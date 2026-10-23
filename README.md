@@ -1,5 +1,16 @@
 # PROJECT GATE
 
+## ▶ 遊ぶ
+
+| 版 | URL |
+| --- | --- |
+| 一般公開用（ユーザー画面のみ） | **[https://oga-0923.github.io/Project_gate/](https://oga-0923.github.io/Project_gate/)** |
+| 開発用（設定からユーザー／開発者を切り替え） | **[https://oga-0923.github.io/Project_gate/dev.html](https://oga-0923.github.io/Project_gate/dev.html)** |
+
+古い版が表示されるときは再読み込み（PCは Ctrl + Shift + R）。
+
+---
+
 VR・MR・スマホ・PCで遊べるオリジナルのトレーディングカードゲーム。
 1つのWebアプリ（`index.html`）が、遊ぶ端末に合わせて3つの形で動く。
 
