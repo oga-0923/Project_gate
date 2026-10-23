@@ -1,0 +1,566 @@
+<title>PROJECT GATE</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: 1画面の卓上。上に相手陣、中央にゲートライン、下に自陣と手札。単一のダークテーマ */
+:root{
+  --bg:#0e1316; --felt:#142320; --panel:#1b2b28; --panel-2:#22362f; --line:#2f4741;
+  --fg:#eaf1ec; --muted:#93a8a1; --gate:#d9b45f; --danger:#ff6a55; --good:#5fcf95;
+  --fire:#e5583c; --earth:#b08f5e; --bolt:#ecc943; --heal:#57c08a; --field:#45b0ad; --wind:#7fd0e8; --seal:#a88be0;
+  --f-display:"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+  --f-num:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --cw:clamp(68px,21vw,108px);
+  color-scheme:dark;
+}
+html,body{background:var(--bg);color:var(--fg)}
+body{
+  font-family:var(--f-body);font-size:14px;line-height:1.5;
+  background:radial-gradient(ellipse at 50% 48%,var(--felt) 0%,var(--bg) 70%) fixed,var(--bg);
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:12px 28px;
+}
+button{font:inherit;color:inherit}
+button:focus-visible{outline:2px solid var(--gate);outline-offset:3px}
+.app{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+
+.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+.top h1{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(22px,5vw,30px);letter-spacing:.06em;color:var(--gate)}
+.top h1 small{font-family:var(--f-body);font-size:12px;color:var(--muted);letter-spacing:.08em;margin-left:8px}
+.ghost{background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 12px;cursor:pointer;color:var(--muted)}
+.ghost:hover{color:var(--fg);border-color:var(--muted)}
+
+details.rules{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px}
+details.rules summary{cursor:pointer;color:var(--muted);font-weight:700}
+.rules ul{margin:8px 0;padding-left:1.2em;max-width:65ch}
+.rules li{margin:2px 0}
+.cardtable{overflow-x:auto}
+.cardtable table{border-collapse:collapse;font-size:13px;min-width:420px}
+.cardtable td,.cardtable th{border-bottom:1px solid var(--line);padding:4px 10px 4px 0;text-align:left;font-variant-numeric:tabular-nums}
+.cardtable th{color:var(--muted);font-weight:400;font-size:12px}
+
+.side{display:flex;flex-direction:column;gap:10px}
+.hero{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;
+  text-align:left;width:100%;position:relative;
+}
+button.hero{cursor:default}
+.hero.active{border-color:color-mix(in oklab,var(--gate) 55%,var(--line))}
+.hero .who{font-family:var(--f-display);font-size:16px;letter-spacing:.05em}
+.pips{display:inline-flex;align-items:center;gap:4px}
+.pip{width:11px;height:11px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line)}
+.pip.life.on{background:var(--danger);border-color:var(--danger)}
+.pip.en{border-radius:2px;transform:rotate(45deg);width:9px;height:9px}
+.pip.en.on{background:var(--gate);border-color:var(--gate)}
+.num{font-family:var(--f-num);font-weight:700;font-variant-numeric:tabular-nums}
+.lbl{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.meta{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.altar-badge{font-size:12px;color:var(--field);border:1px solid color-mix(in oklab,var(--field) 60%,transparent);border-radius:999px;padding:1px 10px}
+.hero.target{cursor:pointer;border-color:var(--danger);animation:pulse 1.1s ease-in-out infinite}
+
+.field{display:grid;grid-template-columns:repeat(3,var(--cw));justify-content:center;gap:clamp(8px,3vw,18px)}
+.slot{width:var(--cw);aspect-ratio:5/7;max-width:100%;border:1.5px dashed var(--line);border-radius:9px;display:grid;place-items:center;color:var(--line);font-size:12px}
+.slot.filled{border:none}
+
+.card{
+  --el:var(--fire);
+  position:relative;width:var(--cw);max-width:100%;aspect-ratio:5/7;border-radius:9px;
+  border:2px solid color-mix(in oklab,var(--el) 65%,var(--line));
+  background:
+    linear-gradient(165deg,color-mix(in oklab,var(--el) 38%,var(--panel)) 0%,var(--panel) 62%);
+  display:grid;grid-template-rows:auto 1fr auto auto;padding:5px 6px 6px;
+  text-align:left;cursor:pointer;overflow:hidden;
+  transition:transform .15s ease,box-shadow .15s ease,opacity .15s;
+}
+.el-fire{--el:var(--fire)} .el-earth{--el:var(--earth)} .el-bolt{--el:var(--bolt)}
+.el-heal{--el:var(--heal)} .el-field{--el:var(--field)} .el-wind{--el:var(--wind)} .el-seal{--el:var(--seal)}
+.card .kind.tag{color:var(--el);font-weight:700}
+.card.evo{box-shadow:0 0 0 3px var(--fire);animation:pulse 1.1s ease-in-out infinite}
+.card .zz.frozen{color:var(--seal);font-weight:700}
+.field-badge{font-size:12px;color:var(--el);border:1px solid color-mix(in oklab,var(--el) 60%,transparent);border-radius:999px;padding:1px 10px}
+.card .cost{
+  position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;
+  background:var(--bg);border:1.5px solid var(--gate);color:var(--gate);
+  display:grid;place-items:center;font-family:var(--f-num);font-weight:700;font-size:12px;
+}
+.card .kind{justify-self:end;font-size:9px;letter-spacing:.06em;color:var(--muted)}
+.card .glyph{align-self:center;justify-self:center;font-family:var(--f-display);font-size:calc(var(--cw)*.36);line-height:1;color:var(--el);opacity:.9}
+.card .name{font-weight:700;font-size:clamp(10px,2.6vw,12.5px);line-height:1.2;text-wrap:balance}
+.card .text{font-size:clamp(8.5px,2.2vw,10.5px);line-height:1.25;color:var(--muted);margin-top:2px}
+.card .stats{display:flex;justify-content:space-between;margin-top:3px;font-family:var(--f-num);font-weight:700;font-size:clamp(11px,3vw,14px)}
+.card .atk::before{content:"ATK ";font-size:.7em;color:var(--muted)}
+.card .hp::before{content:"HP ";font-size:.7em;color:var(--muted)}
+.card .atk.up{color:var(--gate)}
+.card .hp.hurt{color:var(--danger)}
+.card .zz{position:absolute;top:4px;right:5px;font-size:10px;color:var(--muted);background:var(--bg);border-radius:4px;padding:0 4px}
+.card .kind+.zz{top:18px}
+.card:hover{transform:translateY(-3px)}
+.card.ready{box-shadow:0 0 0 2px var(--gate),0 0 18px color-mix(in oklab,var(--gate) 45%,transparent)}
+.card.selected{transform:translateY(-8px);box-shadow:0 0 0 3px var(--gate),0 10px 24px rgba(0,0,0,.5)}
+.card.target{box-shadow:0 0 0 3px var(--danger);animation:pulse 1.1s ease-in-out infinite}
+.card.dim{opacity:.45}
+.card.playable{box-shadow:0 0 0 1.5px color-mix(in oklab,var(--gate) 70%,transparent)}
+
+.gate{
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px 12px;
+  padding:10px 0;border-block:1px solid color-mix(in oklab,var(--gate) 45%,transparent);
+}
+.gate .turn{font-family:var(--f-display);font-size:clamp(15px,3.6vw,19px);color:var(--gate);letter-spacing:.05em}
+.gate .hint{grid-column:1;font-size:13px;color:var(--muted);min-height:1.5em}
+.gate .hint.warn{color:var(--danger)}
+.endbtn{
+  grid-row:1/span 2;grid-column:2;background:var(--gate);color:var(--bg);border:none;border-radius:8px;
+  padding:10px 18px;font-weight:700;cursor:pointer;letter-spacing:.05em;
+}
+.endbtn:disabled{background:var(--panel-2);color:var(--muted);cursor:not-allowed}
+
+.handwrap{display:flex;flex-direction:column;gap:8px}
+.handwrap .lbl{text-align:center}
+.hand{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;min-height:calc(var(--cw)*1.4)}
+
+.logbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.logbox h2{margin:0 0 6px;font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.1em}
+.logbox ol{list-style:none;margin:0;padding:0;max-height:168px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;font-size:13px}
+.logbox li{padding-left:10px;border-left:3px solid var(--line)}
+.logbox li.p0{border-left-color:var(--gate)}
+.logbox li.p1{border-left-color:var(--danger)}
+
+#fx{position:fixed;inset:0;pointer-events:none;z-index:20}
+.float{position:fixed;transform:translate(-50%,-50%);font-family:var(--f-num);font-weight:700;font-size:24px;text-shadow:0 2px 6px rgba(0,0,0,.8);animation:rise .9s ease-out forwards}
+.float.dmg{color:var(--danger)} .float.heal{color:var(--good)} .float.info{color:var(--gate);font-family:var(--f-display);font-size:18px}
+.hit{animation:shake .35s ease}
+
+#overlay{position:fixed;inset:0;background:color-mix(in oklab,var(--bg) 78%,transparent);display:grid;place-items:center;z-index:30;padding:16px}
+.ov{background:var(--panel);border:1px solid var(--gate);border-radius:14px;padding:24px 32px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.ov h2{margin:0;font-family:var(--f-display);font-weight:400;font-size:44px;color:var(--gate)}
+.ov p{margin:0;color:var(--muted)}
+
+@keyframes pulse{50%{filter:brightness(1.25)}}
+@keyframes rise{from{opacity:1;margin-top:0}to{opacity:0;margin-top:-44px}}
+@keyframes shake{20%{transform:translateX(-4px)}50%{transform:translateX(4px)}80%{transform:translateX(-2px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <h1>PROJECT GATE<small>初期版 v0.2</small></h1>
+    <button class="ghost" data-act="restart" id="restartBtn">最初から</button>
+  </header>
+
+  <details class="rules" id="rules">
+    <summary>ルールとカード一覧</summary>
+    <ul>
+      <li>デッキ20枚・初期手札3枚・ライフ5。先攻・後攻はランダム。</li>
+      <li>自分のターン開始時にエネルギーが3まで回復し、山札から1枚引く（ゲーム最初の先攻1ターン目は引かない）。</li>
+      <li>カードはコスト分のエネルギーを払って出す。モンスターは場に最大3体。</li>
+      <li>出したターンのモンスターは攻撃できない（「休」表示）。速攻持ちは例外。攻撃は1体につき1ターン1回。</li>
+      <li>進化：炎の竜は、前のターンから場にいる炎の幼竜の上に重ねて出す。受けていたダメージと攻撃済みかどうかは引き継ぐ。</li>
+      <li>封印の鎖を受けたモンスターは、持ち主の次のターンが終わるまで攻撃できない（「封」表示）。</li>
+      <li>相手の場にモンスターがいる間は、プレイヤーを直接攻撃できない。</li>
+      <li>戦闘ではお互いのATK分のダメージをHPに与え、HPが0以下で破壊。受けたダメージは聖域以外では回復しない。</li>
+      <li>フィールドカードは1人1枚。別のフィールドを出すと張り替わる。</li>
+      <li>山札が尽きて引けないときは1ダメージ。手札が7枚のときに引いたカードは捨てられる。</li>
+      <li>相手のライフを0にしたら勝ち。</li>
+    </ul>
+    <div class="cardtable"><table id="cardTable"></table></div>
+  </details>
+
+  <section class="side" id="side1" aria-label="CPUの陣地"></section>
+
+  <div class="gate">
+    <div class="turn" id="turnLabel"></div>
+    <div class="hint" id="hint" aria-live="polite"></div>
+    <button class="endbtn" data-act="end" id="endBtn">ターン終了</button>
+  </div>
+
+  <section class="side" id="side0" aria-label="あなたの陣地"></section>
+
+  <section class="handwrap" aria-label="手札">
+    <span class="lbl">手札</span>
+    <div class="hand" id="hand"></div>
+  </section>
+
+  <section class="logbox">
+    <h2>バトルログ</h2>
+    <ol id="log"></ol>
+  </section>
+</div>
+<div id="fx"></div>
+<div id="overlay" hidden></div>
+
+<script>
+// ===== 調整用の設定 =====
+const CONFIG = {
+  startLife: 5,          // 初期ライフ
+  maxLife: 5,            // ライフ上限（回復の上限）
+  maxEnergy: 3,          // ターン開始時のエネルギー
+  handStart: 3,          // 初期手札
+  maxHand: 7,            // 手札上限（超えたドローは捨てる）
+  maxField: 3,           // 場に置けるモンスター数
+  altarBonus: 1,         // 古代の祭壇のATK上昇量
+  sanctuaryHeal: 1,      // 大地の聖域がターン開始時に回復するHP
+  deckOutDamage: 1,      // 山札切れで引けないときのダメージ
+  mustAttackMonsters: true, // true: 相手モンスターがいる間は直接攻撃不可
+  cpuDelay: 700,         // CPUの1アクションごとの待ち時間(ms)
+};
+
+// ===== カード定義 =====
+const CARDS = {
+  drake:     { name:'炎の幼竜',     type:'monster', cost:1, atk:1, hp:2, el:'fire',  glyph:'炎' },
+  dragon:    { name:'炎の竜',       type:'monster', cost:1, atk:3, hp:5, el:'fire',  glyph:'竜', evolveFrom:'drake', tag:'進化', text:'炎の幼竜に重ねる' },
+  golem:     { name:'岩石の守護者', type:'monster', cost:2, atk:1, hp:4, el:'earth', glyph:'岩' },
+  knight:    { name:'雷の剣士',     type:'monster', cost:3, atk:3, hp:2, el:'bolt',  glyph:'雷' },
+  scout:     { name:'疾風の斥候',   type:'monster', cost:2, atk:2, hp:1, el:'wind',  glyph:'風', rush:true, tag:'速攻', text:'出したターンに攻撃できる' },
+  fireball:  { name:'火炎弾',       type:'magic',   cost:1, dmg:2,       el:'fire',  glyph:'弾', text:'敵モンスターか相手に2ダメージ' },
+  heal:      { name:'治癒の光',     type:'magic',   cost:1, amount:1,    el:'heal',  glyph:'癒', text:'ライフを1回復' },
+  chain:     { name:'封印の鎖',     type:'magic',   cost:2,              el:'seal',  glyph:'封', text:'敵モンスター1体は次のターン攻撃できない' },
+  altar:     { name:'古代の祭壇',   type:'field',   cost:2,              el:'field', glyph:'壇', text:'味方モンスターのATK+1' },
+  sanctuary: { name:'大地の聖域',   type:'field',   cost:2,              el:'earth', glyph:'聖', text:'自分のターン開始時、味方モンスターのHPを1回復' },
+};
+
+// ===== デッキ構成（合計20枚） =====
+const DECK_LIST = { drake:3, dragon:2, golem:2, knight:2, scout:2, fireball:3, heal:2, chain:2, altar:1, sanctuary:1 };
+
+// ===== ここから本体 =====
+const KIND = { monster:'モンスター', magic:'マジック', field:'フィールド' };
+const NAMES = ['あなた', 'CPU'];
+const $ = s => document.querySelector(s);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let S, uidSeq = 0, gameSeq = 0;
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function buildDeck(){ const d=[]; for(const [id,n] of Object.entries(DECK_LIST)) for(let k=0;k<n;k++) d.push({uid:++uidSeq,id}); return shuffle(d); }
+function newPlayer(){ const deck=buildDeck(); return { life:CONFIG.startLife, energy:0, deck, hand:deck.splice(0,CONFIG.handStart), field:Array(CONFIG.maxField).fill(null), fieldCard:null }; }
+function atkOf(pi,m){ return m.atk + (S.p[pi].fieldCard==='altar' ? CONFIG.altarBonus : 0); }
+function addLog(pi,text){ S.log.unshift({pi,text}); if(S.log.length>80) S.log.pop(); }
+function fx(key,text,cls){ S.fx.push([key,text,cls]); }
+function evoTargets(pi,d){ return S.p[pi].field.filter(m=>m && m.id===d.evolveFrom && m.summonTurn<S.turnNo); }
+function slotKey(pi,m){ return `s${pi}${S.p[pi].field.indexOf(m)}`; }
+
+function newGame(){
+  S = { p:[newPlayer(),newPlayer()], turn:0, turnNo:0, sel:null, busy:false, over:false, winner:null, log:[], fx:[], hint:'', warn:false, gid:++gameSeq };
+  const first = Math.random()<.5 ? 0 : 1;
+  addLog(null, `${NAMES[first]}の先攻で開始`);
+  startTurn(first);
+}
+
+function startTurn(pi){
+  S.turn=pi; S.turnNo++; S.sel=null; S.hint=''; S.warn=false;
+  const p=S.p[pi];
+  p.energy=CONFIG.maxEnergy;
+  p.field.forEach(m=>{ if(m) m.canAttack=!m.frozen; });
+  if(p.fieldCard==='sanctuary'){
+    p.field.forEach(m=>{ if(m && m.hp<m.maxHp){ const n=Math.min(CONFIG.sanctuaryHeal,m.maxHp-m.hp); m.hp+=n; fx(slotKey(pi,m),`+${n}`,'heal'); }});
+  }
+  if(S.turnNo>1) draw(pi);
+  render();
+  if(!S.over && pi===1) cpuTurn(S.gid);
+}
+function endTurn(){
+  if(S.over) return;
+  // 封印は「封印された側のターン終了時」に解ける
+  S.p[S.turn].field.forEach(m=>{ if(m && m.frozen && m.frozenSince<S.turnNo) m.frozen=false; });
+  startTurn(1-S.turn);
+}
+
+function draw(pi){
+  const p=S.p[pi];
+  if(!p.deck.length){ addLog(pi, `${NAMES[pi]}は山札切れで${CONFIG.deckOutDamage}ダメージ`); damagePlayer(pi,CONFIG.deckOutDamage); return; }
+  const c=p.deck.shift();
+  if(p.hand.length>=CONFIG.maxHand){ addLog(pi, `手札がいっぱいで「${CARDS[c.id].name}」を捨てた`); return; }
+  p.hand.push(c);
+}
+
+function damagePlayer(pi,n){
+  const p=S.p[pi]; p.life=Math.max(0,p.life-n);
+  fx(`h${pi}`,`-${n}`,'dmg');
+  if(p.life<=0 && !S.over){ S.over=true; S.winner=1-pi; addLog(1-pi, `${NAMES[1-pi]}の勝利`); }
+}
+function damageMonster(owner,m,n){
+  m.hp-=n; fx(slotKey(owner,m),`-${n}`,'dmg'); killCheck(owner);
+}
+function killCheck(pi){
+  const p=S.p[pi];
+  p.field.forEach((m,i)=>{ if(m && m.hp<=0){ p.field[i]=null; addLog(pi, `${NAMES[pi]}の「${CARDS[m.id].name}」が破壊された`); }});
+}
+
+function canPlay(pi,c){
+  const p=S.p[pi], d=CARDS[c.id];
+  if(d.cost>p.energy) return 'エネルギーが足りません';
+  if(d.evolveFrom){
+    if(!evoTargets(pi,d).length) return `進化できる「${CARDS[d.evolveFrom].name}」がいません（出した次のターンから重ねられます）`;
+    return '';
+  }
+  if(d.type==='monster' && !p.field.includes(null)) return '場がいっぱいです（最大'+CONFIG.maxField+'体）';
+  if(d.type==='field' && p.fieldCard===c.id) return `「${d.name}」はすでに出ています`;
+  if(c.id==='heal' && p.life>=CONFIG.maxLife) return 'ライフはすでに最大です';
+  if(c.id==='chain' && !S.p[1-pi].field.some(Boolean)) return '対象になる相手モンスターがいません';
+  return '';
+}
+
+function doPlay(pi,c,target){
+  const p=S.p[pi], o=1-pi, d=CARDS[c.id];
+  p.energy-=d.cost;
+  p.hand.splice(p.hand.indexOf(c),1);
+  if(d.evolveFrom){
+    const i=p.field.indexOf(target), dmg=target.maxHp-target.hp;
+    p.field[i]={ uid:c.uid, id:c.id, atk:d.atk, hp:d.hp-dmg, maxHp:d.hp, summonTurn:target.summonTurn,
+                 canAttack:target.canAttack, frozen:target.frozen, frozenSince:target.frozenSince };
+    addLog(pi, `${NAMES[pi]}の「${CARDS[target.id].name}」が「${d.name}」に進化`);
+    fx(`s${pi}${i}`,'進化','info');
+  } else if(d.type==='monster'){
+    const i=p.field.indexOf(null);
+    p.field[i]={ uid:c.uid, id:c.id, atk:d.atk, hp:d.hp, maxHp:d.hp, summonTurn:S.turnNo, canAttack:!!d.rush, frozen:false };
+    addLog(pi, `${NAMES[pi]}は「${d.name}」を召喚${d.rush?'（速攻）':''}`);
+    fx(`s${pi}${i}`,'召喚','info');
+  } else if(c.id==='fireball'){
+    if(target==='face'){ addLog(pi, `${NAMES[pi]}の火炎弾が${NAMES[o]}に命中`); damagePlayer(o,d.dmg); }
+    else { addLog(pi, `${NAMES[pi]}の火炎弾が「${CARDS[target.id].name}」に命中`); damageMonster(o,target,d.dmg); }
+  } else if(c.id==='heal'){
+    p.life=Math.min(CONFIG.maxLife,p.life+d.amount);
+    addLog(pi, `${NAMES[pi]}はライフを${d.amount}回復`);
+    fx(`h${pi}`,`+${d.amount}`,'heal');
+  } else if(c.id==='chain'){
+    target.frozen=true; target.frozenSince=S.turnNo; target.canAttack=false;
+    addLog(pi, `${NAMES[pi]}は「${CARDS[target.id].name}」を封印した`);
+    fx(slotKey(o,target),'封印','info');
+  } else if(d.type==='field'){
+    const old=p.fieldCard; p.fieldCard=c.id;
+    addLog(pi, old ? `${NAMES[pi]}は「${CARDS[old].name}」を「${d.name}」に張り替えた` : `${NAMES[pi]}は「${d.name}」を配置`);
+    fx(`h${pi}`,d.name,'info');
+  }
+}
+
+function attack(pi,m,target){
+  const o=1-pi, a=atkOf(pi,m), mk=slotKey(pi,m);
+  m.canAttack=false;
+  if(target==='face'){
+    addLog(pi, `「${CARDS[m.id].name}」が${NAMES[o]}を直接攻撃（${a}）`);
+    damagePlayer(o,a);
+  } else {
+    const tk=slotKey(o,target), b=atkOf(o,target);
+    addLog(pi, `「${CARDS[m.id].name}」ATK${a} ⇄ 「${CARDS[target.id].name}」ATK${b}`);
+    target.hp-=a; m.hp-=b;
+    fx(tk,`-${a}`,'dmg'); if(b>0) fx(mk,`-${b}`,'dmg');
+    killCheck(o); killCheck(pi);
+  }
+}
+
+// ===== CPU =====
+async function cpuTurn(gid){
+  S.busy=true; render();
+  await sleep(CONFIG.cpuDelay); if(gid!==S.gid) return;
+  for(let guard=0; guard<12 && !S.over; guard++){
+    const pick=cpuPickPlay(); if(!pick) break;
+    doPlay(1,pick.card,pick.target); render();
+    await sleep(CONFIG.cpuDelay); if(gid!==S.gid) return;
+  }
+  for(const m of [...S.p[1].field]){
+    if(S.over) break;
+    if(!m || !m.canAttack || !S.p[1].field.includes(m)) continue;
+    const t=cpuPickAttack(m); if(!t) continue;
+    attack(1,m,t); render();
+    await sleep(CONFIG.cpuDelay); if(gid!==S.gid) return;
+  }
+  S.busy=false;
+  if(!S.over) endTurn(); else render();
+}
+
+function cpuPickPlay(){
+  const p=S.p[1], o=S.p[0];
+  const ok = p.hand.filter(c=>!canPlay(1,c));
+  const find = id => ok.find(c=>c.id===id);
+  const enemies = o.field.filter(Boolean);
+  const fb = find('fireball');
+  if(fb && o.life<=CARDS.fireball.dmg) return {card:fb,target:'face'};
+  const ev = find('dragon');
+  if(ev) return {card:ev, target:evoTargets(1,CARDS.dragon)[0]};
+  const ch = find('chain');
+  const threat = enemies.filter(m=>!m.frozen && atkOf(0,m)>=3).sort((a,b)=>atkOf(0,b)-atkOf(0,a))[0];
+  if(ch && threat) return {card:ch,target:threat};
+  if(!p.fieldCard && p.field.some(Boolean)){
+    const damaged = p.field.some(m=>m && m.hp<m.maxHp);
+    const f = damaged ? (find('sanctuary')||find('altar')) : (find('altar')||find('sanctuary'));
+    if(f) return {card:f};
+  }
+  const mons = ok.filter(c=>CARDS[c.id].type==='monster' && !CARDS[c.id].evolveFrom).sort((a,b)=>CARDS[b.id].cost-CARDS[a.id].cost);
+  if(mons.length) return {card:mons[0]};
+  if(fb){
+    const killable = enemies.filter(m=>m.hp<=CARDS.fireball.dmg).sort((a,b)=>atkOf(0,b)-atkOf(0,a));
+    if(killable.length) return {card:fb,target:killable[0]};
+    if(!enemies.length) return {card:fb,target:'face'};
+  }
+  const hl = find('heal'); if(hl) return {card:hl};
+  return null;
+}
+
+function cpuPickAttack(m){
+  const enemies=S.p[0].field.filter(Boolean), a=atkOf(1,m);
+  if(!enemies.length) return 'face';
+  const opts = enemies.map(e=>({e, kill:e.hp<=a, die:m.hp<=atkOf(0,e), eAtk:atkOf(0,e)}))
+                      .sort((x,y)=>y.eAtk-x.eAtk);
+  const best = opts.find(x=>x.kill && !x.die) || opts.find(x=>x.kill && x.eAtk>=a) || opts.find(x=>!x.die);
+  if(best) return best.e;
+  return CONFIG.mustAttackMonsters ? null : 'face';
+}
+
+// ===== プレイヤー操作 =====
+function setHint(t,warn){ S.hint=t; S.warn=!!warn; }
+
+function clickHand(c){
+  if(S.sel?.card===c){ S.sel=null; return; }
+  S.sel=null;
+  const why=canPlay(0,c);
+  if(why){ setHint(why,true); return; }
+  const d=CARDS[c.id];
+  if(d.evolveFrom){
+    const ts=evoTargets(0,d);
+    if(ts.length===1){ doPlay(0,c,ts[0]); setHint(''); }
+    else { S.sel={kind:'evolve',card:c}; setHint(''); }
+    return;
+  }
+  if(c.id==='fireball' || c.id==='chain'){ S.sel={kind:'spell',card:c}; setHint(''); return; }
+  doPlay(0,c); setHint('');
+}
+
+function resolveTarget(t){
+  const sel=S.sel; if(!sel) return;
+  if(sel.kind==='attack'){
+    if(t==='face' && CONFIG.mustAttackMonsters && S.p[1].field.some(Boolean)){ setHint('相手のモンスターがいる間は直接攻撃できません',true); return; }
+    attack(0,sel.m,t);
+  } else if(sel.kind==='spell'){
+    if(t==='face' && sel.card.id==='chain'){ setHint('封印の鎖はモンスターにしか使えません',true); return; }
+    doPlay(0,sel.card,t);
+  } else return;
+  S.sel=null; setHint('');
+}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  const act=b.dataset.act;
+  if(act==='restart'){ newGame(); return; }
+  if(!S || S.over || S.busy || S.turn!==0) return;
+  if(act==='end'){ S.sel=null; endTurn(); return; }
+  if(act==='hand'){ const c=S.p[0].hand.find(c=>String(c.uid)===b.dataset.uid); if(c) clickHand(c); }
+  else if(act==='mon'){
+    const pi=+b.dataset.pi, m=S.p[pi].field[+b.dataset.i]; if(!m) return;
+    if(pi===0){
+      if(S.sel?.kind==='evolve'){
+        const d=CARDS[S.sel.card.id];
+        if(evoTargets(0,d).includes(m)){ doPlay(0,S.sel.card,m); S.sel=null; setHint(''); }
+        else setHint(`進化先に選べるのは、前のターンから場にいる「${CARDS[d.evolveFrom].name}」です`,true);
+      }
+      else if(S.sel?.kind==='attack' && S.sel.m===m){ S.sel=null; setHint(''); }
+      else if(m.canAttack){ S.sel={kind:'attack',m}; setHint(''); }
+      else setHint(m.frozen ? 'このモンスターは封印されています' : 'このモンスターは今ターン攻撃できません',true);
+    } else resolveTarget(m);
+  }
+  else if(act==='hero' && b.dataset.pi==='1') resolveTarget('face');
+  render();
+});
+
+// ===== 描画 =====
+function pips(n,max,cls){ let s=''; for(let i=0;i<max;i++) s+=`<span class="pip ${cls} ${i<n?'on':''}"></span>`; return `<span class="pips">${s}</span>`; }
+
+function cardBody(d,m,pi){
+  let stats;
+  if(d.type==='monster'){
+    const a = m ? atkOf(pi,m) : d.atk, hp = m ? m.hp : d.hp;
+    stats = `<span class="stats"><b class="atk ${m && a>m.atk?'up':''}">${a}</b><b class="hp ${m && hp<m.maxHp?'hurt':''}">${hp}</b></span>`;
+  } else stats = `<span class="text">${d.text}</span>`;
+  const kind = d.tag ? `<span class="kind tag">${d.tag}</span>` : `<span class="kind">${KIND[d.type]}</span>`;
+  return `<span class="cost">${d.cost}</span>${kind}<span class="glyph" aria-hidden="true">${d.glyph}</span><span class="name">${d.name}</span>${stats}`;
+}
+
+function sideHTML(pi){
+  const p=S.p[pi], me=pi===0, sel=S.sel, myTurn=S.turn===0 && !S.over && !S.busy;
+  const heroTarget = !me && myTurn && sel && ((sel.kind==='spell' && sel.card.id==='fireball') || (sel.kind==='attack' && (!CONFIG.mustAttackMonsters || !p.field.some(Boolean))));
+  const evoOK = sel?.kind==='evolve' ? evoTargets(0,CARDS[sel.card.id]) : [];
+  const tag = me ? 'div' : 'button';
+  const fc = p.fieldCard ? CARDS[p.fieldCard] : null;
+  const hero = `<${tag} class="hero ${heroTarget?'target':''} ${S.turn===pi?'active':''}" ${me?'':`data-act="hero" data-pi="${pi}"`} data-k="h${pi}">
+      <span class="who">${NAMES[pi]}</span>
+      <span class="lbl">ライフ</span>${pips(p.life,CONFIG.maxLife,'life')}<span class="num">${p.life}</span>
+      <span class="lbl">エネルギー</span>${pips(p.energy,CONFIG.maxEnergy,'en')}
+      <span class="meta">山札 ${p.deck.length} ・ 手札 ${p.hand.length}</span>
+      ${fc?`<span class="field-badge el-${fc.el}" title="${fc.text}">${fc.name}：${fc.text}</span>`:''}
+    </${tag}>`;
+  const slots = p.field.map((m,i)=>{
+    if(!m) return `<div class="slot" data-k="s${pi}${i}">空き</div>`;
+    const d=CARDS[m.id], cls=['card','el-'+d.el];
+    if(me && myTurn && m.canAttack && !sel) cls.push('ready');
+    if(sel?.kind==='attack' && sel.m===m) cls.push('selected');
+    if(!me && myTurn && sel && sel.kind!=='evolve') cls.push('target');
+    if(me && evoOK.includes(m)) cls.push('evo');
+    let badge='';
+    if(m.frozen) badge='<span class="zz frozen">封</span>';
+    else if(me && S.turn===0 && !m.canAttack) badge='<span class="zz">休</span>';
+    return `<div class="slot filled" data-k="s${pi}${i}"><button class="${cls.join(' ')}" data-act="mon" data-pi="${pi}" data-i="${i}" aria-label="${d.name} ATK${atkOf(pi,m)} HP${m.hp}">${cardBody(d,m,pi)}${badge}</button></div>`;
+  }).join('');
+  const field = `<div class="field">${slots}</div>`;
+  return me ? field+hero : hero+field;
+}
+
+function render(){
+  $('#side1').innerHTML=sideHTML(1);
+  $('#side0').innerHTML=sideHTML(0);
+  const me=S.p[0], myTurn=S.turn===0 && !S.over && !S.busy;
+  $('#hand').innerHTML = me.hand.map(c=>{
+    const d=CARDS[c.id], cls=['card','el-'+d.el];
+    if(myTurn) cls.push(canPlay(0,c)?'dim':'playable'); else cls.push('dim');
+    if(S.sel?.card===c) cls.push('selected');
+    return `<button class="${cls.join(' ')}" data-act="hand" data-uid="${c.uid}">${cardBody(d)}</button>`;
+  }).join('') || '<span class="meta">手札なし</span>';
+
+  $('#turnLabel').textContent = `第${S.turnNo}ターン ・ ${S.turn===0?'あなた':'CPU'}の番`;
+  let hint=S.hint;
+  if(!hint){
+    if(S.over) hint='決着しました';
+    else if(S.turn!==0) hint='CPUが行動中…';
+    else if(S.sel?.kind==='attack') hint='攻撃先を選んでください（同じモンスターを押すと取消）';
+    else if(S.sel?.kind==='evolve') hint='進化させる炎の幼竜を選んでください';
+    else if(S.sel?.kind==='spell') hint=`「${CARDS[S.sel.card.id].name}」の対象を選んでください（赤く光る相手）`;
+    else hint='手札を出すか、金色に光るモンスターで攻撃';
+  }
+  const h=$('#hint'); h.textContent=hint; h.classList.toggle('warn',S.warn);
+  $('#endBtn').disabled=!myTurn;
+
+  $('#log').innerHTML = S.log.map(l=>`<li class="${l.pi===null?'':'p'+l.pi}">${l.text}</li>`).join('');
+
+  const ov=$('#overlay');
+  if(S.over){
+    ov.innerHTML=`<div class="ov"><p>${S.turnNo}ターンで決着</p><h2>${S.winner===0?'勝利':'敗北'}</h2><button class="endbtn" data-act="restart" style="grid-row:auto">もう一度</button></div>`;
+    ov.hidden=false;
+  } else ov.hidden=true;
+
+  flushFx();
+}
+
+function flushFx(){
+  const layer=$('#fx');
+  for(const [k,t,cls] of S.fx){
+    const el=document.querySelector(`[data-k="${k}"]`); if(!el) continue;
+    const r=el.getBoundingClientRect();
+    const s=document.createElement('span');
+    s.className='float '+cls; s.textContent=t;
+    s.style.left=(r.left+r.width/2)+'px'; s.style.top=(r.top+r.height/2)+'px';
+    layer.append(s); setTimeout(()=>s.remove(),950);
+    if(cls==='dmg') el.classList.add('hit');
+  }
+  S.fx=[];
+}
+
+function renderCardTable(){
+  const rows = Object.entries(CARDS).map(([id,d])=>{
+    const body = d.type==='monster' ? `ATK ${d.atk} / HP ${d.hp}${d.text?'。'+d.text:''}` : d.text;
+    return `<tr><td>${d.name}</td><td>${d.tag||KIND[d.type]}</td><td class="num">${d.cost}</td><td class="num">${DECK_LIST[id]||0}</td><td>${body}</td></tr>`;
+  }).join('');
+  $('#cardTable').innerHTML = `<tr><th>カード</th><th>種類</th><th>コスト</th><th>枚数</th><th>内容</th></tr>${rows}`;
+}
+
+renderCardTable();
+newGame();
+</script>
