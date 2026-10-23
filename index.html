@@ -18,7 +18,7 @@
 :root{
   --bg:#070b10; --panel:rgba(16,26,28,.86); --panel-solid:#14211f; --line:#2f4741;
   --fg:#eaf1ec; --muted:#93a8a1; --gate:#d9b45f; --danger:#ff6a55; --good:#5fcf95;
-  --fire:#e5583c; --earth:#b08f5e; --bolt:#ecc943; --heal:#57c08a; --field:#45b0ad; --wind:#7fd0e8; --seal:#a88be0; --lore:#5f9cff; --ward:#f2e2a8; --shade:#7d8fd6;
+  --fire:#e5583c; --earth:#b08f5e; --bolt:#ecc943; --heal:#57c08a; --field:#45b0ad; --wind:#7fd0e8; --seal:#a88be0; --lore:#5f9cff; --ward:#f2e2a8; --shade:#7d8fd6; --nature:#6cbf4a; --iron:#9aa4ad; --water:#4aa3df; --dream:#e08fd0; --ice:#9fe3f0; --blood:#d0405a;
   --f-display:"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif;
   --f-body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
   --f-num:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -81,7 +81,7 @@ button.pp{cursor:default}
   display:grid;grid-template-rows:auto 1fr auto auto;padding:4px 5px 5px;text-align:left;cursor:pointer;overflow:hidden;
   transition:transform .15s ease,box-shadow .15s ease,opacity .15s}
 .el-fire{--el:var(--fire)} .el-earth{--el:var(--earth)} .el-bolt{--el:var(--bolt)} .el-heal{--el:var(--heal)}
-.el-field{--el:var(--field)} .el-wind{--el:var(--wind)} .el-seal{--el:var(--seal)} .el-lore{--el:var(--lore)} .el-ward{--el:var(--ward)} .el-shade{--el:var(--shade)}
+.el-field{--el:var(--field)} .el-wind{--el:var(--wind)} .el-seal{--el:var(--seal)} .el-lore{--el:var(--lore)} .el-ward{--el:var(--ward)} .el-shade{--el:var(--shade)} .el-nature{--el:var(--nature)} .el-iron{--el:var(--iron)} .el-water{--el:var(--water)} .el-dream{--el:var(--dream)} .el-ice{--el:var(--ice)} .el-blood{--el:var(--blood)}
 .card .cost{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--bg);border:1.5px solid var(--gate);color:var(--gate);display:grid;place-items:center;font-family:var(--f-num);font-weight:700;font-size:11px}
 .card .kind{justify-self:end;font-size:8.5px;color:var(--muted)}
 .card .kind.tag{color:var(--el);font-weight:700}
@@ -327,12 +327,13 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== 調整用の設定 =====
-const APP_VERSION = '2.3.0';
+const APP_VERSION = '2.4.0';
 const CONFIG = {
-  startLife: 5,          // 初期ライフ
-  maxLife: 5,            // ライフ上限（回復の上限）
-  maxEnergy: 3,          // ターン開始時のエネルギー
-  handStart: 3,          // 初期手札
+  startLife: 7,          // 初期ライフ
+  maxLife: 7,            // ライフ上限（回復の上限）
+  energyStart: 2,        // 最初の自分のターンのエネルギー
+  energyMax: 4,          // エネルギーの上限（自分のターンごとに1ずつ増える）
+  handStart: 4,          // 初期手札
   maxHand: 7,            // 手札上限（超えたドローは捨てる）
   maxField: 3,           // 場に置けるモンスター数
   altarBonus: 1,         // アルドリスのATK上昇量
@@ -352,9 +353,10 @@ const CONFIG = {
 
 // ===== レア度と提供割合（合計1.0） =====
 const RARITY = {
-  C: { rate: 0.65, craft: 15, mark: '◆' },
+  C: { rate: 0.63, craft: 15, mark: '◆' },
   U: { rate: 0.27, craft: 30, mark: '◆◆' },
   R: { rate: 0.08, craft: 60, mark: '◆◆◆' },
+  L: { rate: 0.02, craft: 120, mark: '★' },
 };
 
 // ===== カード定義（名前と説明は下の多言語データ） =====
@@ -381,16 +383,49 @@ const CARDS = {
   revive:    { type:'magic',   cost:2,              el:'heal',  glyph:'魂', rarity:'U' },
   egg:       { type:'monster', cost:1, atk:0, hp:1, el:'fire',  glyph:'卵', rarity:'C', tag:'egg' },
   storm:     { type:'field',   cost:2,              el:'wind',  glyph:'嵐', rarity:'R' },
+  // --- Ver.2.4 追加（合計50種） ---
+  kolopom:     { type:'monster', cost:1, atk:0, hp:1, el:'nature', glyph:'綿', rarity:'C' },
+  garakutan:   { type:'monster', cost:1, atk:1, hp:1, el:'iron',   glyph:'屑', rarity:'C' },
+  nemurin:     { type:'monster', cost:2, atk:2, hp:3, el:'dream',  glyph:'眠', rarity:'C' },
+  fizzlet:     { type:'magic',   cost:1,              el:'fire',   glyph:'燻', rarity:'C' },
+  namerion:    { type:'monster', cost:3, atk:1, hp:4, el:'water',  glyph:'粘', rarity:'C' },
+  echoling:    { type:'monster', cost:1, atk:0, hp:2, el:'lore',   glyph:'響', rarity:'U' },
+  lastember:   { type:'monster', cost:1, atk:1, hp:1, el:'fire',   glyph:'燼', rarity:'U' },
+  stackle:     { type:'monster', cost:1, atk:0, hp:1, el:'earth',  glyph:'積', rarity:'C' },
+  dongrim:     { type:'monster', cost:1, atk:0, hp:1, el:'nature', glyph:'芽', rarity:'C', ref:'elderoak' },
+  sacrivel:    { type:'magic',   cost:0,              el:'blood',  glyph:'契', rarity:'U' },
+  hollowshell: { type:'monster', cost:2, atk:0, hp:3, el:'water',  glyph:'殻', rarity:'C' },
+  tidecall:    { type:'magic',   cost:1,              el:'water',  glyph:'潮', rarity:'U' },
+  undertow:    { type:'magic',   cost:2,              el:'water',  glyph:'渦', rarity:'U' },
+  gloomcap:    { type:'monster', cost:2, atk:0, hp:2, el:'nature', glyph:'茸', rarity:'U' },
+  lullabam:    { type:'magic',   cost:1,              el:'dream',  glyph:'謡', rarity:'U', limit:2 },
+  riddlewisp:  { type:'monster', cost:1, atk:1, hp:1, el:'shade',  glyph:'謎', rarity:'U' },
+  kindlefox:   { type:'monster', cost:2, atk:1, hp:2, el:'fire',   glyph:'狐', rarity:'U' },
+  quillmouse:  { type:'monster', cost:1, atk:1, hp:1, el:'wind',   glyph:'針', rarity:'C', rush:true },
+  brambleback: { type:'monster', cost:2, atk:1, hp:3, el:'nature', glyph:'茨', rarity:'C' },
+  ironhorn:    { type:'monster', cost:3, atk:3, hp:3, el:'iron',   glyph:'角', rarity:'C' },
+  tundrak:     { type:'monster', cost:3, atk:2, hp:3, el:'ice',    glyph:'氷', rarity:'U' },
+  galeslash:   { type:'magic',   cost:1,              el:'wind',   glyph:'鎌', rarity:'C' },
+  lumend:      { type:'monster', cost:2, atk:1, hp:3, el:'heal',   glyph:'祈', rarity:'U' },
+  ignavault:   { type:'monster', cost:2, atk:5, hp:7, el:'fire',   glyph:'王', rarity:'L', limit:1, evolveFrom:'dragon', tag:'evolve' },
+  aurelion:    { type:'monster', cost:4, atk:3, hp:5, el:'heal',   glyph:'聖', rarity:'L', limit:1 },
+  nyxhollow:   { type:'monster', cost:4, atk:3, hp:3, el:'shade',  glyph:'虚', rarity:'L', limit:1 },
+  gaiaroot:    { type:'field',   cost:3,              el:'nature', glyph:'樹', rarity:'L', limit:1 },
+  gamblet:     { type:'monster', cost:2, atk:1, hp:2, el:'field',  glyph:'賽', rarity:'U' },
+  mimiq:       { type:'monster', cost:2, atk:0, hp:1, el:'shade',  glyph:'擬', rarity:'U' },
+  // トークン（デッキやパックには入らない。ドングリムが育つと出てくる）
+  elderoak:    { type:'monster', cost:0, atk:4, hp:6, el:'nature', glyph:'樹', rarity:'C', token:true },
 };
 const NEW_V22 = ['aoe','fog','pierce','phantom','wall','titan','revive','egg','storm'];
 function cardLimit(id){ return CARDS[id].limit || CONFIG.maxCopies; }
-const CARD_IDS = Object.keys(CARDS);
+const CARD_IDS = Object.keys(CARDS).filter(id=>!CARDS[id].token);
+const NEW_V24 = CARD_IDS.slice(CARD_IDS.indexOf('kolopom'));
 
 // ===== スターターデッキ（20枚）。最初の所持カードとCPUの練習デッキ =====
 const STARTER = { drake:3, dragon:2, golem:1, knight:2, scout:2, fireball:2, heal:1, chain:1, book:2, guard:2, altar:1, sanctuary:1 };
 
 // ===== 属性カラー =====
-const EL = { fire:'#e5583c', earth:'#b08f5e', bolt:'#ecc943', heal:'#57c08a', field:'#45b0ad', wind:'#7fd0e8', seal:'#a88be0', lore:'#5f9cff', ward:'#f2e2a8', shade:'#7d8fd6' };
+const EL = { fire:'#e5583c', earth:'#b08f5e', bolt:'#ecc943', heal:'#57c08a', field:'#45b0ad', wind:'#7fd0e8', seal:'#a88be0', lore:'#5f9cff', ward:'#f2e2a8', shade:'#7d8fd6', nature:'#6cbf4a', iron:'#9aa4ad', water:'#4aa3df', dream:'#e08fd0', ice:'#9fe3f0', blood:'#d0405a' };
 
 /* =====================================================================
    多言語データ。並び順：日本語, English, 简体中文, Español, 한국어, Português
@@ -421,6 +456,36 @@ const NAME = {
   revive:    ['アニマーラ','Animara','阿尼玛拉','Animara','아니마라','Animara'],
   egg:       ['シンドローヴァ','Cindrova','辛德罗娃','Cindrova','신드로바','Cindrova'],
   storm:     ['テンペスティア','Tempestia','腾佩斯蒂娅','Tempestia','템페스티아','Tempestia'],
+  kolopom:     ['コロポム','Kolopom','科洛波姆','Kolopom','콜로폼','Kolopom'],
+  garakutan:   ['ガラクタン','Garakutan','加拉库坦','Garakutan','가라쿠탄','Garakutan'],
+  nemurin:     ['ネムリン','Nemurin','内姆林','Nemurin','네무린','Nemurin'],
+  fizzlet:     ['フィズレット','Fizzlet','菲兹莱特','Fizzlet','피즐렛','Fizzlet'],
+  namerion:    ['ナメリオン','Namerion','纳梅里昂','Namerion','나메리온','Namerion'],
+  echoling:    ['エコリング','Echoling','艾可林','Echoling','에코링','Echoling'],
+  lastember:   ['ラストエンバー','Lastember','拉斯坦伯','Lastember','라스트엠버','Lastember'],
+  stackle:     ['スタックル','Stackle','斯塔克尔','Stackle','스태클','Stackle'],
+  dongrim:     ['ドングリム','Dongrim','东格林','Dongrim','동그림','Dongrim'],
+  sacrivel:    ['サクリヴェル','Sacrivel','萨克里维尔','Sacrivel','사크리벨','Sacrivel'],
+  hollowshell: ['ホロウシェル','Hollowshell','霍洛谢尔','Hollowshell','홀로우셸','Hollowshell'],
+  tidecall:    ['タイドコール','Tidecall','泰德科尔','Tidecall','타이드콜','Tidecall'],
+  undertow:    ['アンダートウ','Undertow','安德托','Undertow','언더토','Undertow'],
+  gloomcap:    ['グルームキャップ','Gloomcap','格鲁姆卡普','Gloomcap','글룸캡','Gloomcap'],
+  lullabam:    ['ララバム','Lullabam','拉拉巴姆','Lullabam','랄라밤','Lullabam'],
+  riddlewisp:  ['リドルウィスプ','Riddlewisp','里德维斯普','Riddlewisp','리들위스프','Riddlewisp'],
+  kindlefox:   ['キンドルフォクス','Kindlefox','金德福克斯','Kindlefox','킨들폭스','Kindlefox'],
+  quillmouse:  ['クイルマウス','Quillmouse','奎尔毛斯','Quillmouse','퀼마우스','Quillmouse'],
+  brambleback: ['ブランブルバック','Brambleback','布兰布尔巴克','Brambleback','브램블백','Brambleback'],
+  ironhorn:    ['アイアンホーン','Ironhorn','艾恩霍恩','Ironhorn','아이언혼','Ironhorn'],
+  tundrak:     ['ツンドラク','Tundrak','通德拉克','Tundrak','툰드라크','Tundrak'],
+  galeslash:   ['ゲイルスラッシュ','Galeslash','盖尔斯拉什','Galeslash','게일슬래시','Galeslash'],
+  lumend:      ['ルーメンド','Lumend','卢门德','Lumend','루멘드','Lumend'],
+  ignavault:   ['イグナヴォルト','Ignavault','伊格纳沃特','Ignavault','이그나볼트','Ignavault'],
+  aurelion:    ['オーレリオン','Aurelion','奥雷利昂','Aurelion','오렐리온','Aurelion'],
+  nyxhollow:   ['ニクスホロウ','Nyxhollow','尼克斯霍洛','Nyxhollow','닉스홀로우','Nyxhollow'],
+  gaiaroot:    ['ガイアルート','Gaiaroot','盖亚鲁特','Gaiaroot','가이아루트','Gaiaroot'],
+  gamblet:     ['ギャンブレット','Gamblet','甘布雷特','Gamblet','갬블렛','Gamblet'],
+  mimiq:       ['ミミーク','Mimiq','米米克','Mimiq','미미크','Mimiq'],
+  elderoak:    ['エルドローク','Eldroak','艾尔德罗克','Eldroak','엘드로크','Eldroak'],
 };
 // モチーフ（属性・何をもとにしたカードか）
 const MOTIF = {
@@ -445,6 +510,36 @@ const MOTIF = {
   revive:    ['光・魂','Light · Soul','光·灵魂','Luz · Alma','빛 · 영혼','Luz · Alma'],
   egg:       ['火・竜の卵','Fire · Dragon egg','火·龙蛋','Fuego · Huevo de dragón','불 · 용의 알','Fogo · Ovo de dragão'],
   storm:     ['嵐・祭壇','Storm · Altar','岚·祭坛','Tormenta · Altar','폭풍 · 제단','Tempestade · Altar'],
+  kolopom:     ['草・綿毛玉','Grass · Fluffball','草·绒毛球','Hierba · Bola de pelusa','풀 · 솜털 공','Grama · Bola de penugem'],
+  garakutan:   ['鉄・がらくた人形','Iron · Junk doll','铁·破烂人偶','Hierro · Muñeco de chatarra','철 · 고철 인형','Ferro · Boneco de sucata'],
+  nemurin:     ['夢・眠り羊','Dream · Sleepy sheep','梦·瞌睡羊','Sueño · Oveja dormilona','꿈 · 잠꾸러기 양','Sonho · Ovelha sonolenta'],
+  fizzlet:     ['火・しけた火花','Fire · Damp spark','火·受潮火花','Fuego · Chispa húmeda','불 · 눅눅한 불꽃','Fogo · Faísca úmida'],
+  namerion:    ['水・なめくじ','Water · Slug','水·蛞蝓','Agua · Babosa','물 · 민달팽이','Água · Lesma'],
+  echoling:    ['音・こだま','Sound · Echo','音·回声','Sonido · Eco','소리 · 메아리','Som · Eco'],
+  lastember:   ['火・最後の火種','Fire · Last ember','火·最后的火种','Fuego · Última brasa','불 · 마지막 불씨','Fogo · Última brasa'],
+  stackle:     ['地・積み石','Earth · Cairn stone','地·堆石','Tierra · Piedra apilada','땅 · 돌탑','Terra · Pedra empilhada'],
+  dongrim:     ['森・どんぐり','Forest · Acorn','森·橡果','Bosque · Bellota','숲 · 도토리','Floresta · Bolota'],
+  sacrivel:    ['血・契約','Blood · Pact','血·契约','Sangre · Pacto','피 · 계약','Sangue · Pacto'],
+  hollowshell: ['海・やどかり','Sea · Hermit crab','海·寄居蟹','Mar · Cangrejo ermitaño','바다 · 소라게','Mar · Caranguejo-eremita'],
+  tidecall:    ['水・満ち潮','Water · High tide','水·涨潮','Agua · Marea alta','물 · 밀물','Água · Maré alta'],
+  undertow:    ['水・引き波','Water · Undertow','水·退潮','Agua · Resaca','물 · 썰물','Água · Ressaca'],
+  gloomcap:    ['毒・きのこ','Poison · Mushroom','毒·蘑菇','Veneno · Hongo','독 · 버섯','Veneno · Cogumelo'],
+  lullabam:    ['夢・子守唄','Dream · Lullaby','梦·摇篮曲','Sueño · Canción de cuna','꿈 · 자장가','Sonho · Canção de ninar'],
+  riddlewisp:  ['謎・鬼火','Mystery · Will-o\'-wisp','谜·鬼火','Misterio · Fuego fatuo','수수께끼 · 도깨비불','Mistério · Fogo-fátuo'],
+  kindlefox:   ['火・狐火','Fire · Foxfire','火·狐火','Fuego · Fuego de zorro','불 · 여우불','Fogo · Fogo-de-raposa'],
+  quillmouse:  ['風・針ねずみ','Wind · Hedgehog','风·刺猬','Viento · Erizo','바람 · 고슴도치','Vento · Ouriço'],
+  brambleback: ['森・茨の獣','Forest · Thorn beast','森·荆棘兽','Bosque · Bestia espinosa','숲 · 가시 짐승','Floresta · Fera de espinhos'],
+  ironhorn:    ['鉄・角獣','Iron · Horned beast','铁·角兽','Hierro · Bestia cornuda','철 · 뿔짐승','Ferro · Fera com chifre'],
+  tundrak:     ['氷・凍土獣','Ice · Tundra beast','冰·冻土兽','Hielo · Bestia de tundra','얼음 · 동토 짐승','Gelo · Fera da tundra'],
+  galeslash:   ['風・かまいたち','Wind · Sickle wind','风·镰鼬','Viento · Viento cortante','바람 · 낫바람','Vento · Vento cortante'],
+  lumend:      ['光・祈り手','Light · Praying monk','光·祈祷者','Luz · Monje orante','빛 · 기도하는 자','Luz · Monge orante'],
+  ignavault:   ['火・竜王','Fire · Dragon king','火·龙王','Fuego · Rey dragón','불 · 용왕','Fogo · Rei dragão'],
+  aurelion:    ['光・聖竜','Light · Holy dragon','光·圣龙','Luz · Dragón sagrado','빛 · 성룡','Luz · Dragão sagrado'],
+  nyxhollow:   ['闇・虚ろの王','Dark · Hollow king','暗·虚空之王','Oscuridad · Rey vacío','어둠 · 공허의 왕','Trevas · Rei vazio'],
+  gaiaroot:    ['森・世界樹','Forest · World tree','森·世界树','Bosque · Árbol del mundo','숲 · 세계수','Floresta · Árvore do mundo'],
+  gamblet:     ['運・サイコロ鳥','Luck · Dice bird','运·骰子鸟','Suerte · Pájaro dado','운 · 주사위 새','Sorte · Pássaro-dado'],
+  mimiq:       ['擬態・影','Mimicry · Shadow','拟态·影','Mimetismo · Sombra','의태 · 그림자','Mimetismo · Sombra'],
+  elderoak:    ['森・大樹','Forest · Great tree','森·巨树','Bosque · Gran árbol','숲 · 큰 나무','Floresta · Grande árvore'],
 };
 
 const STR = {
@@ -540,6 +635,53 @@ const STR = {
   'dev.warn':['注意：この端末だけで動く簡易版です。ソースを読めばギフトコードを偽造できるので、公開前にサーバー側の仕組みに置き換えます','Note: device-only prototype. Gift codes can be forged by reading the source, so this must move to a server before release'],
   'dev.badId':['プレイヤーIDは8文字です','Player ID must be 8 characters'],
   'dev.needItem':['カードかパックポイントを指定してください','Choose a card or Pack Points'],
+  'txt.kolopom':['何もしない','Does nothing','什么也不做','No hace nada','아무것도 하지 않는다','Não faz nada'],
+  'txt.garakutan':['破壊されると相手が1枚引く','When destroyed, the opponent draws 1','被破坏时对手抽1张','Al ser destruido, el rival roba 1','파괴되면 상대가 1장 뽑는다','Ao ser destruído, o oponente compra 1'],
+  'txt.nemurin':['出してから2ターン攻撃できない','Can\'t attack for 2 turns after it is played','登场后2回合内无法攻击','No puede atacar durante 2 turnos tras jugarse','낸 뒤 2턴 동안 공격할 수 없다','Não pode atacar por 2 turnos após entrar'],
+  'txt.fizzlet':['ランダムな相手モンスターに1ダメージ。半分の確率で自分のモンスターに当たる','Deal 1 damage to a random enemy monster. Half the time it hits one of yours instead','对随机敌方怪兽造成1点伤害。有一半概率打中自己的怪兽','Inflige 1 de daño a un monstruo enemigo al azar. La mitad de las veces golpea a uno tuyo','무작위 적 몬스터에게 1 데미지. 절반 확률로 아군에게 맞는다','Causa 1 de dano a um monstro inimigo aleatório. Metade das vezes acerta um seu'],
+  'txt.echoling':['自分がマジックを使うたびATK+1','Gains +1 ATK whenever you cast a spell','我方每使用1次魔法，ATK+1','+1 ATK cada vez que lanzas un hechizo','마법을 쓸 때마다 ATK+1','+1 ATK sempre que você lança um feitiço'],
+  'txt.lastember':['自分のライフが2以下ならATK+3','+3 ATK while your life is 2 or less','我方生命2以下时ATK+3','+3 ATK si tu vida es 2 o menos','내 라이프가 2 이하면 ATK+3','+3 ATK se sua vida for 2 ou menos'],
+  'txt.stackle':['場にいる他の同名カード1枚ごとにATK+1・HP+1','+1 ATK/+1 HP for each other copy on your field','场上每有1张其他同名卡，ATK+1、HP+1','+1 ATK/+1 HP por cada otra copia en tu campo','필드의 다른 같은 카드 1장마다 ATK+1·HP+1','+1 ATK/+1 HP para cada outra cópia no seu campo'],
+  'txt.dongrim':['自分のターンを3回生き残ると{c}（ATK4/HP6）になる','Becomes {c} (ATK 4/HP 6) after surviving 3 of your turns','存活3个我方回合后变为{c}（ATK4/HP6）','Se convierte en {c} (ATK 4/HP 6) tras sobrevivir 3 de tus turnos','내 턴을 3번 버티면 {c}(ATK4/HP6)이(가) 된다','Vira {c} (ATK 4/HP 6) após sobreviver 3 turnos seus'],
+  'txt.sacrivel':['味方1体を破壊し、このターンのエネルギー+2','Destroy one of your monsters. Gain 2 energy this turn','破坏1只友方怪兽，本回合能量+2','Destruye a uno de tus monstruos. +2 de energía este turno','아군 1체를 파괴하고 이번 턴 에너지 +2','Destrua um monstro seu. +2 de energia neste turno'],
+  'txt.hollowshell':['他の味方が破壊されるたびATK+1','Gains +1 ATK whenever another ally is destroyed','每有其他友方被破坏，ATK+1','+1 ATK cada vez que otro aliado es destruido','다른 아군이 파괴될 때마다 ATK+1','+1 ATK sempre que outro aliado é destruído'],
+  'txt.tidecall':['次の自分のターン、エネルギー+2','Gain 2 extra energy next turn','下个我方回合能量+2','+2 de energía en tu próximo turno','다음 내 턴 에너지 +2','+2 de energia no seu próximo turno'],
+  'txt.undertow':['相手モンスター1体を持ち主の手札に戻す','Return an enemy monster to its owner\'s hand','将1只敌方怪兽返回其持有者手牌','Devuelve un monstruo enemigo a la mano de su dueño','적 몬스터 1체를 주인의 패로 되돌린다','Devolve um monstro inimigo à mão do dono'],
+  'txt.gloomcap':['このモンスターを攻撃した相手は次のターン攻撃できない','Monsters that attack this can\'t attack on their next turn','攻击此怪兽的怪兽下回合无法攻击','Quien lo ataque no podrá atacar en su próximo turno','이 몬스터를 공격한 몬스터는 다음 턴 공격할 수 없다','Quem atacá-lo não poderá atacar no próximo turno'],
+  'txt.lullabam':['相手の次のターン、すべてのモンスターは攻撃できない（幽体を除く）','During the opponent\'s next turn, no monster can attack (except Phantoms)','对手下回合所有怪兽无法攻击（幽体除外）','Durante el próximo turno rival ningún monstruo puede atacar (salvo Fantasmas)','상대의 다음 턴, 모든 몬스터는 공격할 수 없다 (유령 제외)','No próximo turno do oponente nenhum monstro pode atacar (exceto Fantasmas)'],
+  'txt.riddlewisp':['出したとき相手の手札を1枚見る','When played, look at a random card in the opponent\'s hand','登场时查看对手1张随机手牌','Al jugarse, mira una carta al azar de la mano rival','낼 때 상대 패 1장을 무작위로 본다','Ao entrar, veja uma carta aleatória da mão do oponente'],
+  'txt.kindlefox':['自分のマジックが与えるダメージ+1','Your spells deal +1 damage','我方魔法造成的伤害+1','Tus hechizos infligen +1 de daño','내 마법이 주는 데미지 +1','Seus feitiços causam +1 de dano'],
+  'txt.brambleback':['攻撃してきた相手に1ダメージを返す','Deals 1 damage back to monsters that attack it','对攻击它的怪兽反击1点伤害','Devuelve 1 de daño a quien lo ataque','공격해 온 몬스터에게 1 데미지를 돌려준다','Devolve 1 de dano a quem o atacar'],
+  'txt.tundrak':['戦った相手を封印する','Seals monsters it fights','封印与其战斗的怪兽','Sella a los monstruos con los que combate','싸운 몬스터를 봉인한다','Sela os monstros com que luta'],
+  'txt.galeslash':['このターン出した味方1体はすぐに攻撃できる','An ally played this turn can attack right away','本回合登场的1只友方可立即攻击','Un aliado jugado este turno puede atacar ya','이번 턴에 낸 아군 1체는 바로 공격할 수 있다','Um aliado jogado neste turno pode atacar já'],
+  'txt.lumend':['自分のターン終了時、ライフ1回復','At the end of your turn, restore 1 life','我方回合结束时回复1点生命','Al final de tu turno, recupera 1 de vida','내 턴 종료 시 라이프 1 회복','No fim do seu turno, recupera 1 de vida'],
+  'txt.ignavault':['出たとき相手モンスター全体に1ダメージ','When it enters, deal 1 damage to all enemy monsters','登场时对所有敌方怪兽造成1点伤害','Al entrar, inflige 1 de daño a todos los monstruos enemigos','등장 시 적 몬스터 전체에 1 데미지','Ao entrar, causa 1 de dano a todos os monstros inimigos'],
+  'txt.aurelion':['出たとき味方全員のHPを1回復','When it enters, your monsters restore 1 HP','登场时我方全体怪兽回复1点HP','Al entrar, tus monstruos recuperan 1 HP','등장 시 아군 전체 HP 1 회복','Ao entrar, seus monstros recuperam 1 HP'],
+  'txt.nyxhollow':['出たとき両者のフィールドカードを破壊','When it enters, destroy both players\' Field cards','登场时破坏双方的场地卡','Al entrar, destruye los Campos de ambos jugadores','등장 시 양쪽의 필드 카드를 파괴','Ao entrar, destrói os Campos de ambos'],
+  'txt.gaiaroot':['自分のモンスターは出たときHP+1','Your monsters enter with +1 HP','我方怪兽登场时HP+1','Tus monstruos entran con +1 HP','아군 몬스터는 등장 시 HP+1','Seus monstros entram com +1 HP'],
+  'txt.gamblet':['出たときATKが1〜4のどれかになる','When it enters, its ATK becomes 1–4 at random','登场时ATK随机变为1～4','Al entrar, su ATK pasa a ser 1–4 al azar','등장 시 ATK가 1~4 중 무작위가 된다','Ao entrar, seu ATK vira 1–4 aleatório'],
+  'txt.mimiq':['出たとき、ATKが最も高い相手モンスターと同じATK/HPになる','When it enters, copies the ATK/HP of the enemy monster with the highest ATK','登场时变为与ATK最高的敌方怪兽相同的ATK/HP','Al entrar, copia ATK/HP del monstruo enemigo con más ATK','등장 시 ATK가 가장 높은 적 몬스터와 같은 ATK/HP가 된다','Ao entrar, copia ATK/HP do monstro inimigo de maior ATK'],
+  'txt.elderoak':['ドングリムが育った姿','What a Dongrim grows into','东格林长大后的样子','En lo que se convierte un Dongrim','동그림이 자란 모습','O que um Dongrim se torna'],
+  'l.peek':['相手の手札に「{c}」が見えた','You glimpsed {c} in the opponent\'s hand','看到对手手牌中有「{c}」','Viste {c} en la mano rival','상대 패에서 「{c}」을(를) 보았다','Você viu {c} na mão do oponente'],
+  'l.bounce':['「{c}」が手札に押し戻された','{c} was swept back to hand','「{c}」被冲回了手牌','{c} volvió a la mano','「{c}」이(가) 패로 밀려났다','{c} voltou para a mão'],
+  'l.sacrifice':['{p}は「{c}」を捧げてエネルギーを得た','{p} sacrificed {c} for energy','{p}献祭「{c}」获得能量','{p} sacrificó a {c} por energía','{p}은(는) 「{c}」을(를) 바쳐 에너지를 얻었다','{p} sacrificou {c} por energia'],
+  'l.grow':['「{a}」が「{c}」に育った','{a} grew into {c}','「{a}」长成了「{c}」','{a} creció hasta ser {c}','「{a}」이(가) 「{c}」(으)로 자랐다','{a} cresceu e virou {c}'],
+  'l.tide':['{p}は次のターンのエネルギーを蓄えた','{p} stored energy for next turn','{p}为下回合积蓄了能量','{p} guardó energía para el próximo turno','{p}은(는) 다음 턴의 에너지를 모았다','{p} guardou energia para o próximo turno'],
+  'l.lull':['子守唄が響き、次のターンは誰も攻撃できない','A lullaby plays: no one can attack next turn','摇篮曲响起，下回合谁也无法攻击','Suena una nana: nadie puede atacar el próximo turno','자장가가 울려 다음 턴엔 아무도 공격할 수 없다','Uma canção de ninar toca: ninguém ataca no próximo turno'],
+  'l.fizzle':['「{c}」は自分のモンスターに当たった！','{c} backfired on its caster\'s monster!','「{c}」打中了自己的怪兽！','¡{c} golpeó a un monstruo propio!','「{c}」이(가) 아군에게 맞았다!','{c} acertou um monstro do próprio dono!'],
+  'l.nyx':['すべてのフィールドカードが消えた','All Field cards vanished','所有场地卡消失了','Todos los Campos desaparecieron','모든 필드 카드가 사라졌다','Todos os Campos sumiram'],
+  'l.gamble':['「{c}」のATKは{n}！','{c} rolled ATK {n}!','「{c}」的ATK是{n}！','¡{c} sacó ATK {n}!','「{c}」의 ATK는 {n}!','{c} tirou ATK {n}!'],
+  'l.mimic':['「{c}」が「{t}」に化けた','{c} became a copy of {t}','「{c}」变成了「{t}」','{c} copió a {t}','「{c}」이(가) 「{t}」(으)로 변했다','{c} copiou {t}'],
+  'l.gale':['「{t}」に疾風が宿った','{t} is ready to strike','「{t}」获得了疾风','{t} está listo para atacar','「{t}」에 질풍이 깃들었다','{t} está pronto para atacar'],
+  'w.lull':['子守唄で今ターンは攻撃できません','A lullaby prevents attacks this turn','摇篮曲使本回合无法攻击','Una nana impide atacar este turno','자장가 때문에 이번 턴 공격할 수 없습니다','Uma canção de ninar impede ataques neste turno'],
+  'w.gale':['このターンに出した、攻撃を待っている味方がいません','No ally played this turn is waiting to attack','没有本回合登场且尚不能攻击的友方','No hay un aliado jugado este turno que espere para atacar','이번 턴에 낸 공격 대기 아군이 없습니다','Nenhum aliado jogado neste turno esperando para atacar'],
+  'w.sleep':['このモンスターは眠っています','This monster is asleep','该怪兽在睡觉','Este monstruo está dormido','이 몬스터는 잠들어 있습니다','Este monstro está dormindo'],
+  'w.allyTarget':['そのカードの対象にできない味方です','That ally isn\'t a valid target','该友方不是有效目标','Ese aliado no es un objetivo válido','대상으로 할 수 없는 아군입니다','Esse aliado não é um alvo válido'],
+  'h.allyGeneric':['対象の味方を選んでください','Choose an ally','选择目标友方','Elige un aliado','대상 아군을 고르세요','Escolha um aliado'],
+  'fx.grow':['成長','GROW','成长','CRECE','성장','CRESCE'],
+  'fx.bounce':['押し戻し','BOUNCE','退回','REBOTE','되돌림','VOLTA'],
+  'fx.lull':['子守唄','LULL','摇篮曲','NANA','자장가','NINAR'],
+  'r11':['★のカードはデッキに1枚まで。','★ cards are limited to 1 per deck.','★卡每个卡组限1张。','Las cartas ★ se limitan a 1 por mazo.','★ 카드는 덱에 1장까지.','Cartas ★ são limitadas a 1 por deck.'],
   'tab.home':['ホーム','Home','主页','Inicio','홈','Início'],
   'tab.cards':['マイカード','My Cards','我的卡牌','Mis cartas','내 카드','Minhas cartas'],
   'tab.friends':['フレンド','Friends','好友','Amigos','친구','Amigos'],
@@ -722,8 +864,8 @@ const STR = {
   'odds.note':['確率は全員共通です。パックの見た目や開け方では変わりません','Rates are the same for everyone and don\'t change with the pack\'s look or how you open it','概率对所有人相同，不会因卡包外观或开法而改变','Las probabilidades son iguales para todos y no cambian con el aspecto del sobre ni con cómo lo abras','확률은 모두에게 같으며 팩의 모양이나 여는 방법으로 바뀌지 않습니다','As chances são iguais para todos e não mudam com a aparência do pacote ou como você o abre'],
   'odds.pity':['パックポイントで好きなカードを作成できます（1パック{p}pt）','Use Pack Points to craft any card ({p} pts per pack)','可用卡包点数制作任意卡牌（每包{p}点）','Usa Puntos de sobre para crear cualquier carta ({p} por sobre)','팩 포인트로 원하는 카드를 제작할 수 있습니다 (팩당 {p}pt)','Use Pontos de pacote para criar qualquer carta ({p} por pacote)'],
 
-  'r1':['デッキ20枚、初期手札3枚、ライフ5で始まる。','Decks have 20 cards. You start with 3 cards in hand and 5 life.','卡组20张，起手3张手牌，生命5。','Los mazos tienen 20 cartas. Empiezas con 3 cartas en mano y 5 de vida.','덱 20장, 시작 패 3장, 라이프 5로 시작한다.','Decks têm 20 cartas. Comece com 3 cartas na mão e 5 de vida.'],
-  'r2':['自分のターン開始時にエネルギーが3まで回復し、1枚引く（最初の先攻1ターン目は引かない）。','At the start of your turn, energy refills to 3 and you draw 1 card (the first player skips their first draw).','回合开始时能量恢复至3并抽1张（先攻第1回合不抽）。','Al inicio de tu turno la energía vuelve a 3 y robas 1 carta (quien empieza no roba en su primer turno).','내 턴 시작 시 에너지가 3으로 회복되고 1장 뽑는다 (선공 첫 턴은 뽑지 않음).','No início do seu turno a energia volta a 3 e você compra 1 carta (quem começa não compra no primeiro turno).'],
+  'r1':['デッキ20枚、初期手札{h}枚、ライフ{l}で始まる。','Decks have 20 cards. You start with {h} cards in hand and {l} life.','卡组20张，起手{h}张手牌，生命{l}。','Los mazos tienen 20 cartas. Empiezas con {h} cartas en mano y {l} de vida.','덱 20장, 시작 패 {h}장, 라이프 {l}로 시작한다.','Decks têm 20 cartas. Comece com {h} cartas na mão e {l} de vida.'],
+  'r2':['エネルギーは最初のターン{e}、自分のターンごとに1ずつ増える（最大{m}）。毎ターン1枚引く（最初の先攻1ターン目は引かない）。','Energy starts at {e} on your first turn and grows by 1 each of your turns (max {m}). Draw 1 card each turn (the first player skips their first draw).','能量首回合为{e}，每个我方回合+1（最多{m}）。每回合抽1张（先攻第1回合不抽）。','La energía empieza en {e} y sube 1 por cada turno tuyo (máx. {m}). Robas 1 carta por turno (quien empieza no roba en su primer turno).','에너지는 첫 턴 {e}, 내 턴마다 1씩 늘어난다 (최대 {m}). 매 턴 1장 뽑는다 (선공 첫 턴 제외).','A energia começa em {e} e sobe 1 a cada turno seu (máx. {m}). Compre 1 carta por turno (quem começa não compra no 1º turno).'],
   'r3':['カードはコスト分のエネルギーを払って出す。モンスターは場に3体まで。','Pay energy equal to a card\'s cost to play it. Up to 3 monsters on your field.','支付与费用相同的能量出牌。场上最多3只怪兽。','Paga energía igual al coste para jugar una carta. Hasta 3 monstruos en tu campo.','코스트만큼 에너지를 내고 카드를 낸다. 몬스터는 필드에 3체까지.','Pague energia igual ao custo para jogar. Até 3 monstros no seu campo.'],
   'r4':['出したターンのモンスターは攻撃できない（速攻は例外）。攻撃は1体につき1ターン1回。','Monsters can\'t attack the turn they are played (except Rush). Each monster attacks once per turn.','怪兽登场回合无法攻击（速攻除外）。每只怪兽每回合攻击1次。','Los monstruos no pueden atacar el turno en que entran (salvo Rápido). Cada uno ataca una vez por turno.','낸 턴의 몬스터는 공격할 수 없다 (속공 제외). 1체당 턴에 1회 공격.','Monstros não atacam no turno em que entram (exceto Investida). Cada um ataca uma vez por turno.'],
   'r5':['戦闘ではお互いのATK分のダメージを与え、HPが0になると破壊。','In combat, both monsters deal damage equal to their ATK. A monster at 0 HP is destroyed.','战斗中双方造成等同ATK的伤害，HP为0即被破坏。','En combate, ambos monstruos infligen daño igual a su ATK. Con 0 HP se destruye.','전투에서는 서로 ATK만큼 데미지를 주고, HP가 0이 되면 파괴된다.','Em combate, ambos causam dano igual ao ATK. Com 0 HP, o monstro é destruído.'],
@@ -749,10 +891,11 @@ function cardName(id){ return NAME[id][LI]; }
 function cardMotif(id){ return MOTIF[id][LI]; }
 function who(pi){ return pi===0 ? t('you') : (S?.oppName || t('cpu')); }
 function cardText(id){
-  const d=CARDS[id];
-  if(d.evolveFrom) return t('txt.evolve',{c:'@'+d.evolveFrom});
-  if(d.rush) return t('txt.rush');
-  return STR['txt.'+id] ? t('txt.'+id,{c:'@drake'}) : '';
+  const d=CARDS[id], parts=[];
+  if(d.evolveFrom) parts.push(t('txt.evolve',{c:'@'+d.evolveFrom}));
+  if(d.rush) parts.push(t('txt.rush'));
+  if(STR['txt.'+id]) parts.push(t('txt.'+id,{c:'@'+(d.ref||'drake')}));
+  return parts.join(' ');
 }
 function setLang(code){
   const i=LANGS.findIndex(l=>l[0]===code); LI=i<0?1:i; LANG=LANGS[LI][0];
@@ -786,9 +929,11 @@ function save(){ try{ localStorage.setItem(SAVE_KEY,JSON.stringify(SV)); }catch(
 // Ver.2.2の新カードを、遊んでいた人にも新しく始めた人にも2枚ずつ配る（デッキ構築を試せるように）
 function applyGifts(){
   SV.gifts=SV.gifts||[];
-  if(SV.gifts.includes('v22')) return false;
-  NEW_V22.forEach(id=>{ SV.collection[id]=Math.max(SV.collection[id]||0,2); });
-  SV.gifts.push('v22'); save(); return true;
+  if(SV.gifts.includes('v22') && SV.gifts.includes('v24')) return 0;
+  let n=0;
+  if(!SV.gifts.includes('v22')){ NEW_V22.forEach(id=>{ SV.collection[id]=Math.max(SV.collection[id]||0,2); }); SV.gifts.push('v22'); n+=NEW_V22.length; }
+  if(!SV.gifts.includes('v24')){ NEW_V24.forEach(id=>{ SV.collection[id]=Math.max(SV.collection[id]||0,Math.min(2,cardLimit(id))); }); SV.gifts.push('v24'); n+=NEW_V24.length; }
+  save(); return n;
 }
 function deckCount(c){ return Object.values(c||{}).reduce((s,n)=>s+(n||0),0); }
 function deckName(i){ const d=SV.decks[i]; return d.name || (i===0 ? t('deck.starter') : t('deck.default',{n:i+1})); }
@@ -816,8 +961,8 @@ let S=null, uidSeq=0, gameSeq=0;
 
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function buildDeck(counts){ const d=[]; for(const id of CARD_IDS) for(let k=0;k<(counts[id]||0);k++) d.push({uid:++uidSeq,id}); return shuffle(d); }
-function newPlayer(counts){ const deck=buildDeck(counts); return { life:CONFIG.startLife, energy:0, deck, hand:deck.splice(0,CONFIG.handStart), field:Array(CONFIG.maxField).fill(null), fieldCard:null, grave:[], fogUntil:-1 }; }
-function atkOf(pi,m){ return m.atk + (S.p[pi].fieldCard==='altar' ? CONFIG.altarBonus : 0); }
+function newPlayer(counts){ const deck=buildDeck(counts); return { life:CONFIG.startLife, energy:0, deck, hand:deck.splice(0,CONFIG.handStart), field:Array(CONFIG.maxField).fill(null), fieldCard:null, grave:[], fogUntil:-1, turns:0, nextBonus:0 }; }
+function atkOf(pi,m){ return m.atk + (S.p[pi].fieldCard==='altar' ? CONFIG.altarBonus : 0) + (m.id==='lastember' && S.p[pi].life<=2 ? 3 : 0); }
 function addLog(pi,key,params){ S.log.unshift({pi,key,params}); if(S.log.length>80) S.log.pop(); }
 function fx(key,text,cls){ S.fx.push([key,text,cls]); }
 function evoTargets(pi,d){ return S.p[pi].field.filter(m=>m && m.id===d.evolveFrom && m.summonTurn<S.turnNo); }
@@ -851,11 +996,26 @@ function toMenu(){
   showApp(true);
 }
 
+function energyFor(p){ return Math.min(CONFIG.energyMax, CONFIG.energyStart + p.turns - 1); }
 function beginTurn(pi){
   S.turn=pi; S.turnNo++; S.sel=null; S.hint=null; S.warn=false;
   const p=S.p[pi];
-  p.energy=CONFIG.maxEnergy;
-  p.field.forEach(m=>{ if(m) m.canAttack=!m.frozen; });
+  p.turns=(p.turns||0)+1;
+  p.energy=energyFor(p)+(p.nextBonus||0); p.nextBonus=0;
+  p.field.forEach((m,i)=>{
+    if(!m) return;
+    m.canAttack=!m.frozen && !(m.sleep>0);
+    if(m.sleep>0) m.sleep--;
+    if(m.id==='dongrim'){
+      m.age=(m.age||0)+1;
+      if(m.age>=3){
+        const d=CARDS.elderoak;
+        p.field[i]={ uid:++uidSeq, id:'elderoak', atk:d.atk, hp:d.hp, maxHp:d.hp, summonTurn:m.summonTurn, canAttack:!m.frozen, frozen:m.frozen, frozenSince:m.frozenSince, guarded:m.guarded, guardSince:m.guardSince, pierce:false, evolvedFrom:m.uid };
+        addLog(pi,'l.grow',{a:'@dongrim',c:'@elderoak'});
+        fx(`s${pi}${i}`,t('fx.grow'),'info');
+      }
+    }
+  });
   if(p.fieldCard==='sanctuary'){
     p.field.forEach(m=>{ if(m && m.hp<m.maxHp){ const n=Math.min(CONFIG.sanctuaryHeal,m.maxHp-m.hp); m.hp+=n; fx(slotKey(pi,m),`+${n}`,'heal'); }});
   }
@@ -867,15 +1027,18 @@ function startTurn(pi){
   render();
   if(!S.over && pi===1) cpuTurn(S.gid);
 }
-// ターン終了時の後片付け（封印・結界・抜け道の期限切れ）
+// ターン終了時の処理（ルーメンドの回復、封印・結界・抜け道の期限切れ）
 function closeTurn(){
-  const me=S.turn;
-  S.p[me].field.forEach(m=>{ if(m){ if(m.frozen && m.frozenSince<S.turnNo) m.frozen=false; m.pierce=false; } });
+  const me=S.turn, p=S.p[me];
+  const pray=p.field.filter(m=>m && m.id==='lumend').length;
+  if(pray && p.life<CONFIG.maxLife){ const n=Math.min(pray,CONFIG.maxLife-p.life); p.life+=n; fx(`h${me}`,`+${n}`,'heal'); addLog(me,'l.heal',{p:'#'+me,n}); }
+  p.field.forEach(m=>{ if(m){ if(m.frozen && m.frozenSince<S.turnNo) m.frozen=false; m.pierce=false; } });
   S.p[1-me].field.forEach(m=>{ if(m && m.guarded && m.guardSince<S.turnNo) m.guarded=false; });
 }
 function endTurn(){
   if(S.over) return;
   closeTurn();
+  if(S.over){ render(); return; }
   startTurn(1-S.turn);
 }
 
@@ -888,6 +1051,7 @@ function draw(pi){
 }
 
 function fogActive(pi){ return S.turnNo<=S.p[pi].fogUntil; }
+function spellBonus(pi){ return S.p[pi].field.filter(m=>m && m.id==='kindlefox').length; }
 function damagePlayer(pi,n){
   const p=S.p[pi];
   if(S.turn!==pi && fogActive(pi)){ fx(`h${pi}`,t('fx.fog'),'info'); addLog(pi,'l.fogBlock',{p:'#'+pi,n}); return; }
@@ -901,39 +1065,64 @@ function finishMatch(){
   save();
 }
 function damageMonster(owner,m,n){ m.hp-=n; fx(slotKey(owner,m),`-${n}`,'dmg'); killCheck(owner); }
+// 場に出たときの共通処理（テラヴェル級の常時効果、ガイアルート）
+function placeMonster(pi,i,obj){
+  const p=S.p[pi]; p.field[i]=obj;
+  if(p.fieldCard==='gaiaroot'){ obj.hp++; obj.maxHp++; }
+  recalcStack(pi);
+}
+// スタックル：場の他のスタックル1体ごとに+1/+1
+function recalcStack(pi){
+  const st=S.p[pi].field.filter(m=>m && m.id==='stackle'), want=Math.max(0,st.length-1);
+  st.forEach(m=>{ const delta=want-(m.sb||0); if(delta){ m.atk+=delta; m.hp+=delta; m.maxHp+=delta; m.sb=want; } });
+}
 function killCheck(pi){
-  const p=S.p[pi];
+  const p=S.p[pi]; let died=false;
   p.field.forEach((m,i)=>{
     if(!m || m.hp>0) return;
+    died=true;
     p.field[i]=null; p.grave.push(m.id);
     addLog(pi,'l.destroyed',{p:'#'+pi,c:'@'+m.id});
+    p.field.forEach(h=>{ if(h && h.id==='hollowshell' && h.hp>0) h.atk++; });
+    if(m.id==='garakutan' && !S.over) draw(1-pi);
     if(m.id==='egg'){
       const k=p.deck.findIndex(c=>c.id==='drake');
       if(k>=0){
         const c=p.deck.splice(k,1)[0], d=CARDS.drake;
-        p.field[i]={ uid:c.uid, id:'drake', atk:d.atk, hp:d.hp, maxHp:d.hp, summonTurn:S.turnNo, canAttack:false, frozen:false, pierce:false };
+        placeMonster(pi,i,{ uid:c.uid, id:'drake', atk:d.atk, hp:d.hp, maxHp:d.hp, summonTurn:S.turnNo, canAttack:false, frozen:false, pierce:false });
         addLog(pi,'l.egg',{p:'#'+pi,c:'@drake'});
         fx(`s${pi}${i}`,t('fx.hatch'),'info');
       }
     }
   });
+  if(died){ recalcStack(pi); if(p.field.some(m=>m && m.hp<=0)) killCheck(pi); }
 }
 function costOf(pi,c){ const d=CARDS[c.id]; return d.type==='magic' && S.p[pi].fieldCard==='storm' ? Math.max(1,d.cost-1) : d.cost; }
 function pierceTargets(pi){ return S.p[pi].field.filter(m=>m && m.canAttack && m.atk<=2 && !CARDS[m.id].phantom); }
-function canAttackWith(pi,m){ return m.canAttack && atkOf(pi,m)>0; }
+function allyTargets(pi,id){
+  const f=S.p[pi].field.filter(Boolean);
+  if(id==='pierce') return pierceTargets(pi);
+  if(id==='galeslash') return f.filter(m=>m.summonTurn===S.turnNo && !m.canAttack && !m.frozen && !(m.sleep>0) && atkOf(pi,m)>0);
+  return f;
+}
+const ALLY_CARDS=['guard','pierce','sacrivel','galeslash'];
+const ENEMY_CARDS=['fireball','chain','undertow'];
+function lulled(m){ return S.turnNo===S.lullTurn && !CARDS[m.id].phantom; }
+function canAttackWith(pi,m){ return m.canAttack && atkOf(pi,m)>0 && !lulled(m); }
 
 // 出せない理由を [文言キー, 値] で返す。出せるなら null
 function canPlay(pi,c){
-  const p=S.p[pi], d=CARDS[c.id];
+  const p=S.p[pi], d=CARDS[c.id], foes=S.p[1-pi].field.some(Boolean);
   if(costOf(pi,c)>p.energy) return ['w.energy'];
   if(d.evolveFrom) return evoTargets(pi,d).length ? null : ['w.evolve',{c:'@'+d.evolveFrom}];
   if(d.type==='monster' && !p.field.includes(null)) return ['w.full'];
   if(d.type==='field' && p.fieldCard===c.id) return ['w.fieldSame',{c:'@'+c.id}];
   if(c.id==='heal' && p.life>=CONFIG.maxLife) return ['w.lifeMax'];
-  if((c.id==='chain'||c.id==='aoe') && !S.p[1-pi].field.some(Boolean)) return ['w.noEnemy'];
-  if(c.id==='guard' && !p.field.some(Boolean)) return ['w.noAlly'];
+  if(['chain','aoe','undertow','fizzlet'].includes(c.id) && !foes) return ['w.noEnemy'];
+  if((c.id==='guard'||c.id==='sacrivel') && !p.field.some(Boolean)) return ['w.noAlly'];
   if(c.id==='book' && !p.deck.length) return ['w.noDeck'];
   if(c.id==='pierce' && !pierceTargets(pi).length) return ['w.pierce'];
+  if(c.id==='galeslash' && !allyTargets(pi,'galeslash').length) return ['w.gale'];
   if(c.id==='revive' && !p.grave.length) return ['w.grave'];
   if(c.id==='fog' && p.fogUntil>S.turnNo) return ['w.fogOn'];
   return null;
@@ -943,6 +1132,7 @@ function doPlay(pi,c,target){
   const p=S.p[pi], o=1-pi, d=CARDS[c.id];
   p.energy-=costOf(pi,c);
   p.hand.splice(p.hand.indexOf(c),1);
+  if(d.type==='magic') p.field.forEach(m=>{ if(m && m.id==='echoling') m.atk++; });
   if(d.evolveFrom){
     const i=p.field.indexOf(target), dmg=target.maxHp-target.hp;
     p.field[i]={ uid:c.uid, id:c.id, atk:d.atk, hp:d.hp-dmg, maxHp:d.hp, summonTurn:target.summonTurn,
@@ -950,13 +1140,28 @@ function doPlay(pi,c,target){
                  guarded:target.guarded, guardSince:target.guardSince, pierce:target.pierce, evolvedFrom:target.uid };
     addLog(pi,'l.evolve',{p:'#'+pi,a:'@'+target.id,c:'@'+c.id});
     fx(`s${pi}${i}`,t('fx.evolve'),'info');
+    if(c.id==='ignavault'){ S.p[o].field.forEach(m=>{ if(m){ m.hp-=1; fx(slotKey(o,m),'-1','dmg'); } }); killCheck(o); }
   } else if(d.type==='monster'){
     const i=p.field.indexOf(null);
-    p.field[i]={ uid:c.uid, id:c.id, atk:d.atk, hp:d.hp, maxHp:d.hp, summonTurn:S.turnNo, canAttack:!!d.rush, frozen:false, pierce:false };
+    const m={ uid:c.uid, id:c.id, atk:d.atk, hp:d.hp, maxHp:d.hp, summonTurn:S.turnNo, canAttack:!!d.rush, frozen:false, pierce:false, sleep:c.id==='nemurin'?1:0 };
+    if(c.id==='gamblet'){ m.atk=1+Math.floor(Math.random()*4); }
+    if(c.id==='mimiq'){ const best=S.p[o].field.filter(Boolean).sort((a,b)=>atkOf(o,b)-atkOf(o,a))[0]; if(best){ m.atk=best.atk; m.hp=m.maxHp=best.maxHp; m.copied=best.id; } }
+    placeMonster(pi,i,m);
     addLog(pi,'l.summon',{p:'#'+pi,c:'@'+c.id});
+    if(c.id==='gamblet') addLog(pi,'l.gamble',{c:'@gamblet',n:m.atk});
+    if(m.copied) addLog(pi,'l.mimic',{c:'@mimiq',t:'@'+m.copied});
+    if(c.id==='aurelion') p.field.forEach(x=>{ if(x && x.hp<x.maxHp){ x.hp++; fx(slotKey(pi,x),'+1','heal'); } });
+    if(c.id==='nyxhollow'){ S.p[0].fieldCard=null; S.p[1].fieldCard=null; addLog(pi,'l.nyx',{}); }
+    if(c.id==='riddlewisp' && pi===0 && S.p[o].hand.length){ const h=S.p[o].hand[Math.floor(Math.random()*S.p[o].hand.length)]; addLog(0,'l.peek',{c:'@'+h.id}); }
   } else if(c.id==='fireball'){
-    if(target==='face'){ addLog(pi,'l.hitFace',{p:'#'+pi,c:'@'+c.id,q:'#'+o}); damagePlayer(o,d.dmg); }
-    else { addLog(pi,'l.hitMon',{p:'#'+pi,c:'@'+c.id,t:'@'+target.id}); damageMonster(o,target,d.dmg); }
+    const dmg=d.dmg+spellBonus(pi);
+    if(target==='face'){ addLog(pi,'l.hitFace',{p:'#'+pi,c:'@'+c.id,q:'#'+o}); damagePlayer(o,dmg); }
+    else { addLog(pi,'l.hitMon',{p:'#'+pi,c:'@'+c.id,t:'@'+target.id}); damageMonster(o,target,dmg); }
+  } else if(c.id==='fizzlet'){
+    const dmg=1+spellBonus(pi), mine=p.field.filter(Boolean), foes=S.p[o].field.filter(Boolean);
+    const back=mine.length && Math.random()<.5, side=back?pi:o, list=back?mine:foes, tg=list[Math.floor(Math.random()*list.length)];
+    if(back) addLog(pi,'l.fizzle',{c:'@fizzlet'}); else addLog(pi,'l.hitMon',{p:'#'+pi,c:'@fizzlet',t:'@'+tg.id});
+    damageMonster(side,tg,dmg);
   } else if(c.id==='heal'){
     p.life=Math.min(CONFIG.maxLife,p.life+d.amount);
     addLog(pi,'l.heal',{p:'#'+pi,n:d.amount});
@@ -975,8 +1180,9 @@ function doPlay(pi,c,target){
     addLog(pi,'l.guard',{p:'#'+pi,t:'@'+target.id});
     fx(slotKey(pi,target),t('fx.guard'),'info');
   } else if(c.id==='aoe'){
+    const dmg=1+spellBonus(pi);
     addLog(pi,'l.aoe',{p:'#'+pi,c:'@aoe'});
-    S.p[o].field.forEach(m=>{ if(m){ m.hp-=1; fx(slotKey(o,m),'-1','dmg'); } });
+    S.p[o].field.forEach(m=>{ if(m){ m.hp-=dmg; fx(slotKey(o,m),`-${dmg}`,'dmg'); } });
     killCheck(o);
   } else if(c.id==='fog'){
     p.fogUntil=S.turnNo+1;
@@ -991,6 +1197,28 @@ function doPlay(pi,c,target){
     if(p.hand.length<CONFIG.maxHand){ p.hand.push({uid:++uidSeq,id}); addLog(pi,'l.revive',{p:'#'+pi,c:'@'+id}); }
     else addLog(pi,'l.burn',{c:'@'+id});
     fx(`h${pi}`,'+1','info');
+  } else if(c.id==='sacrivel'){
+    addLog(pi,'l.sacrifice',{p:'#'+pi,c:'@'+target.id});
+    target.hp=0; killCheck(pi);
+    p.energy+=2; fx(`h${pi}`,'+2','info');
+  } else if(c.id==='galeslash'){
+    target.canAttack=true;
+    addLog(pi,'l.gale',{t:'@'+target.id});
+    fx(slotKey(pi,target),t('tag.rush'),'info');
+  } else if(c.id==='tidecall'){
+    p.nextBonus=(p.nextBonus||0)+2;
+    addLog(pi,'l.tide',{p:'#'+pi});
+    fx(`h${pi}`,'+2','info');
+  } else if(c.id==='lullabam'){
+    S.lullTurn=S.turnNo+1;
+    addLog(pi,'l.lull',{});
+    fx(`h${o}`,t('fx.lull'),'info');
+  } else if(c.id==='undertow'){
+    const i=S.p[o].field.indexOf(target);
+    fx(`s${o}${i}`,t('fx.bounce'),'info');
+    S.p[o].field[i]=null; recalcStack(o);
+    if(S.p[o].hand.length<CONFIG.maxHand) S.p[o].hand.push({uid:++uidSeq,id:target.id});
+    addLog(o,'l.bounce',{c:'@'+target.id});
   } else if(d.type==='field'){
     const old=p.fieldCard; p.fieldCard=c.id;
     if(old) addLog(pi,'l.fieldSwap',{p:'#'+pi,a:'@'+old,c:'@'+c.id});
@@ -1015,10 +1243,14 @@ function attack(pi,m,target){
     addLog(pi,'l.face',{c:'@'+m.id,q:'#'+o,n:a});
     damagePlayer(o,a);
   } else {
-    const tk=slotKey(o,target), b=atkOf(o,target);
+    const tk=slotKey(o,target);
+    let b=atkOf(o,target);
+    if(target.id==='brambleback') b+=1;
     addLog(pi,'l.battle',{c:'@'+m.id,a,t:'@'+target.id,b});
     target.hp-=a; m.hp-=b;
     fx(tk,`-${a}`,'dmg'); if(b>0) fx(mk,`-${b}`,'dmg');
+    if((target.id==='gloomcap' || target.id==='tundrak') && m.hp>0){ m.frozen=true; m.frozenSince=S.turnNo; }
+    if(m.id==='tundrak' && target.hp>0){ target.frozen=true; target.frozenSince=S.turnNo; target.canAttack=false; }
     killCheck(o); killCheck(pi);
   }
 }
@@ -1028,18 +1260,20 @@ async function playAnimated(pi,c,target){
   const d=CARDS[c.id], o=1-pi;
   cutIn(pi,c.id);
   if(pi===1) await sleep(650);
-  if(c.id==='fireball' || c.id==='chain'){
+  if(ENEMY_CARDS.includes(c.id)){
     const to = target==='face' ? CRYSTAL[o].clone() : slotPos(o,S.p[o].field.indexOf(target)).add(new THREE.Vector3(0,1,0));
     await projectile(CRYSTAL[pi].clone().add(new THREE.Vector3(0,.4,0)), to, EL[d.el]);
   }
   if(!S) return;
+  const allyIdx = ALLY_CARDS.includes(c.id) && target ? S.p[pi].field.indexOf(target) : -1;
   const foes = c.id==='aoe' ? S.p[o].field.map((m,i)=>m?slotPos(o,i):null).filter(Boolean) : [];
   doPlay(pi,c,target);
   render();
   if(c.id==='heal') healFx(pi);
   if(c.id==='book') bookFx(pi);
   if(c.id==='revive') healFx(pi);
-  if(c.id==='guard' || c.id==='pierce'){ const p0=slotPos(pi,S.p[pi].field.indexOf(target)); magicCircle(V(p0.x,.06,p0.z),EL[d.el],2.8,1.2); burst(V(p0.x,1,p0.z),EL[d.el],60,3,1,.2,-1); }
+  if(c.id==='tidecall' || c.id==='lullabam'){ const p0=CRYSTAL[c.id==='tidecall'?pi:1-pi]; magicCircle(V(p0.x,.06,p0.z),EL[d.el],3,1.3); burst(p0,EL[d.el],60,2.5,1.2,.22,-1); }
+  if(allyIdx>=0){ const p0=slotPos(pi,allyIdx); magicCircle(V(p0.x,.06,p0.z),EL[d.el],2.8,1.2); burst(V(p0.x,1,p0.z),EL[d.el],60,3,1,.2,-1); }
   if(c.id==='fog'){ const p0=CRYSTAL[pi]; magicCircle(V(p0.x,.06,p0.z),EL.ward,3.2,1.4); burst(p0,EL.ward,70,2,1.4,.24,-1); }
   if(c.id==='aoe'){ foes.forEach(p0=>{ pillar(p0,EL.bolt,7,.55,.32); burst(V(p0.x,1,p0.z),EL.bolt,40,5,.6,.22); }); shake(.4); flash(); }
   await sleep(d.type==='monster' ? 950 : 550);
@@ -1071,7 +1305,7 @@ async function attackAnimated(pi,m,target){
 async function cpuTurn(gid){
   S.busy=true; render();
   await sleep(1100); if(!alive(gid)) return;
-  for(let guard=0; guard<12 && !S.over; guard++){
+  for(let guard=0; guard<14 && !S.over; guard++){
     const pick=cpuPickPlay(1); if(!pick) break;
     await playAnimated(1,pick.card,pick.target); if(!alive(gid)) return;
     await sleep(CONFIG.cpuDelay); if(!alive(gid)) return;
@@ -1094,21 +1328,25 @@ function cpuPickPlay(me=1){
   const enemies = op.field.filter(Boolean);
   const foeFog = fogActive(o);
   const fb = find('fireball');
-  if(fb && !foeFog && op.life<=CARDS.fireball.dmg) return {card:fb,target:'face'};
+  if(fb && !foeFog && op.life<=CARDS.fireball.dmg+spellBonus(me)) return {card:fb,target:'face'};
   const pc = find('pierce');
   if(pc && !foeFog){
     const cand=pierceTargets(me).sort((a,b)=>atkOf(me,b)-atkOf(me,a))[0];
     if(cand && blockers(o).length && atkOf(me,cand)>0) return {card:pc,target:cand};
   }
+  const sc = find('sacrivel');
+  if(sc){ const egg=p.field.find(m=>m && m.id==='egg'); if(egg && p.deck.some(c=>c.id==='drake')) return {card:sc,target:egg}; }
   const ev = ok.find(c=>CARDS[c.id].evolveFrom);
   if(ev) return {card:ev, target:evoTargets(me,CARDS[ev.id])[0]};
+  const threatSum = enemies.filter(m=>!m.frozen && atkOf(o,m)>0).reduce((s,m)=>s+atkOf(o,m),0);
+  const lb = find('lullabam');
+  if(lb && threatSum>=p.life) return {card:lb};
   const fg = find('fog');
-  if(fg){
-    const threat=enemies.filter(m=>!m.frozen && m.id!=='wall').reduce((s,m)=>s+atkOf(o,m),0);
-    if(threat>0 && (threat>=p.life || p.life<=2)) return {card:fg};
-  }
+  if(fg && threatSum>0 && (threatSum>=p.life || p.life<=2)) return {card:fg};
+  const ut = find('undertow');
+  if(ut){ const big=enemies.filter(m=>CARDS[m.id].evolveFrom || atkOf(o,m)>=3 || CARDS[m.id].rarity==='L').sort((a,b)=>atkOf(o,b)-atkOf(o,a))[0]; if(big) return {card:ut,target:big}; }
   const ao = find('aoe');
-  if(ao){ const kills=enemies.filter(m=>m.hp<=1).length; if(kills>=1 || enemies.length>=2) return {card:ao}; }
+  if(ao){ const kills=enemies.filter(m=>m.hp<=1+spellBonus(me)).length; if(kills>=1 || enemies.length>=2) return {card:ao}; }
   const gd = find('guard');
   if(gd){
     const danger = p.field.filter(m=>m && !m.guarded && (atkOf(me,m)>=3 || CARDS[m.id].evolveFrom) && enemies.some(e=>atkOf(o,e)>=m.hp));
@@ -1119,17 +1357,24 @@ function cpuPickPlay(me=1){
   if(ch && threat) return {card:ch,target:threat};
   if(!p.fieldCard && p.field.some(Boolean)){
     const bigMagic = p.hand.filter(c=>CARDS[c.id].type==='magic' && CARDS[c.id].cost>=2).length;
+    const monsInHand = p.hand.filter(c=>CARDS[c.id].type==='monster').length;
     const damaged = p.field.some(m=>m && m.hp<m.maxHp);
-    const f = (bigMagic>=2 && find('storm')) || (damaged ? (find('sanctuary')||find('altar')) : (find('altar')||find('sanctuary'))) || find('storm');
+    const f = (bigMagic>=2 && find('storm')) || (monsInHand>=2 && find('gaiaroot')) || (damaged ? (find('sanctuary')||find('altar')) : (find('altar')||find('sanctuary'))) || find('storm') || find('gaiaroot');
     if(f) return {card:f};
   }
-  const mons = ok.filter(c=>CARDS[c.id].type==='monster' && !CARDS[c.id].evolveFrom).sort((a,b)=>CARDS[b.id].cost-CARDS[a.id].cost);
+  const mons = ok.filter(c=>CARDS[c.id].type==='monster' && !CARDS[c.id].evolveFrom).sort((a,b)=>CARDS[b.id].cost-CARDS[a.id].cost || (CARDS[b.id].atk||0)-(CARDS[a.id].atk||0));
   if(mons.length) return {card:mons[0]};
+  const gs = find('galeslash');
+  if(gs){ const tg=allyTargets(me,'galeslash').sort((a,b)=>atkOf(me,b)-atkOf(me,a))[0]; if(tg && atkOf(me,tg)>=2) return {card:gs,target:tg}; }
   if(fb && !foeFog){
-    const killable = enemies.filter(m=>m.hp<=CARDS.fireball.dmg).sort((a,b)=>atkOf(o,b)-atkOf(o,a));
+    const killable = enemies.filter(m=>m.hp<=CARDS.fireball.dmg+spellBonus(me)).sort((a,b)=>atkOf(o,b)-atkOf(o,a));
     if(killable.length) return {card:fb,target:killable[0]};
     if(!enemies.length) return {card:fb,target:'face'};
   }
+  const fz = find('fizzlet');
+  if(fz && !p.field.some(Boolean)) return {card:fz};
+  const tc = find('tidecall');
+  if(tc && p.hand.some(c=>c!==tc && costOf(me,c)>energyFor(p)+0) ) return {card:tc};
   const rv = find('revive');
   if(rv && p.hand.length<=4) return {card:rv};
   const bk = find('book');
@@ -1140,14 +1385,15 @@ function cpuPickPlay(me=1){
 
 function cpuPickAttack(m,me=1){
   const o=1-me, a=atkOf(me,m), foeFog=fogActive(o);
-  if(a<=0) return null;
+  if(a<=0 || lulled(m)) return null;
   if(CARDS[m.id].phantom || m.pierce) return foeFog ? null : 'face';
   let enemies=blockers(o);
   if(!enemies.length) return foeFog ? null : 'face';
   const taunts=enemies.filter(e=>CARDS[e.id].taunt);
   if(taunts.length) enemies=taunts;
-  const opts = enemies.map(e=>({e, kill:e.hp<=a, die:m.hp<=atkOf(o,e), eAtk:atkOf(o,e)})).sort((x,y)=>y.eAtk-x.eAtk);
-  const best = opts.find(x=>x.kill && !x.die) || opts.find(x=>x.kill && x.eAtk>=a) || opts.find(x=>!x.die);
+  const back=e=>atkOf(o,e)+(e.id==='brambleback'?1:0);
+  const opts = enemies.map(e=>({e, kill:e.hp<=a, die:m.hp<=back(e), eAtk:atkOf(o,e)})).sort((x,y)=>y.eAtk-x.eAtk);
+  const best = opts.find(x=>x.kill && !x.die) || opts.find(x=>x.kill && x.eAtk>=a) || opts.find(x=>!x.die && x.e.id!=='gloomcap' && x.e.id!=='tundrak');
   if(best) return best.e;
   return CONFIG.mustAttackMonsters ? null : 'face';
 }
@@ -1172,9 +1418,9 @@ function clickHand(c){
     else S.sel={kind:'evolve',card:c};
     return;
   }
-  if(c.id==='fireball' || c.id==='chain'){ S.sel={kind:'spell',card:c}; return; }
-  if(c.id==='guard' || c.id==='pierce'){
-    const own = c.id==='pierce' ? pierceTargets(0) : S.p[0].field.filter(Boolean);
+  if(ENEMY_CARDS.includes(c.id)){ S.sel={kind:'spell',card:c}; return; }
+  if(ALLY_CARDS.includes(c.id)){
+    const own=allyTargets(0,c.id);
     if(own.length===1) run(()=>playAnimated(0,c,own[0]));
     else S.sel={kind:'ally',card:c};
     return;
@@ -1189,7 +1435,7 @@ function resolveTarget(tg){
     else { const w=monTargetBlock(0,sel.m,tg); if(w){ setHint(w,null,true); return; } }
     S.sel=null; setHint(null); run(()=>attackAnimated(0,sel.m,tg));
   } else if(sel.kind==='spell'){
-    if(tg==='face' && sel.card.id==='chain'){ setHint('w.monOnly',{c:'@chain'},true); return; }
+    if(tg==='face' && sel.card.id!=='fireball'){ setHint('w.monOnly',{c:'@'+sel.card.id},true); return; }
     S.sel=null; setHint(null); run(()=>playAnimated(0,sel.card,tg));
   }
 }
@@ -1220,9 +1466,11 @@ function battleAct(act,data){
         if(evoTargets(0,d).includes(m)){ S.sel=null; setHint(null); run(()=>playAnimated(0,sel.card,m)); }
         else setHint('w.evolveTarget',{c:'@'+d.evolveFrom},true);
       }
-      else if(S.sel?.kind==='ally'){ const sel=S.sel; if(sel.card.id==='pierce' && !pierceTargets(0).includes(m)) setHint('w.pierceTarget',null,true); else { S.sel=null; setHint(null); run(()=>playAnimated(0,sel.card,m)); } }
+      else if(S.sel?.kind==='ally'){ const sel=S.sel; if(!allyTargets(0,sel.card.id).includes(m)) setHint(sel.card.id==='pierce'?'w.pierceTarget':'w.allyTarget',null,true); else { S.sel=null; setHint(null); run(()=>playAnimated(0,sel.card,m)); } }
       else if(S.sel?.kind==='attack' && S.sel.m===m){ S.sel=null; setHint(null); }
       else if(m.canAttack && atkOf(0,m)<=0) setHint('w.noAtk',null,true);
+      else if(m.canAttack && lulled(m)) setHint('w.lull',null,true);
+      else if(m.sleep>0 || (!m.canAttack && m.id==='nemurin' && m.summonTurn>=S.turnNo-2)) setHint('w.sleep',null,true);
       else if(m.canAttack){ S.sel={kind:'attack',m}; setHint(null); }
       else setHint(m.frozen?'w.frozen':'w.tired',null,true);
     } else resolveTarget(m);
@@ -1246,7 +1494,7 @@ function panelHTML(pi){
   const p=S.p[pi];
   return `<span class="who">${esc(who(pi))}</span>
     <span class="lbl">${t('hud.life')}</span>${pips(p.life,CONFIG.maxLife,'life')}<span class="num">${p.life}</span>
-    <span class="lbl">${t('hud.energy')}</span>${pips(p.energy,CONFIG.maxEnergy,'en')}
+    <span class="lbl">${t('hud.energy')}</span>${pips(p.energy,Math.max(p.energy,energyFor(p)),'en')}
     <span class="meta">${t('hud.deckhand',{d:p.deck.length,h:p.hand.length})}</span>
     ${p.fieldCard?`<span class="fbadge el-${CARDS[p.fieldCard].el}">${esc(cardName(p.fieldCard))}</span>`:''}`;
 }
@@ -1273,7 +1521,7 @@ function render(){
     else if(S.busy) hint='';
     else if(S.sel?.kind==='attack') hint=t('h.attack');
     else if(S.sel?.kind==='evolve') hint=t('h.evolve',{c:'@'+CARDS[S.sel.card.id].evolveFrom});
-    else if(S.sel?.kind==='ally') hint=t(S.sel.card.id==='pierce'?'h.pierce':'h.ally');
+    else if(S.sel?.kind==='ally') hint=t(S.sel.card.id==='pierce'?'h.pierce':S.sel.card.id==='guard'?'h.ally':'h.allyGeneric');
     else if(S.sel?.kind==='spell') hint=t('h.spell',{c:'@'+S.sel.card.id});
     else hint=t('h.default');
   }
@@ -1587,7 +1835,7 @@ function showModal(html,cls=''){ const m=$('#modal'); m.innerHTML=`<div class="s
 function closeModal(){ const m=$('#modal'); m.hidden=true; m.innerHTML=''; PACK=null; }
 function showRules(){
   const rows=CARD_IDS.map(id=>{ const d=CARDS[id]; return `<tr><td><b>${esc(cardName(id))}</b><br><span class="meta">${esc(cardMotif(id))}</span></td><td class="num">${d.cost}</td><td>${d.type==='monster'?`ATK ${d.atk} / HP ${d.hp}${d.tag?'<br>'+esc(cardText(id)):''}`:esc(cardText(id))}</td></tr>`; }).join('');
-  showModal(`<h2>${t('st.rules')}</h2><ul>${[1,2,3,4,5,6,7,8,9,10].map(i=>`<li>${t('r'+i)}</li>`).join('')}</ul>
+  showModal(`<h2>${t('st.rules')}</h2><ul>${[1,2,3,4,5,6,7,8,9,10,11].map(i=>`<li>${t('r'+i,{h:CONFIG.handStart,l:CONFIG.startLife,e:CONFIG.energyStart,m:CONFIG.energyMax})}</li>`).join('')}</ul>
     <div class="cardtable"><table><tr><th></th><th>${t('cost')}</th><th></th></tr>${rows}</table></div>
     <p><button class="endbtn" data-act="closeModal">${t('close')}</button></p>`);
 }
@@ -1953,6 +2201,66 @@ function buildDragon(g,body,belly,wingC,big){
   g.userData.wings=addWings(g,mw,.3,1.05,0,big?1.25:.75);
   g.userData.flap=big?2.2:4;
 }
+
+// ----- Ver.2.4 のモンスター形状（部品を組み合わせて作る） -----
+function eyes(g,y,z,dx,color,size=.05){ const m=M(color||0x111111,color?{emissive:col(color===0x111111?'#000000':'#ffffff'),emissiveIntensity:color?1.2:0}:{}); add(g,new THREE.SphereGeometry(size,6,4),m,dx,y,z); add(g,new THREE.SphereGeometry(size,6,4),m,-dx,y,z); }
+function legs4(g,mat,w,d,h,r=.07){ for(const [x,z] of [[w,-d],[-w,-d],[w,d],[-w,d]]) add(g,new THREE.CylinderGeometry(r,r*.8,h,6),mat,x,h/2,z); }
+function beast(g,o){
+  const body=M(o.color), dark=M(o.dark||o.color);
+  add(g,new THREE.SphereGeometry(.42,10,8),body,0,o.h,0,o.w||1,o.t||.85,o.len||1.4);
+  add(g,new THREE.SphereGeometry(.26,8,6),body,0,o.h+.2,-(o.len||1.4)*.42,1,.9,1.1);
+  legs4(g,dark,.24,.3,o.h-.1);
+  eyes(g,o.h+.27,-(o.len||1.4)*.42-.2,.1,o.eye||0x111111);
+  return {body,dark};
+}
+const SHAPES={
+  kolopom:g=>{ add(g,new THREE.IcosahedronGeometry(.42,1),M(0xeef6d8),0,.45,0); eyes(g,.52,-.38,.12); },
+  garakutan:g=>{ const ir=M(0x8d959c,{metalness:.6,roughness:.4}), rs=M(0x7a5a3a);
+    add(g,new THREE.BoxGeometry(.5,.55,.34),ir,0,.6,0); add(g,new THREE.BoxGeometry(.36,.32,.32),rs,.02,1.04,0); add(g,new THREE.SphereGeometry(.06,6,4),M(0xffd36b,{emissive:col('#ffb020'),emissiveIntensity:2}),.08,1.07,-.17);
+    add(g,new THREE.CylinderGeometry(.06,.06,.36,6),ir,.14,.18,0); add(g,new THREE.CylinderGeometry(.06,.06,.3,6),rs,-.14,.15,0);
+    const arm=add(g,new THREE.BoxGeometry(.1,.45,.1),rs,.34,.6,0); arm.rotation.z=.5; },
+  nemurin:g=>{ add(g,new THREE.IcosahedronGeometry(.5,1),M(0xf3eef7),0,.62,0,1.2,.85,1.05); add(g,new THREE.SphereGeometry(.22,8,6),M(0x5a4a66),0,.72,-.55); legs4(g,M(0x5a4a66),.25,.25,.3,.06);
+    const zz=add(g,new THREE.TorusGeometry(.12,.02,4,12),M(0xe08fd0,{emissive:col('#e08fd0'),emissiveIntensity:1.2}),.25,1.25,-.3); zz.userData.float=true; },
+  namerion:g=>{ const b=M(0x5aa7c9,{roughness:.3}); add(g,new THREE.SphereGeometry(.45,12,8),b,0,.28,0,.85,.55,1.6);
+    for(const s of [1,-1]){ add(g,new THREE.CylinderGeometry(.03,.03,.35,5),b,s*.12,.62,-.55); add(g,new THREE.SphereGeometry(.06,6,4),M(0x111111),s*.12,.8,-.55); } },
+  echoling:g=>{ const c=M(0x9ec2ff,{emissive:col('#5f9cff'),emissiveIntensity:1.4}); add(g,new THREE.SphereGeometry(.22,10,8),c,0,1.0,0);
+    for(let i=0;i<3;i++){ const r=add(g,new THREE.TorusGeometry(.35+i*.18,.02,4,28),M(0x5f9cff,{transparent:true,opacity:.7-i*.18,emissive:col('#5f9cff'),emissiveIntensity:1}),0,1.0,0); r.rotation.x=Math.PI/2; } g.userData.flyer=true; },
+  lastember:g=>{ add(g,new THREE.SphereGeometry(.24,10,8),M(0xff7a3a,{emissive:col('#ff5a20'),emissiveIntensity:1.6}),0,.7,0); const f=add(g,new THREE.ConeGeometry(.16,.45,8),M(0xffd36b,{emissive:col('#ffb020'),emissiveIntensity:2,transparent:true,opacity:.85}),0,1.05,0); add(g,new THREE.CylinderGeometry(.18,.24,.25,8),M(0x3a2a24),0,.25,0); eyes(g,.74,-.21,.08); },
+  stackle:g=>{ const s=M(0x9b8f7c); [[.0,.18,.36],[.04,.48,.3],[-.03,.74,.24],[.02,.95,.17]].forEach(([x,y,r])=>add(g,new THREE.DodecahedronGeometry(r),s,x,y,0,1,.55,1)); eyes(g,.98,-.16,.06); },
+  dongrim:g=>{ add(g,new THREE.SphereGeometry(.3,10,8),M(0xb07a3a),0,.38,0,.85,1.05,.85); add(g,new THREE.SphereGeometry(.3,10,6,0,Math.PI*2,0,Math.PI/2),M(0x6b4a26),0,.6,0,.95,.6,.95); add(g,new THREE.CylinderGeometry(.03,.03,.16,5),M(0x6b4a26),0,.85,0); const lf=add(g,new THREE.SphereGeometry(.09,6,4),M(0x6cbf4a),.07,.92,0,1.6,.4,.8); eyes(g,.42,-.25,.08); },
+  elderoak:g=>{ const bark=M(0x6b4a2e), leaf=M(0x4f9e3a,{emissive:col('#2f6e22'),emissiveIntensity:.3});
+    add(g,new THREE.CylinderGeometry(.22,.38,1.6,8),bark,0,.8,0);
+    for(const [x,y,z,r] of [[0,2.0,0,.75],[.45,1.75,.2,.5],[-.45,1.8,-.1,.55],[.1,2.4,-.2,.45]]) add(g,new THREE.IcosahedronGeometry(r,1),leaf,x,y,z);
+    for(const s of [1,-1]){ const rt=add(g,new THREE.ConeGeometry(.1,.6,5),bark,s*.35,.12,0); rt.rotation.z=s*1.2; }
+    eyes(g,1.1,-.28,.1,0xfff3a0,.06); },
+  hollowshell:g=>{ const sh=add(g,new THREE.ConeGeometry(.45,.9,10),M(0xe0b090),0,.65,.15); sh.rotation.x=.9;
+    const b=M(0xd0603a); add(g,new THREE.SphereGeometry(.22,8,6),b,0,.3,-.3); for(const s of [1,-1]){ add(g,new THREE.SphereGeometry(.12,6,4),b,s*.3,.3,-.5,1.2,.8,1); }
+    eyes(g,.48,-.42,.08); },
+  gloomcap:g=>{ add(g,new THREE.CylinderGeometry(.14,.18,.6,8),M(0xe8e0d0),0,.3,0); add(g,new THREE.SphereGeometry(.42,12,8,0,Math.PI*2,0,Math.PI/2),M(0x7a3fa0,{emissive:col('#5a2080'),emissiveIntensity:.4}),0,.58,0,1,.7,1);
+    const sp=M(0xb6ff6a,{emissive:col('#8fe040'),emissiveIntensity:1.6}); for(const [x,z] of [[.18,.1],[-.15,.2],[0,-.25],[-.22,-.12]]) add(g,new THREE.SphereGeometry(.05,6,4),sp,x,.83,z); eyes(g,.42,-.15,.06); },
+  riddlewisp:g=>{ add(g,new THREE.SphereGeometry(.24,10,8),M(0xcfe0ff,{emissive:col('#8fb0ff'),emissiveIntensity:2,transparent:true,opacity:.85}),0,1.15,0);
+    const tl=add(g,new THREE.ConeGeometry(.2,.6,8),M(0x8fb0ff,{transparent:true,opacity:.4,emissive:col('#5f6fd0'),emissiveIntensity:1}),0,.8,.05); tl.rotation.x=Math.PI; eyes(g,1.18,-.21,.07); g.userData.flyer=true; },
+  kindlefox:g=>{ const {body}=beast(g,{color:0xf08a3a,dark:0x8a4a20,h:.5,len:1.3}); for(const s of [1,-1]){ add(g,new THREE.ConeGeometry(.08,.22,4),body,s*.12,.98,-.6); }
+    const tl=add(g,new THREE.ConeGeometry(.16,.7,6),M(0xffd36b,{emissive:col('#ff8a20'),emissiveIntensity:1.6}),0,.75,.65); tl.rotation.x=1.9; },
+  quillmouse:g=>{ const b=M(0x8a6a4a); add(g,new THREE.SphereGeometry(.3,10,8),b,0,.32,0,1,.9,1.2); add(g,new THREE.SphereGeometry(.05,6,4),M(0x111111),0,.34,-.38);
+    const q=M(0xdfe8f0); for(let i=0;i<9;i++){ const a=i/9*Math.PI; const sp=add(g,new THREE.ConeGeometry(.04,.3,4),q,Math.cos(a)*.22,.45+Math.sin(a)*.15,.05+(i%3)*.08); sp.rotation.z=Math.PI/2-a; } eyes(g,.42,-.3,.08); },
+  brambleback:g=>{ const {body}=beast(g,{color:0x5f7a3a,dark:0x3a4a24,h:.55,len:1.4}); const th=M(0x9c6a3a); for(let i=0;i<6;i++){ const sp=add(g,new THREE.ConeGeometry(.06,.3,4),th,(i%2?.12:-.12),.95,-.35+i*.14); sp.rotation.x=-.3; } },
+  ironhorn:g=>{ const {body}=beast(g,{color:0x7d858c,dark:0x4a5056,h:.6,len:1.5,eye:0xffd36b}); const hn=add(g,new THREE.ConeGeometry(.09,.55,6),M(0xe0e4e8,{metalness:.8,roughness:.25}),0,1.0,-1.0); hn.rotation.x=-1.2; },
+  tundrak:g=>{ beast(g,{color:0xa8d8e8,dark:0x6a9aaa,h:.7,len:1.6,w:1.2,eye:0x5ff0ff}); const ice=M(0xdff8ff,{transparent:true,opacity:.8,emissive:col('#9fe3f0'),emissiveIntensity:.8}); for(const [x,z,h] of [[.15,-.2,.5],[-.15,.1,.6],[0,.4,.45]]) add(g,new THREE.OctahedronGeometry(.16),ice,x,1.05+h*.3,z,1,2,1); },
+  lumend:g=>{ const robe=M(0xf3ead2); add(g,new THREE.ConeGeometry(.42,1.2,10),robe,0,.6,0); add(g,new THREE.SphereGeometry(.2,8,6),M(0xf0d0b0),0,1.35,0);
+    const halo=add(g,new THREE.TorusGeometry(.2,.03,6,24),M(0xffe08a,{emissive:col('#ffd36b'),emissiveIntensity:2}),0,1.65,0); halo.rotation.x=Math.PI/2; },
+  nyxhollow:g=>{ const robe=M(0x2a2240,{emissive:col('#1a1030'),emissiveIntensity:.5}); add(g,new THREE.ConeGeometry(.6,1.7,10,1,true),robe,0,1.0,0).material.side=THREE.DoubleSide;
+    add(g,new THREE.SphereGeometry(.26,8,6),M(0x111018),0,1.95,0); eyes(g,1.98,-.23,.1,0xc080ff,.06);
+    const cr=M(0xa070ff,{emissive:col('#a070ff'),emissiveIntensity:1.6}); for(let i=0;i<5;i++){ const a=i/5*Math.PI*2; add(g,new THREE.ConeGeometry(.05,.25,4),cr,Math.cos(a)*.2,2.25,Math.sin(a)*.2); } g.userData.flyer=true; },
+  gamblet:g=>{ const b=M(0xf0c040); add(g,new THREE.SphereGeometry(.3,8,6),b,0,1.1,0,.9,.9,1.3); const bk=add(g,new THREE.ConeGeometry(.07,.22,5),M(0xe5583c),0,1.2,-.45); bk.rotation.x=-Math.PI/2; eyes(g,1.25,-.3,.1);
+    add(g,new THREE.BoxGeometry(.22,.22,.22),M(0xffffff),0,.62,0); const dots=M(0x111111); add(g,new THREE.SphereGeometry(.03,4,4),dots,0,.62,-.115);
+    g.userData.wings=addWings(g,M(0xe0a020,{side:THREE.DoubleSide}),.2,1.15,0,.75); g.userData.flap=6; g.userData.flyer=true; },
+  mimiq:g=>{ const s=M(0x7d8fd6,{transparent:true,opacity:.65,emissive:col('#4a5aa0'),emissiveIntensity:.8}); add(g,new THREE.IcosahedronGeometry(.42,1),s,0,.6,0,1,1.2,1); for(let i=0;i<6;i++){ const a=i/6*Math.PI*2; add(g,new THREE.SphereGeometry(.09,6,4),s,Math.cos(a)*.5,.6+Math.sin(a*2)*.25,Math.sin(a)*.5); } eyes(g,.75,-.38,.12,0xffffff,.07); },
+  ignavault:g=>{ buildDragon(g,0x9a1a10,0xffc040,0xff7a20,true); g.scale.setScalar(1.35); const cr=M(0xffd36b,{metalness:.8,emissive:col('#ffb020'),emissiveIntensity:1}); for(let i=0;i<3;i++) add(g,new THREE.ConeGeometry(.05,.22,4),cr,-.08+i*.08,1.82,-.62); },
+  aurelion:g=>{ buildDragon(g,0xf4f0e6,0xffe08a,0xfff3c0,true); g.scale.setScalar(1.25); },
+};
+const SHAPE_LABEL_Y={ kolopom:1.2, garakutan:1.6, nemurin:1.6, namerion:1.3, echoling:1.8, lastember:1.7, stackle:1.6, dongrim:1.4, elderoak:3.2, hollowshell:1.5, gloomcap:1.4, riddlewisp:1.9, kindlefox:1.6, quillmouse:1.2, brambleback:1.7, ironhorn:1.8, tundrak:2.0, lumend:2.2, nyxhollow:2.8, gamblet:1.9, mimiq:1.6, ignavault:3.1, aurelion:2.9 };
+
 function buildMonster(id){
   const g=new THREE.Group();
   if(id==='drake'){ buildDragon(g,0xf07a3a,0xffd08a,0xff9a50,false); g.scale.setScalar(.65); }
@@ -2024,6 +2332,7 @@ function buildMonster(id){
     const tl=add(g,new THREE.ConeGeometry(.25,.6,4),bd,0,1.15,.55,1,.25,1); tl.rotation.x=Math.PI/2;
     g.userData.wings=addWings(g,wg,.18,1.25,0,.95); g.userData.flap=9; g.userData.flyer=true;
   }
+  else if(SHAPES[id]) SHAPES[id](g);
   return g;
 }
 
@@ -2037,7 +2346,7 @@ function createEnt(m,pi,i){
   const holder=new THREE.Group();
   const model=buildMonster(m.id); model.rotation.y=pi?Math.PI:0;
   const pivot=new THREE.Group(); pivot.add(model); holder.add(pivot);
-  const label=makeLabel(); label.position.y=LABEL_Y[m.id]||2; holder.add(label);
+  const label=makeLabel(); label.position.y=LABEL_Y[m.id]||SHAPE_LABEL_Y[m.id]||2; holder.add(label);
   root.add(card,ring,holder); world.add(root);
   return { root, card, ring, holder, pivot, model, label, pi, uid:m.uid, id:m.id, lift:0, liftT:0, shakeT:0, phase:Math.random()*6, chain:null };
 }
@@ -2050,13 +2359,13 @@ function removeEnt(e,withFx){
 }
 function updateEnt(e,m,pi){
   const sel=S?.sel, myTurn=S.turn===0 && !S.over && !S.busy;
-  const badge = m.frozen ? '封' : m.guarded ? '護' : m.pierce ? '抜' : CARDS[m.id].taunt ? '挑' : (pi===0 && S.turn===0 && !m.canAttack ? '休' : '');
+  const badge = m.frozen ? '封' : m.guarded ? '護' : m.pierce ? '抜' : m.sleep>0 ? '眠' : (S.turnNo===S.lullTurn && !CARDS[m.id].phantom) ? '謡' : CARDS[m.id].taunt ? '挑' : (pi===0 && S.turn===0 && !m.canAttack ? '休' : '');
   drawLabel(e.label, atkOf(pi,m), m.hp, m.maxHp, atkOf(pi,m)>m.atk, badge);
   let st=null;
   if(pi===0){
     if(sel?.kind==='attack' && sel.m===m) st='sel';
     else if(sel?.kind==='evolve' && evoTargets(0,CARDS[sel.card.id]).includes(m)) st='evo';
-    else if(sel?.kind==='ally' && (sel.card.id!=='pierce' || pierceTargets(0).includes(m))) st='ally';
+    else if(sel?.kind==='ally' && allyTargets(0,sel.card.id).includes(m)) st='ally';
     else if(myTurn && !sel && canAttackWith(0,m)) st='ready';
   } else if(myTurn && sel && (sel.kind==='spell' || (sel.kind==='attack' && !monTargetBlock(0,sel.m,m)))) st='target';
   e.ringState=st; e.ring.visible=!!st;
@@ -2432,7 +2741,7 @@ function updateXRHud(){
   g.fillStyle='#eaf1ec';
   const l2=`${t('hud.life')}　${who(0)} ${me.life}　/　${who(1)} ${op.life}`;
   fitFont(g,l2,940,36,'bold',UIFONT); g.fillText(l2,40,130);
-  const l3=`${t('hud.energy')} ${'◆'.repeat(me.energy)}${'◇'.repeat(Math.max(0,CONFIG.maxEnergy-me.energy))}　${t('hud.deckhand',{d:me.deck.length,h:me.hand.length})}`;
+  const l3=`${t('hud.energy')} ${'◆'.repeat(me.energy)}${'◇'.repeat(Math.max(0,energyFor(me)-me.energy))}　${t('hud.deckhand',{d:me.deck.length,h:me.hand.length})}`;
   fitFont(g,l3,940,36,'bold',UIFONT); g.fillText(l3,40,182);
   g.fillStyle=S.warn?'#ff6a55':'#93a8a1';
   const line = S.over ? t('over.restart') : (S.hint ? t(S.hint,S.hintP) : (S.log[0] ? t(S.log[0].key,S.log[0].params) : ''));
@@ -2476,7 +2785,7 @@ function float3D(pos,text,cls){
   init3D();
   $('#loading').remove();
   showApp(true);
-  if(gifted) setTimeout(()=>toast(t('g.new',{n:NEW_V22.length})),600);
+  if(gifted) setTimeout(()=>toast(t('g.new',{n:gifted})),600);
   try{ if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
 })();
 </script>

@@ -1,6 +1,6 @@
 // オフラインでも遊べるようにするためのキャッシュ。
 // ゲームを更新したら VERSION の数字を上げる（古いキャッシュが消えて新しい版が読み込まれる）
-const VERSION = 'gate-v2.3.0';
+const VERSION = 'gate-v2.4.0';
 const CORE = [
   './',
   './index.html',
