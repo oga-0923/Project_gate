@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ja">
+<!-- 自動生成ファイル：編集は dev.html で行い、tools/build_release.py で作り直す -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -272,6 +273,7 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 .rates{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
 .selgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
 .dim-panel{opacity:.5}
+.mode-panel{border-color:var(--danger)}
 @media (max-width:560px){ .stats3 .stat b{font-size:14px} .hud .tools .tool{padding:4px 8px} }
 *{box-sizing:border-box}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -327,7 +329,10 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== 調整用の設定 =====
-const APP_VERSION = '2.4.0';
+const APP_VERSION = '2.4.1';
+// 'dev'：開発用（設定にユーザー／開発者の切り替えが出る）。'release'：一般公開用（ユーザー画面のみ）
+// 一般公開用は tools/build_release.py が自動で 'release' に書き換えて index.html を作る
+const BUILD = 'release';
 const CONFIG = {
   startLife: 7,          // 初期ライフ
   maxLife: 7,            // ライフ上限（回復の上限）
@@ -682,6 +687,11 @@ const STR = {
   'fx.bounce':['押し戻し','BOUNCE','退回','REBOTE','되돌림','VOLTA'],
   'fx.lull':['子守唄','LULL','摇篮曲','NANA','자장가','NINAR'],
   'r11':['★のカードはデッキに1枚まで。','★ cards are limited to 1 per deck.','★卡每个卡组限1张。','Las cartas ★ se limitan a 1 por mazo.','★ 카드는 덱에 1장까지.','Cartas ★ são limitadas a 1 por deck.'],
+  'mode.title':['画面モード','Screen mode'],
+  'mode.user':['ユーザー','User'],
+  'mode.dev':['開発者','Developer'],
+  'mode.note':['この切り替えは開発用の版（dev.html）だけに出ます。一般公開用の版（index.html）はユーザー画面のみです','This switch exists only in the development build (dev.html). The public build (index.html) is user-only'],
+  'mode.toUser':['ユーザー画面に戻る','Back to user mode'],
   'tab.home':['ホーム','Home','主页','Inicio','홈','Início'],
   'tab.cards':['マイカード','My Cards','我的卡牌','Mis cartas','내 카드','Minhas cartas'],
   'tab.friends':['フレンド','Friends','好友','Amigos','친구','Amigos'],
@@ -1613,7 +1623,7 @@ function renderApp(keepScroll){
   applyI18n();
   $('#tabbar').innerHTML=TABS.map(k=>`<button class="tab ${APP.tab===k?'on':''}" data-act="tab" data-tab="${k}" ${APP.tab===k?'aria-current="page"':''}>${ICON[k]}<span>${t('tab.'+k)}</span></button>`).join('');
   $('#topPoints').textContent=SV.points;
-  $('#screen').innerHTML=({home:homeHTML,cards:cardsHTML,friends:friendsHTML,battle:battleHTML,settings:settingsHTML,dev:devHTML})[APP.tab]();
+  $('#screen').innerHTML=({home:homeHTML,cards:cardsHTML,friends:friendsHTML,battle:battleHTML,settings:settingsHTML,dev:devHTML})[APP.tab==='dev'&&!devOn()?'settings':APP.tab]();
   updateDevBanner();
   if(APP.tab==='home') bindPackDrag();
   wrap.scrollTop = keepScroll ? y : 0;
@@ -1720,8 +1730,8 @@ function collectionHTML(){
   const f=APP.filter;
   const chips=['all','monster','magic','field'].map(k=>`<button class="chip ${f===k?'on':''}" data-act="filter" data-f="${k}">${k==='all'?t('filter.all'):t('kind.'+k)}</button>`).join('');
   const ids=CARD_IDS.filter(id=>f==='all'||CARDS[id].type===f);
-  const owned=CARD_IDS.filter(id=>SV.collection[id]).length;
-  return `<div class="row between"><div class="chips">${chips}</div><span class="meta">${t('home.dex')} ${owned}/${CARD_IDS.length}</span></div>
+  const ownedCount=CARD_IDS.filter(id=>SV.collection[id]).length;
+  return `<div class="row between"><div class="chips">${chips}</div><span class="meta">${t('home.dex')} ${ownedCount}/${CARD_IDS.length}</span></div>
     <div class="grid">${ids.map(id=>{ const n=owned(id); return `<button class="cell ${n?'':'unowned'}" data-act="card" data-id="${id}">${cardHTML(id)}<span class="cnt">×${n}</span><span class="rar">${RARITY[CARDS[id].rarity].mark}</span></button>`; }).join('')}</div>`;
 }
 function decksHTML(){
@@ -1809,7 +1819,8 @@ function settingsHTML(){
   const s=SV.settings;
   const seg=(act,vals,cur,lab)=>`<div class="seg">${vals.map(v=>`<button class="${v===cur?'on':''}" data-act="${act}" data-v="${v}">${lab(v)}</button>`).join('')}</div>`;
   const cm=Math.round(s.tableHeight*100);
-  return `<section class="panel"><h3>${t('st.lang')}</h3><div class="seg wrap">${LANGS.map(([c,n])=>`<button class="${c===LANG?'on':''}" data-act="lang" data-v="${c}" lang="${c}">${n}</button>`).join('')}</div></section>
+  const modeSec = BUILD==='dev' ? `<section class="panel mode-panel"><h3>${t('mode.title')}</h3><div class="seg"><button class="${devOn()?'':'on'}" data-act="modeUser">${t('mode.user')}</button><button class="${devOn()?'on':''}" data-act="modeDev">${t('mode.dev')}</button></div>${devOn()?`<button class="btn sm" data-act="devOpen">${t('dev.open')}</button>`:''}<p class="meta">${t('mode.note')}</p></section>` : '';
+  return `${modeSec}<section class="panel"><h3>${t('st.lang')}</h3><div class="seg wrap">${LANGS.map(([c,n])=>`<button class="${c===LANG?'on':''}" data-act="lang" data-v="${c}" lang="${c}">${n}</button>`).join('')}</div></section>
     <section class="panel">
       <h3>${t('st.speed')}</h3>${seg('speed',[0.5,1,2],s.speed,v=>'×'+v)}
       <h3>${t('st.view')}</h3>${seg('viewSet',[0,1],s.view,v=>t(v?'view.close':'view.top'))}
@@ -1821,8 +1832,7 @@ function settingsHTML(){
       <h3>${t('st.test')}</h3>${seg('test',[1,0],s.test?1:0,v=>t(v?'st.on':'st.off'))}
       <p class="meta">${t('st.save')}</p>
       <button class="danger-btn" data-act="reset">${APP.resetArm?t('st.resetConfirm'):t('st.reset')}</button>
-      <button class="ver" data-act="verTap">${t('st.version')} ${APP_VERSION}</button>
-      ${SV.dev.unlocked?`<button class="ghost-btn" data-act="devOpen">${t('dev.open')}</button>`:''}
+      <p class="meta">${t('st.version')} ${APP_VERSION}${BUILD==='dev'?'（dev）':''}</p>
     </section>
     <section class="panel"><h3>${t('gift.title')}</h3>
       <p class="meta">${t('fr.id')}：<b class="num">${SV.profile.id}</b></p>
@@ -1861,7 +1871,7 @@ function copyFrom(src){
    開発者画面（設定の「バージョン」を7回押すと出てくる）
    確率の変更・全カード解放はこの端末で開発者モードがオンのときだけ効く
    ===================================================================== */
-function devOn(){ return !!(SV?.dev?.enabled); }
+function devOn(){ return BUILD==='dev' && !!(SV?.dev?.enabled); }
 function owned(id){ return devOn() && SV.dev.allCards ? cardLimit(id) : (SV.collection[id]||0); }
 function effRates(){ if(devOn() && SV.dev.rates) return SV.dev.rates; const r={}; for(const [k,v] of Object.entries(RARITY)) r[k]=v.rate; return r; }
 function effGod(){ return devOn() && SV.dev.god!=null ? SV.dev.god : CONFIG.godPackRate; }
@@ -1912,8 +1922,8 @@ function devHTML(){
   const D=SV.dev, r=effRates(), seg=(act,on)=>`<div class="seg"><button class="${on?'on':''}" data-act="${act}" data-v="1">${t('st.on')}</button><button class="${on?'':'on'}" data-act="${act}" data-v="0">${t('st.off')}</button></div>`;
   const pend=SV.pending?.cards||[];
   return `<div class="row between"><button class="ghost-btn" data-act="devBack">← ${t('dev.back')}</button><b class="eyebrow">${t('dev.title')}</b></div>
-  <section class="panel"><h3>${t('dev.enabled')}</h3>${seg('devToggle',D.enabled)}<p class="note">${t('dev.warn')}</p></section>
-  <section class="panel ${D.enabled?'':'dim-panel'}">
+  <section class="panel"><button class="ghost-btn" data-act="modeUser">${t('mode.toUser')}</button><p class="note">${t('dev.warn')}</p></section>
+  <section class="panel">
     <h3>${t('dev.allCards')}</h3>${seg('devAll',D.allCards)}
     <h3>${t('dev.rates')}</h3>
     <div class="rates">${Object.keys(RARITY).map(k=>`<label class="field"><span class="lbl">${RARITY[k].mark}</span><input type="number" id="rate${k}" min="0" max="100" step="0.1" value="${+(r[k]*100).toFixed(2)}"></label>`).join('')}
@@ -1946,14 +1956,17 @@ function devHTML(){
 }
 function devAct(act,d){
   const D=SV.dev;
+  if(BUILD!=='dev' && act!=='redeemGift') return false;
   switch(act){
+    case 'modeUser': D.enabled=false; save(); APP.tab='settings'; renderApp(); return true;
+    case 'modeDev': D.enabled=true; D.unlocked=true; save(); APP.tab='dev'; renderApp(); return true;
     case 'verTap':
       if(D.unlocked){ APP.tab='dev'; renderApp(); return true; }
       APP.verTaps=(APP.verTaps||0)+1;
       if(APP.verTaps>=7){ D.unlocked=true; save(); toast(t('dev.unlocked')); renderApp(true); }
       else if(APP.verTaps>=4) toast(t('dev.taps',{n:7-APP.verTaps}));
       return true;
-    case 'devOpen': APP.tab='dev'; renderApp(); return true;
+    case 'devOpen': if(!devOn()) return true; APP.tab='dev'; renderApp(); return true;
     case 'devBack': APP.tab='settings'; renderApp(); return true;
     case 'devToggle': D.enabled=d.v==='1'; save(); renderApp(true); return true;
     case 'devAll': D.allCards=d.v==='1'; save(); renderApp(true); return true;

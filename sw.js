@@ -1,9 +1,10 @@
 // オフラインでも遊べるようにするためのキャッシュ。
 // ゲームを更新したら VERSION の数字を上げる（古いキャッシュが消えて新しい版が読み込まれる）
-const VERSION = 'gate-v2.4.0';
+const VERSION = 'gate-v2.4.1';
 const CORE = [
   './',
   './index.html',
+  './dev.html',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -28,8 +29,8 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(req).then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put('./index.html', copy)); return res; })
-        .catch(() => caches.match('./index.html'))
+      fetch(req).then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); return res; })
+        .catch(() => caches.match(req).then(hit => hit || caches.match('./index.html')))
     );
     return;
   }
