@@ -18,7 +18,7 @@
 :root{
   --bg:#070b10; --panel:rgba(16,26,28,.86); --panel-solid:#14211f; --line:#2f4741;
   --fg:#eaf1ec; --muted:#93a8a1; --gate:#d9b45f; --danger:#ff6a55; --good:#5fcf95;
-  --fire:#e5583c; --earth:#b08f5e; --bolt:#ecc943; --heal:#57c08a; --field:#45b0ad; --wind:#7fd0e8; --seal:#a88be0; --lore:#5f9cff; --ward:#f2e2a8;
+  --fire:#e5583c; --earth:#b08f5e; --bolt:#ecc943; --heal:#57c08a; --field:#45b0ad; --wind:#7fd0e8; --seal:#a88be0; --lore:#5f9cff; --ward:#f2e2a8; --shade:#7d8fd6;
   --f-display:"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif;
   --f-body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
   --f-num:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -81,10 +81,11 @@ button.pp{cursor:default}
   display:grid;grid-template-rows:auto 1fr auto auto;padding:4px 5px 5px;text-align:left;cursor:pointer;overflow:hidden;
   transition:transform .15s ease,box-shadow .15s ease,opacity .15s}
 .el-fire{--el:var(--fire)} .el-earth{--el:var(--earth)} .el-bolt{--el:var(--bolt)} .el-heal{--el:var(--heal)}
-.el-field{--el:var(--field)} .el-wind{--el:var(--wind)} .el-seal{--el:var(--seal)} .el-lore{--el:var(--lore)} .el-ward{--el:var(--ward)}
+.el-field{--el:var(--field)} .el-wind{--el:var(--wind)} .el-seal{--el:var(--seal)} .el-lore{--el:var(--lore)} .el-ward{--el:var(--ward)} .el-shade{--el:var(--shade)}
 .card .cost{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--bg);border:1.5px solid var(--gate);color:var(--gate);display:grid;place-items:center;font-family:var(--f-num);font-weight:700;font-size:11px}
 .card .kind{justify-self:end;font-size:8.5px;color:var(--muted)}
 .card .kind.tag{color:var(--el);font-weight:700}
+.card .cost.down{border-color:var(--good);color:var(--good)}
 .card .glyph{align-self:center;justify-self:center;font-family:var(--f-display);font-size:calc(var(--cw)*.36);line-height:1;color:var(--el)}
 .card .name{font-weight:700;font-size:clamp(9.5px,2.4vw,12px);line-height:1.2}
 .card .text{font-size:clamp(8px,2vw,10px);line-height:1.25;color:var(--muted);margin-top:2px}
@@ -320,7 +321,7 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== 調整用の設定 =====
-const APP_VERSION = '2.1.0';
+const APP_VERSION = '2.2.0';
 const CONFIG = {
   startLife: 5,          // 初期ライフ
   maxLife: 5,            // ライフ上限（回復の上限）
@@ -364,14 +365,26 @@ const CARDS = {
   guard:     { type:'magic',   cost:1,              el:'ward',  glyph:'護', rarity:'U' },
   altar:     { type:'field',   cost:2,              el:'field', glyph:'壇', rarity:'R' },
   sanctuary: { type:'field',   cost:2,              el:'earth', glyph:'聖', rarity:'R' },
+  // --- Ver.2.2 追加 ---
+  aoe:       { type:'magic',   cost:2,              el:'bolt',  glyph:'轟', rarity:'U' },
+  fog:       { type:'magic',   cost:2,              el:'ward',  glyph:'霧', rarity:'R', limit:2 },
+  pierce:    { type:'magic',   cost:2,              el:'shade', glyph:'影', rarity:'R', limit:2 },
+  phantom:   { type:'monster', cost:2, atk:1, hp:2, el:'shade', glyph:'幽', rarity:'U', phantom:true, tag:'phantom' },
+  wall:      { type:'monster', cost:2, atk:0, hp:5, el:'earth', glyph:'盾', rarity:'C', taunt:true, tag:'taunt' },
+  titan:     { type:'monster', cost:2, atk:2, hp:7, el:'earth', glyph:'巌', rarity:'R', evolveFrom:'golem', tag:'evolve' },
+  revive:    { type:'magic',   cost:2,              el:'heal',  glyph:'魂', rarity:'U' },
+  egg:       { type:'monster', cost:1, atk:0, hp:1, el:'fire',  glyph:'卵', rarity:'C', tag:'egg' },
+  storm:     { type:'field',   cost:2,              el:'wind',  glyph:'嵐', rarity:'R' },
 };
+const NEW_V22 = ['aoe','fog','pierce','phantom','wall','titan','revive','egg','storm'];
+function cardLimit(id){ return CARDS[id].limit || CONFIG.maxCopies; }
 const CARD_IDS = Object.keys(CARDS);
 
 // ===== スターターデッキ（20枚）。最初の所持カードとCPUの練習デッキ =====
 const STARTER = { drake:3, dragon:2, golem:1, knight:2, scout:2, fireball:2, heal:1, chain:1, book:2, guard:2, altar:1, sanctuary:1 };
 
 // ===== 属性カラー =====
-const EL = { fire:'#e5583c', earth:'#b08f5e', bolt:'#ecc943', heal:'#57c08a', field:'#45b0ad', wind:'#7fd0e8', seal:'#a88be0', lore:'#5f9cff', ward:'#f2e2a8' };
+const EL = { fire:'#e5583c', earth:'#b08f5e', bolt:'#ecc943', heal:'#57c08a', field:'#45b0ad', wind:'#7fd0e8', seal:'#a88be0', lore:'#5f9cff', ward:'#f2e2a8', shade:'#7d8fd6' };
 
 /* =====================================================================
    多言語データ。並び順：日本語, English, 简体中文, Español, 한국어, Português
@@ -393,6 +406,15 @@ const NAME = {
   guard:     ['イージルン','Aegirn','伊吉恩','Aegirn','이지른','Aegirn'],
   altar:     ['アルドリス','Ardolith','阿尔多利斯','Ardolith','아르돌리스','Ardolith'],
   sanctuary: ['テラヴェル','Terravel','特拉维尔','Terravel','테라벨','Terravel'],
+  aoe:       ['ヴォルトレイン','Voltrain','沃尔特雷恩','Voltrain','볼트레인','Voltrain'],
+  fog:       ['ミストヴェイル','Mistveil','米斯特维尔','Mistveil','미스트베일','Mistveil'],
+  pierce:    ['シェイドパス','Shadepass','谢德帕斯','Shadepass','셰이드패스','Shadepass'],
+  phantom:   ['ファントリス','Phantris','凡特里斯','Phantris','판트리스','Phantris'],
+  wall:      ['ボルダリオン','Boulderion','博尔达里昂','Boulderion','볼더리온','Boulderion'],
+  titan:     ['グラヴォルデン','Gravolden','格拉沃登','Gravolden','그라볼든','Gravolden'],
+  revive:    ['アニマーラ','Animara','阿尼玛拉','Animara','아니마라','Animara'],
+  egg:       ['シンドローヴァ','Cindrova','辛德罗娃','Cindrova','신드로바','Cindrova'],
+  storm:     ['テンペスティア','Tempestia','腾佩斯蒂娅','Tempestia','템페스티아','Tempestia'],
 };
 // モチーフ（属性・何をもとにしたカードか）
 const MOTIF = {
@@ -408,6 +430,15 @@ const MOTIF = {
   guard:     ['護・結界','Ward · Barrier','护·结界','Guarda · Barrera','수호 · 결계','Guarda · Barreira'],
   altar:     ['古・祭壇','Ancient · Altar','古·祭坛','Antiguo · Altar','고대 · 제단','Antigo · Altar'],
   sanctuary: ['地・聖域','Earth · Sanctuary','地·圣域','Tierra · Santuario','땅 · 성역','Terra · Santuário'],
+  aoe:       ['雷・雷雨','Thunder · Storm','雷·雷雨','Trueno · Tormenta','번개 · 뇌우','Trovão · Tempestade'],
+  fog:       ['護・霧','Ward · Mist','护·迷雾','Guarda · Niebla','수호 · 안개','Guarda · Névoa'],
+  pierce:    ['影・抜け道','Shadow · Hidden path','影·密道','Sombra · Pasaje oculto','그림자 · 샛길','Sombra · Passagem secreta'],
+  phantom:   ['影・幽霊','Shadow · Phantom','影·幽灵','Sombra · Fantasma','그림자 · 유령','Sombra · Fantasma'],
+  wall:      ['地・盾の巨岩','Earth · Shield boulder','地·盾岩','Tierra · Roca escudo','땅 · 방패 바위','Terra · Rocha escudo'],
+  titan:     ['地・岩の巨神','Earth · Stone titan','地·岩石巨神','Tierra · Titán de roca','땅 · 바위 거신','Terra · Titã de pedra'],
+  revive:    ['光・魂','Light · Soul','光·灵魂','Luz · Alma','빛 · 영혼','Luz · Alma'],
+  egg:       ['火・竜の卵','Fire · Dragon egg','火·龙蛋','Fuego · Huevo de dragón','불 · 용의 알','Fogo · Ovo de dragão'],
+  storm:     ['嵐・祭壇','Storm · Altar','岚·祭坛','Tormenta · Altar','폭풍 · 제단','Tempestade · Altar'],
 };
 
 const STR = {
@@ -428,6 +459,37 @@ const STR = {
   'txt.altar':['味方モンスターのATK+1','Your monsters get +1 ATK','我方怪兽ATK+1','Tus monstruos obtienen +1 ATK','아군 몬스터 ATK+1','Seus monstros ganham +1 ATK'],
   'txt.sanctuary':['自分のターン開始時、味方モンスターのHPを1回復','At the start of your turn, your monsters restore 1 HP','我方回合开始时，我方怪兽回复1点HP','Al inicio de tu turno, tus monstruos recuperan 1 HP','내 턴 시작 시 아군 몬스터 HP 1 회복','No início do seu turno, seus monstros recuperam 1 HP'],
 
+  'tag.taunt':['挑発','Taunt','嘲讽','Provocar','도발','Provocar'],
+  'tag.phantom':['幽体','Phantom','幽体','Fantasma','유령','Fantasma'],
+  'tag.egg':['孵化','Hatch','孵化','Eclosión','부화','Eclosão'],
+  'txt.aoe':['相手モンスターすべてに1ダメージ','Deal 1 damage to all enemy monsters','对所有敌方怪兽造成1点伤害','Inflige 1 de daño a todos los monstruos enemigos','적 몬스터 전체에 1 데미지','Causa 1 de dano a todos os monstros inimigos'],
+  'txt.fog':['相手の次のターン、自分はダメージを受けない','You take no damage during the opponent\'s next turn','对手下回合你不会受到伤害','No recibes daño durante el próximo turno rival','상대의 다음 턴에 자신은 데미지를 받지 않는다','Você não sofre dano no próximo turno do oponente'],
+  'txt.pierce':['ATK2以下の味方1体は、このターン相手を直接攻撃できる','One ally with ATK 2 or less can attack the opponent directly this turn','ATK2以下的1只友方本回合可直接攻击对手','Un aliado con ATK 2 o menos puede atacar directamente al rival este turno','ATK 2 이하 아군 1체는 이번 턴 상대를 직접 공격할 수 있다','Um aliado com ATK 2 ou menos pode atacar o oponente diretamente neste turno'],
+  'txt.phantom':['相手しか攻撃できず、モンスターに防がれない','Can only attack the opponent, and monsters can\'t block it','只能攻击对手，且不会被怪兽阻挡','Solo puede atacar al rival y los monstruos no lo bloquean','상대만 공격할 수 있고 몬스터에게 막히지 않는다','Só pode atacar o oponente e monstros não o bloqueiam'],
+  'txt.wall':['相手はこのモンスターを先に攻撃しなければならない','The opponent must attack this monster first','对手必须先攻击此怪兽','El rival debe atacar primero a este monstruo','상대는 이 몬스터를 먼저 공격해야 한다','O oponente deve atacar este monstro primeiro'],
+  'txt.revive':['最後に破壊された自分のモンスターを手札に戻す','Return your most recently destroyed monster to your hand','将最后被破坏的我方怪兽返回手牌','Devuelve a tu mano tu último monstruo destruido','마지막으로 파괴된 아군 몬스터를 패로 되돌린다','Devolve à mão seu último monstro destruído'],
+  'txt.egg':['破壊されたとき、山札から{c}を1体場に出す','When destroyed, summon a {c} from your deck','被破坏时，从牌库将1只{c}放到场上','Al ser destruido, invoca un {c} de tu mazo','파괴되면 덱에서 {c} 1체를 필드에 낸다','Ao ser destruído, invoque um {c} do seu deck'],
+  'txt.storm':['自分のマジックのコスト-1（最低1）','Your spells cost 1 less (minimum 1)','我方魔法费用-1（最低为1）','Tus hechizos cuestan 1 menos (mínimo 1)','아군 마법 코스트 -1 (최소 1)','Seus feitiços custam 1 a menos (mínimo 1)'],
+  'w.pierce':['このターン攻撃できるATK2以下の味方がいません','No ally with ATK 2 or less that can attack this turn','没有本回合可攻击且ATK2以下的友方','No hay aliado con ATK 2 o menos que pueda atacar','이번 턴 공격 가능한 ATK 2 이하 아군이 없습니다','Nenhum aliado com ATK 2 ou menos que possa atacar'],
+  'w.pierceTarget':['選べるのは、このターン攻撃できるATK2以下の味方です','Choose an ally with ATK 2 or less that can still attack','只能选择本回合可攻击且ATK2以下的友方','Elige un aliado con ATK 2 o menos que aún pueda atacar','이번 턴 공격 가능한 ATK 2 이하 아군만 고를 수 있습니다','Escolha um aliado com ATK 2 ou menos que ainda possa atacar'],
+  'w.grave':['破壊された自分のモンスターがいません','None of your monsters have been destroyed','没有被破坏的我方怪兽','Ninguno de tus monstruos ha sido destruido','파괴된 아군 몬스터가 없습니다','Nenhum monstro seu foi destruído'],
+  'w.fogOn':['すでに霧に守られています','You are already protected by mist','已受到迷雾保护','Ya estás protegido por la niebla','이미 안개로 보호받고 있습니다','Você já está protegido pela névoa'],
+  'w.taunt':['挑発のモンスターを先に攻撃してください','You must attack the Taunt monster first','必须先攻击嘲讽怪兽','Debes atacar primero al monstruo con Provocar','도발 몬스터를 먼저 공격해야 합니다','Ataque primeiro o monstro com Provocar'],
+  'w.phantom':['幽体のモンスターは相手プレイヤーしか攻撃できません','Phantom monsters can only attack the opponent','幽体怪兽只能攻击对手','Los monstruos Fantasma solo pueden atacar al rival','유령 몬스터는 상대 플레이어만 공격할 수 있습니다','Monstros Fantasma só podem atacar o oponente'],
+  'w.noAtk':['ATKが0のモンスターは攻撃できません','Monsters with 0 ATK can\'t attack','ATK为0的怪兽无法攻击','Los monstruos con 0 ATK no pueden atacar','ATK 0 몬스터는 공격할 수 없습니다','Monstros com 0 ATK não podem atacar'],
+  'h.pierce':['直接攻撃させる味方（ATK2以下）を選んでください','Choose an ally (ATK 2 or less) to attack directly','选择要直接攻击的友方（ATK2以下）','Elige un aliado (ATK 2 o menos) para atacar directamente','직접 공격할 아군 (ATK 2 이하)을 고르세요','Escolha um aliado (ATK 2 ou menos) para atacar diretamente'],
+  'l.aoe':['{p}の「{c}」が相手モンスター全体に1ダメージ','{p}\'s {c} dealt 1 damage to all enemy monsters','{p}的「{c}」对所有敌方怪兽造成1点伤害','{c} de {p} infligió 1 de daño a todos los monstruos enemigos','{p}의 「{c}」이(가) 적 몬스터 전체에 1 데미지','{c} de {p} causou 1 de dano a todos os monstros inimigos'],
+  'l.fog':['{p}は「{c}」の霧に包まれた','{p} is shrouded in {c}\'s mist','{p}被「{c}」的迷雾包围','{p} quedó envuelto en la niebla de {c}','{p}은(는) 「{c}」의 안개에 휩싸였다','{p} foi envolto pela névoa de {c}'],
+  'l.fogBlock':['霧が{p}への{n}ダメージを防いだ','The mist blocked {n} damage to {p}','迷雾抵挡了对{p}的{n}点伤害','La niebla bloqueó {n} de daño a {p}','안개가 {p}에 대한 {n} 데미지를 막았다','A névoa bloqueou {n} de dano a {p}'],
+  'l.pierce':['{p}の「{t}」が抜け道を得た','{p}\'s {t} found a hidden path','{p}的「{t}」找到了密道','{t} de {p} encontró un pasaje oculto','{p}의 「{t}」이(가) 샛길을 얻었다','{t} de {p} encontrou uma passagem secreta'],
+  'l.revive':['{p}の「{c}」が手札に戻った','{p}\'s {c} returned to hand','{p}的「{c}」回到了手牌','{c} de {p} volvió a la mano','{p}의 「{c}」이(가) 패로 돌아왔다','{c} de {p} voltou para a mão'],
+  'l.egg':['{p}の卵から「{c}」が生まれた','{c} hatched from {p}\'s egg','{p}的蛋孵出了「{c}」','{c} nació del huevo de {p}','{p}의 알에서 「{c}」이(가) 태어났다','{c} nasceu do ovo de {p}'],
+  'fx.fog':['無効','BLOCKED','无效','BLOQUEADO','무효','BLOQUEADO'],
+  'fx.fogOn':['霧','MIST','迷雾','NIEBLA','안개','NÉVOA'],
+  'fx.pierce':['抜け道','PATH','密道','PASAJE','샛길','PASSAGEM'],
+  'fx.hatch':['孵化','HATCH','孵化','ECLOSIÓN','부화','ECLOSÃO'],
+  'g.new':['新カード{n}種を各2枚プレゼントしました','You received 2 copies each of {n} new cards','已赠送{n}种新卡各2张','Recibiste 2 copias de {n} cartas nuevas','신규 카드 {n}종을 2장씩 선물했습니다','Você recebeu 2 cópias de {n} cartas novas'],
+  'r10':['挑発のモンスターがいる間、相手はそれ以外のモンスターを攻撃できない。幽体のモンスターは相手プレイヤーだけを攻撃でき、モンスターに防がれない。ATKが0のモンスターは攻撃できない。','While you have a Taunt monster, the opponent must attack it before your other monsters. Phantom monsters can only attack the opponent, and monsters can\'t block them. Monsters with 0 ATK can\'t attack.','有嘲讽怪兽时，对手不能攻击其他怪兽。幽体怪兽只能攻击对手，且不会被怪兽阻挡。ATK为0的怪兽无法攻击。','Mientras tengas un monstruo con Provocar, el rival debe atacarlo antes que a tus otros monstruos. Los Fantasmas solo atacan al rival y los monstruos no los bloquean. Los monstruos con 0 ATK no pueden atacar.','도발 몬스터가 있는 동안 상대는 다른 몬스터를 공격할 수 없다. 유령 몬스터는 상대 플레이어만 공격하며 몬스터에게 막히지 않는다. ATK 0 몬스터는 공격할 수 없다.','Enquanto houver um monstro com Provocar, o oponente deve atacá-lo antes dos outros. Fantasmas só atacam o oponente e monstros não os bloqueiam. Monstros com 0 ATK não podem atacar.'],
   'tab.home':['ホーム','Home','主页','Inicio','홈','Início'],
   'tab.cards':['マイカード','My Cards','我的卡牌','Mis cartas','내 카드','Minhas cartas'],
   'tab.friends':['フレンド','Friends','好友','Amigos','친구','Amigos'],
@@ -640,7 +702,7 @@ function cardText(id){
   const d=CARDS[id];
   if(d.evolveFrom) return t('txt.evolve',{c:'@'+d.evolveFrom});
   if(d.rush) return t('txt.rush');
-  return STR['txt.'+id] ? t('txt.'+id) : '';
+  return STR['txt.'+id] ? t('txt.'+id,{c:'@drake'}) : '';
 }
 function setLang(code){
   const i=LANGS.findIndex(l=>l[0]===code); LI=i<0?1:i; LANG=LANGS[LI][0];
@@ -660,7 +722,7 @@ function defSave(){
     points:0, lastPack:'', pending:null,
     profile:{name:'Player', id:randId()}, friends:[],
     settings:{speed:1, view:0, hideLast:true, tableHeight:0.78, test:false},
-    stats:{w:0,l:0} };
+    stats:{w:0,l:0}, gifts:[] };
 }
 function loadSave(){
   try{
@@ -670,15 +732,27 @@ function loadSave(){
   return defSave();
 }
 function save(){ try{ localStorage.setItem(SAVE_KEY,JSON.stringify(SV)); }catch(e){} }
+// Ver.2.2の新カードを、遊んでいた人にも新しく始めた人にも2枚ずつ配る（デッキ構築を試せるように）
+function applyGifts(){
+  SV.gifts=SV.gifts||[];
+  if(SV.gifts.includes('v22')) return false;
+  NEW_V22.forEach(id=>{ SV.collection[id]=Math.max(SV.collection[id]||0,2); });
+  SV.gifts.push('v22'); save(); return true;
+}
 function deckCount(c){ return Object.values(c||{}).reduce((s,n)=>s+(n||0),0); }
 function deckName(i){ const d=SV.decks[i]; return d.name || (i===0 ? t('deck.starter') : t('deck.default',{n:i+1})); }
 
 // デッキコード：GATE1- のあとにカードごとの枚数を並べた文字列
 function deckCode(cards){ return 'GATE1-'+CARD_IDS.map(id=>Math.min(9,cards[id]||0)).join(''); }
-function parseCode(code){
+// 古いコード（カードが少なかった頃）も読めるよう、足りない桁は0として扱う
+function codeDigits(code){
   const m=String(code||'').trim().toUpperCase().match(/^GATE1-(\d+)$/);
-  if(!m || m[1].length!==CARD_IDS.length) return null;
-  const cards={}; CARD_IDS.forEach((id,i)=>{ const n=+m[1][i]; if(n) cards[id]=Math.min(n,CONFIG.maxCopies); });
+  if(!m || m[1].length>CARD_IDS.length) return null;
+  return m[1].padEnd(CARD_IDS.length,'0');
+}
+function parseCode(code){
+  const dg=codeDigits(code); if(!dg) return null;
+  const cards={}; CARD_IDS.forEach((id,i)=>{ const n=+dg[i]; if(n) cards[id]=Math.min(n,cardLimit(id)); });
   return deckCount(cards)===CONFIG.deckSize ? cards : null;
 }
 
@@ -691,7 +765,7 @@ let S=null, uidSeq=0, gameSeq=0;
 
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function buildDeck(counts){ const d=[]; for(const id of CARD_IDS) for(let k=0;k<(counts[id]||0);k++) d.push({uid:++uidSeq,id}); return shuffle(d); }
-function newPlayer(counts){ const deck=buildDeck(counts); return { life:CONFIG.startLife, energy:0, deck, hand:deck.splice(0,CONFIG.handStart), field:Array(CONFIG.maxField).fill(null), fieldCard:null }; }
+function newPlayer(counts){ const deck=buildDeck(counts); return { life:CONFIG.startLife, energy:0, deck, hand:deck.splice(0,CONFIG.handStart), field:Array(CONFIG.maxField).fill(null), fieldCard:null, grave:[], fogUntil:-1 }; }
 function atkOf(pi,m){ return m.atk + (S.p[pi].fieldCard==='altar' ? CONFIG.altarBonus : 0); }
 function addLog(pi,key,params){ S.log.unshift({pi,key,params}); if(S.log.length>80) S.log.pop(); }
 function fx(key,text,cls){ S.fx.push([key,text,cls]); }
@@ -724,7 +798,7 @@ function toMenu(){
   showApp(true);
 }
 
-function startTurn(pi){
+function beginTurn(pi){
   S.turn=pi; S.turnNo++; S.sel=null; S.hint=null; S.warn=false;
   const p=S.p[pi];
   p.energy=CONFIG.maxEnergy;
@@ -733,14 +807,22 @@ function startTurn(pi){
     p.field.forEach(m=>{ if(m && m.hp<m.maxHp){ const n=Math.min(CONFIG.sanctuaryHeal,m.maxHp-m.hp); m.hp+=n; fx(slotKey(pi,m),`+${n}`,'heal'); }});
   }
   if(S.turnNo>1) draw(pi);
+}
+function startTurn(pi){
+  beginTurn(pi);
   showBanner(t(pi===0?'banner.you':'banner.opp'), pi===0?'me':'foe');
   render();
   if(!S.over && pi===1) cpuTurn(S.gid);
 }
+// ターン終了時の後片付け（封印・結界・抜け道の期限切れ）
+function closeTurn(){
+  const me=S.turn;
+  S.p[me].field.forEach(m=>{ if(m){ if(m.frozen && m.frozenSince<S.turnNo) m.frozen=false; m.pierce=false; } });
+  S.p[1-me].field.forEach(m=>{ if(m && m.guarded && m.guardSince<S.turnNo) m.guarded=false; });
+}
 function endTurn(){
   if(S.over) return;
-  S.p[S.turn].field.forEach(m=>{ if(m && m.frozen && m.frozenSince<S.turnNo) m.frozen=false; });
-  S.p[1-S.turn].field.forEach(m=>{ if(m && m.guarded && m.guardSince<S.turnNo) m.guarded=false; });
+  closeTurn();
   startTurn(1-S.turn);
 }
 
@@ -752,49 +834,72 @@ function draw(pi){
   p.hand.push(c);
 }
 
+function fogActive(pi){ return S.turnNo<=S.p[pi].fogUntil; }
 function damagePlayer(pi,n){
-  const p=S.p[pi]; p.life=Math.max(0,p.life-n);
+  const p=S.p[pi];
+  if(S.turn!==pi && fogActive(pi)){ fx(`h${pi}`,t('fx.fog'),'info'); addLog(pi,'l.fogBlock',{p:'#'+pi,n}); return; }
+  p.life=Math.max(0,p.life-n);
   fx(`h${pi}`,`-${n}`,'dmg');
   if(p.life<=0 && !S.over){ S.over=true; S.winner=1-pi; addLog(1-pi,'l.win',{p:'#'+(1-pi)}); finishMatch(); }
 }
 function finishMatch(){
+  if(S.sim) return;
   if(S.winner===0){ SV.stats.w++; SV.points+=CONFIG.winPoints; } else SV.stats.l++;
   save();
 }
 function damageMonster(owner,m,n){ m.hp-=n; fx(slotKey(owner,m),`-${n}`,'dmg'); killCheck(owner); }
 function killCheck(pi){
   const p=S.p[pi];
-  p.field.forEach((m,i)=>{ if(m && m.hp<=0){ p.field[i]=null; addLog(pi,'l.destroyed',{p:'#'+pi,c:'@'+m.id}); }});
+  p.field.forEach((m,i)=>{
+    if(!m || m.hp>0) return;
+    p.field[i]=null; p.grave.push(m.id);
+    addLog(pi,'l.destroyed',{p:'#'+pi,c:'@'+m.id});
+    if(m.id==='egg'){
+      const k=p.deck.findIndex(c=>c.id==='drake');
+      if(k>=0){
+        const c=p.deck.splice(k,1)[0], d=CARDS.drake;
+        p.field[i]={ uid:c.uid, id:'drake', atk:d.atk, hp:d.hp, maxHp:d.hp, summonTurn:S.turnNo, canAttack:false, frozen:false, pierce:false };
+        addLog(pi,'l.egg',{p:'#'+pi,c:'@drake'});
+        fx(`s${pi}${i}`,t('fx.hatch'),'info');
+      }
+    }
+  });
 }
+function costOf(pi,c){ const d=CARDS[c.id]; return d.type==='magic' && S.p[pi].fieldCard==='storm' ? Math.max(1,d.cost-1) : d.cost; }
+function pierceTargets(pi){ return S.p[pi].field.filter(m=>m && m.canAttack && m.atk<=2 && !CARDS[m.id].phantom); }
+function canAttackWith(pi,m){ return m.canAttack && atkOf(pi,m)>0; }
 
 // 出せない理由を [文言キー, 値] で返す。出せるなら null
 function canPlay(pi,c){
   const p=S.p[pi], d=CARDS[c.id];
-  if(d.cost>p.energy) return ['w.energy'];
+  if(costOf(pi,c)>p.energy) return ['w.energy'];
   if(d.evolveFrom) return evoTargets(pi,d).length ? null : ['w.evolve',{c:'@'+d.evolveFrom}];
   if(d.type==='monster' && !p.field.includes(null)) return ['w.full'];
   if(d.type==='field' && p.fieldCard===c.id) return ['w.fieldSame',{c:'@'+c.id}];
   if(c.id==='heal' && p.life>=CONFIG.maxLife) return ['w.lifeMax'];
-  if(c.id==='chain' && !S.p[1-pi].field.some(Boolean)) return ['w.noEnemy'];
+  if((c.id==='chain'||c.id==='aoe') && !S.p[1-pi].field.some(Boolean)) return ['w.noEnemy'];
   if(c.id==='guard' && !p.field.some(Boolean)) return ['w.noAlly'];
   if(c.id==='book' && !p.deck.length) return ['w.noDeck'];
+  if(c.id==='pierce' && !pierceTargets(pi).length) return ['w.pierce'];
+  if(c.id==='revive' && !p.grave.length) return ['w.grave'];
+  if(c.id==='fog' && p.fogUntil>S.turnNo) return ['w.fogOn'];
   return null;
 }
 
 function doPlay(pi,c,target){
   const p=S.p[pi], o=1-pi, d=CARDS[c.id];
-  p.energy-=d.cost;
+  p.energy-=costOf(pi,c);
   p.hand.splice(p.hand.indexOf(c),1);
   if(d.evolveFrom){
     const i=p.field.indexOf(target), dmg=target.maxHp-target.hp;
     p.field[i]={ uid:c.uid, id:c.id, atk:d.atk, hp:d.hp-dmg, maxHp:d.hp, summonTurn:target.summonTurn,
                  canAttack:target.canAttack, frozen:target.frozen, frozenSince:target.frozenSince,
-                 guarded:target.guarded, guardSince:target.guardSince, evolvedFrom:target.uid };
+                 guarded:target.guarded, guardSince:target.guardSince, pierce:target.pierce, evolvedFrom:target.uid };
     addLog(pi,'l.evolve',{p:'#'+pi,a:'@'+target.id,c:'@'+c.id});
     fx(`s${pi}${i}`,t('fx.evolve'),'info');
   } else if(d.type==='monster'){
     const i=p.field.indexOf(null);
-    p.field[i]={ uid:c.uid, id:c.id, atk:d.atk, hp:d.hp, maxHp:d.hp, summonTurn:S.turnNo, canAttack:!!d.rush, frozen:false };
+    p.field[i]={ uid:c.uid, id:c.id, atk:d.atk, hp:d.hp, maxHp:d.hp, summonTurn:S.turnNo, canAttack:!!d.rush, frozen:false, pierce:false };
     addLog(pi,'l.summon',{p:'#'+pi,c:'@'+c.id});
   } else if(c.id==='fireball'){
     if(target==='face'){ addLog(pi,'l.hitFace',{p:'#'+pi,c:'@'+c.id,q:'#'+o}); damagePlayer(o,d.dmg); }
@@ -816,11 +921,38 @@ function doPlay(pi,c,target){
     target.guarded=true; target.guardSince=S.turnNo;
     addLog(pi,'l.guard',{p:'#'+pi,t:'@'+target.id});
     fx(slotKey(pi,target),t('fx.guard'),'info');
+  } else if(c.id==='aoe'){
+    addLog(pi,'l.aoe',{p:'#'+pi,c:'@aoe'});
+    S.p[o].field.forEach(m=>{ if(m){ m.hp-=1; fx(slotKey(o,m),'-1','dmg'); } });
+    killCheck(o);
+  } else if(c.id==='fog'){
+    p.fogUntil=S.turnNo+1;
+    addLog(pi,'l.fog',{p:'#'+pi,c:'@fog'});
+    fx(`h${pi}`,t('fx.fogOn'),'info');
+  } else if(c.id==='pierce'){
+    target.pierce=true;
+    addLog(pi,'l.pierce',{p:'#'+pi,t:'@'+target.id});
+    fx(slotKey(pi,target),t('fx.pierce'),'info');
+  } else if(c.id==='revive'){
+    const id=p.grave.pop();
+    if(p.hand.length<CONFIG.maxHand){ p.hand.push({uid:++uidSeq,id}); addLog(pi,'l.revive',{p:'#'+pi,c:'@'+id}); }
+    else addLog(pi,'l.burn',{c:'@'+id});
+    fx(`h${pi}`,'+1','info');
   } else if(d.type==='field'){
     const old=p.fieldCard; p.fieldCard=c.id;
     if(old) addLog(pi,'l.fieldSwap',{p:'#'+pi,a:'@'+old,c:'@'+c.id});
     else addLog(pi,'l.field',{p:'#'+pi,c:'@'+c.id});
   }
+}
+
+// 攻撃のルール：挑発・幽体・抜け道・結界
+function faceAllowed(pi,m){ const o=1-pi; return !CONFIG.mustAttackMonsters || !blockers(o).length || m.pierce || !!CARDS[m.id].phantom; }
+function monTargetBlock(pi,m,tg){
+  if(CARDS[m.id].phantom) return 'w.phantom';
+  if(tg.guarded) return 'w.guarded';
+  const taunts=blockers(1-pi).filter(e=>CARDS[e.id].taunt);
+  if(taunts.length && !taunts.includes(tg)) return 'w.taunt';
+  return null;
 }
 
 function attack(pi,m,target){
@@ -848,11 +980,15 @@ async function playAnimated(pi,c,target){
     await projectile(CRYSTAL[pi].clone().add(new THREE.Vector3(0,.4,0)), to, EL[d.el]);
   }
   if(!S) return;
+  const foes = c.id==='aoe' ? S.p[o].field.map((m,i)=>m?slotPos(o,i):null).filter(Boolean) : [];
   doPlay(pi,c,target);
   render();
   if(c.id==='heal') healFx(pi);
   if(c.id==='book') bookFx(pi);
-  if(c.id==='guard'){ const p0=slotPos(pi,S.p[pi].field.indexOf(target)); magicCircle(V(p0.x,.06,p0.z),EL.ward,2.8,1.2); burst(V(p0.x,1,p0.z),EL.ward,60,3,1,.2,-1); }
+  if(c.id==='revive') healFx(pi);
+  if(c.id==='guard' || c.id==='pierce'){ const p0=slotPos(pi,S.p[pi].field.indexOf(target)); magicCircle(V(p0.x,.06,p0.z),EL[d.el],2.8,1.2); burst(V(p0.x,1,p0.z),EL[d.el],60,3,1,.2,-1); }
+  if(c.id==='fog'){ const p0=CRYSTAL[pi]; magicCircle(V(p0.x,.06,p0.z),EL.ward,3.2,1.4); burst(p0,EL.ward,70,2,1.4,.24,-1); }
+  if(c.id==='aoe'){ foes.forEach(p0=>{ pillar(p0,EL.bolt,7,.55,.32); burst(V(p0.x,1,p0.z),EL.bolt,40,5,.6,.22); }); shake(.4); flash(); }
   await sleep(d.type==='monster' ? 950 : 550);
 }
 
@@ -878,19 +1014,19 @@ async function attackAnimated(pi,m,target){
   await sleep(250);
 }
 
-/* ===== CPU ===== */
+/* ===== CPU（me=CPUが操作する側。テストでは両側をCPUにできる） ===== */
 async function cpuTurn(gid){
   S.busy=true; render();
   await sleep(1100); if(!alive(gid)) return;
   for(let guard=0; guard<12 && !S.over; guard++){
-    const pick=cpuPickPlay(); if(!pick) break;
+    const pick=cpuPickPlay(1); if(!pick) break;
     await playAnimated(1,pick.card,pick.target); if(!alive(gid)) return;
     await sleep(CONFIG.cpuDelay); if(!alive(gid)) return;
   }
   for(const m of [...S.p[1].field]){
     if(S.over) break;
-    if(!m || !m.canAttack || !S.p[1].field.includes(m)) continue;
-    const tg=cpuPickAttack(m); if(!tg) continue;
+    if(!m || !canAttackWith(1,m) || !S.p[1].field.includes(m)) continue;
+    const tg=cpuPickAttack(m,1); if(!tg) continue;
     await attackAnimated(1,m,tg); if(!alive(gid)) return;
     await sleep(CONFIG.cpuDelay); if(!alive(gid)) return;
   }
@@ -898,45 +1034,66 @@ async function cpuTurn(gid){
   if(!S.over) endTurn(); else render();
 }
 
-function cpuPickPlay(){
-  const p=S.p[1], o=S.p[0];
-  const ok = p.hand.filter(c=>!canPlay(1,c));
+function cpuPickPlay(me=1){
+  const o=1-me, p=S.p[me], op=S.p[o];
+  const ok = p.hand.filter(c=>!canPlay(me,c));
   const find = id => ok.find(c=>c.id===id);
-  const enemies = o.field.filter(Boolean);
+  const enemies = op.field.filter(Boolean);
+  const foeFog = fogActive(o);
   const fb = find('fireball');
-  if(fb && o.life<=CARDS.fireball.dmg) return {card:fb,target:'face'};
-  const ev = find('dragon');
-  if(ev) return {card:ev, target:evoTargets(1,CARDS.dragon)[0]};
+  if(fb && !foeFog && op.life<=CARDS.fireball.dmg) return {card:fb,target:'face'};
+  const pc = find('pierce');
+  if(pc && !foeFog){
+    const cand=pierceTargets(me).sort((a,b)=>atkOf(me,b)-atkOf(me,a))[0];
+    if(cand && blockers(o).length && atkOf(me,cand)>0) return {card:pc,target:cand};
+  }
+  const ev = ok.find(c=>CARDS[c.id].evolveFrom);
+  if(ev) return {card:ev, target:evoTargets(me,CARDS[ev.id])[0]};
+  const fg = find('fog');
+  if(fg){
+    const threat=enemies.filter(m=>!m.frozen && m.id!=='wall').reduce((s,m)=>s+atkOf(o,m),0);
+    if(threat>0 && (threat>=p.life || p.life<=2)) return {card:fg};
+  }
+  const ao = find('aoe');
+  if(ao){ const kills=enemies.filter(m=>m.hp<=1).length; if(kills>=1 || enemies.length>=2) return {card:ao}; }
   const gd = find('guard');
   if(gd){
-    const danger = p.field.filter(m=>m && !m.guarded && (atkOf(1,m)>=3 || m.id==='dragon') && enemies.some(e=>atkOf(0,e)>=m.hp));
+    const danger = p.field.filter(m=>m && !m.guarded && (atkOf(me,m)>=3 || CARDS[m.id].evolveFrom) && enemies.some(e=>atkOf(o,e)>=m.hp));
     if(danger.length) return {card:gd,target:danger[0]};
   }
   const ch = find('chain');
-  const threat = enemies.filter(m=>!m.frozen && atkOf(0,m)>=3).sort((a,b)=>atkOf(0,b)-atkOf(0,a))[0];
+  const threat = enemies.filter(m=>!m.frozen && atkOf(o,m)>=3).sort((a,b)=>atkOf(o,b)-atkOf(o,a))[0];
   if(ch && threat) return {card:ch,target:threat};
   if(!p.fieldCard && p.field.some(Boolean)){
+    const bigMagic = p.hand.filter(c=>CARDS[c.id].type==='magic' && CARDS[c.id].cost>=2).length;
     const damaged = p.field.some(m=>m && m.hp<m.maxHp);
-    const f = damaged ? (find('sanctuary')||find('altar')) : (find('altar')||find('sanctuary'));
+    const f = (bigMagic>=2 && find('storm')) || (damaged ? (find('sanctuary')||find('altar')) : (find('altar')||find('sanctuary'))) || find('storm');
     if(f) return {card:f};
   }
   const mons = ok.filter(c=>CARDS[c.id].type==='monster' && !CARDS[c.id].evolveFrom).sort((a,b)=>CARDS[b.id].cost-CARDS[a.id].cost);
   if(mons.length) return {card:mons[0]};
-  if(fb){
-    const killable = enemies.filter(m=>m.hp<=CARDS.fireball.dmg).sort((a,b)=>atkOf(0,b)-atkOf(0,a));
+  if(fb && !foeFog){
+    const killable = enemies.filter(m=>m.hp<=CARDS.fireball.dmg).sort((a,b)=>atkOf(o,b)-atkOf(o,a));
     if(killable.length) return {card:fb,target:killable[0]};
     if(!enemies.length) return {card:fb,target:'face'};
   }
+  const rv = find('revive');
+  if(rv && p.hand.length<=4) return {card:rv};
   const bk = find('book');
   if(bk && p.hand.length<=3) return {card:bk};
   const hl = find('heal'); if(hl) return {card:hl};
   return null;
 }
 
-function cpuPickAttack(m){
-  const enemies=blockers(0), a=atkOf(1,m);
-  if(!enemies.length) return 'face';
-  const opts = enemies.map(e=>({e, kill:e.hp<=a, die:m.hp<=atkOf(0,e), eAtk:atkOf(0,e)})).sort((x,y)=>y.eAtk-x.eAtk);
+function cpuPickAttack(m,me=1){
+  const o=1-me, a=atkOf(me,m), foeFog=fogActive(o);
+  if(a<=0) return null;
+  if(CARDS[m.id].phantom || m.pierce) return foeFog ? null : 'face';
+  let enemies=blockers(o);
+  if(!enemies.length) return foeFog ? null : 'face';
+  const taunts=enemies.filter(e=>CARDS[e.id].taunt);
+  if(taunts.length) enemies=taunts;
+  const opts = enemies.map(e=>({e, kill:e.hp<=a, die:m.hp<=atkOf(o,e), eAtk:atkOf(o,e)})).sort((x,y)=>y.eAtk-x.eAtk);
   const best = opts.find(x=>x.kill && !x.die) || opts.find(x=>x.kill && x.eAtk>=a) || opts.find(x=>!x.die);
   if(best) return best.e;
   return CONFIG.mustAttackMonsters ? null : 'face';
@@ -963,8 +1120,8 @@ function clickHand(c){
     return;
   }
   if(c.id==='fireball' || c.id==='chain'){ S.sel={kind:'spell',card:c}; return; }
-  if(c.id==='guard'){
-    const own=S.p[0].field.filter(Boolean);
+  if(c.id==='guard' || c.id==='pierce'){
+    const own = c.id==='pierce' ? pierceTargets(0) : S.p[0].field.filter(Boolean);
     if(own.length===1) run(()=>playAnimated(0,c,own[0]));
     else S.sel={kind:'ally',card:c};
     return;
@@ -975,8 +1132,8 @@ function clickHand(c){
 function resolveTarget(tg){
   const sel=S.sel; if(!sel) return;
   if(sel.kind==='attack'){
-    if(tg==='face' && CONFIG.mustAttackMonsters && blockers(1).length){ setHint('w.face',null,true); return; }
-    if(tg!=='face' && tg.guarded){ setHint('w.guarded',null,true); return; }
+    if(tg==='face'){ if(!faceAllowed(0,sel.m)){ setHint('w.face',null,true); return; } }
+    else { const w=monTargetBlock(0,sel.m,tg); if(w){ setHint(w,null,true); return; } }
     S.sel=null; setHint(null); run(()=>attackAnimated(0,sel.m,tg));
   } else if(sel.kind==='spell'){
     if(tg==='face' && sel.card.id==='chain'){ setHint('w.monOnly',{c:'@chain'},true); return; }
@@ -987,7 +1144,7 @@ function resolveTarget(tg){
 function heroIsTarget(){
   if(!S) return false;
   const sel=S.sel, myTurn=S.turn===0 && !S.over && !S.busy;
-  return !!(myTurn && sel && ((sel.kind==='spell' && sel.card.id==='fireball') || (sel.kind==='attack' && (!CONFIG.mustAttackMonsters || !blockers(1).length))));
+  return !!(myTurn && sel && ((sel.kind==='spell' && sel.card.id==='fireball') || (sel.kind==='attack' && faceAllowed(0,sel.m))));
 }
 
 function battleAct(act,data){
@@ -1010,8 +1167,9 @@ function battleAct(act,data){
         if(evoTargets(0,d).includes(m)){ S.sel=null; setHint(null); run(()=>playAnimated(0,sel.card,m)); }
         else setHint('w.evolveTarget',{c:'@'+d.evolveFrom},true);
       }
-      else if(S.sel?.kind==='ally'){ const sel=S.sel; S.sel=null; setHint(null); run(()=>playAnimated(0,sel.card,m)); }
+      else if(S.sel?.kind==='ally'){ const sel=S.sel; if(sel.card.id==='pierce' && !pierceTargets(0).includes(m)) setHint('w.pierceTarget',null,true); else { S.sel=null; setHint(null); run(()=>playAnimated(0,sel.card,m)); } }
       else if(S.sel?.kind==='attack' && S.sel.m===m){ S.sel=null; setHint(null); }
+      else if(m.canAttack && atkOf(0,m)<=0) setHint('w.noAtk',null,true);
       else if(m.canAttack){ S.sel={kind:'attack',m}; setHint(null); }
       else setHint(m.frozen?'w.frozen':'w.tired',null,true);
     } else resolveTarget(m);
@@ -1023,12 +1181,12 @@ function battleAct(act,data){
 /* ===== 対戦画面の表示（HUD） ===== */
 function pips(n,max,cls){ let s=''; for(let i=0;i<max;i++) s+=`<span class="pip ${cls} ${i<n?'on':''}"></span>`; return `<span class="pips">${s}</span>`; }
 function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function cardBody(id){
+function cardBody(id,cost){
   const d=CARDS[id];
   const stats = d.type==='monster'
-    ? `${d.tag?`<span class="text">${esc(cardText(id))}</span>`:''}<span class="stats"><b class="atk">${d.atk}</b><b class="hp">${d.hp}</b></span>`
+    ? `${cardText(id)?`<span class="text">${esc(cardText(id))}</span>`:''}<span class="stats"><b class="atk">${d.atk}</b><b class="hp">${d.hp}</b></span>`
     : `<span class="text">${esc(cardText(id))}</span>`;
-  return `<span class="cost">${d.cost}</span><span class="kind">${esc(cardMotif(id))}</span><span class="glyph" aria-hidden="true">${d.glyph}</span><span class="name">${esc(cardName(id))}</span>${stats}`;
+  return `<span class="cost ${cost!=null&&cost<d.cost?'down':''}">${cost??d.cost}</span><span class="kind">${esc(cardMotif(id))}</span><span class="glyph" aria-hidden="true">${d.glyph}</span><span class="name">${esc(cardName(id))}</span>${stats}`;
 }
 function cardHTML(id,extra=''){ return `<div class="card el-${CARDS[id].el} ${extra}">${cardBody(id)}</div>`; }
 function panelHTML(pi){
@@ -1052,7 +1210,7 @@ function render(){
     const d=CARDS[c.id], cls=['card','el-'+d.el];
     cls.push(myTurn && !canPlay(0,c) ? 'playable' : 'dim');
     if(S.sel?.card===c) cls.push('selected');
-    return `<button class="${cls.join(' ')}" data-act="hand" data-uid="${c.uid}">${cardBody(c.id)}</button>`;
+    return `<button class="${cls.join(' ')}" data-act="hand" data-uid="${c.uid}">${cardBody(c.id,costOf(0,c))}</button>`;
   }).join('') || `<span class="meta">${t('hud.noHand')}</span>`;
 
   let hint = S.hint ? t(S.hint,S.hintP) : '';
@@ -1062,7 +1220,7 @@ function render(){
     else if(S.busy) hint='';
     else if(S.sel?.kind==='attack') hint=t('h.attack');
     else if(S.sel?.kind==='evolve') hint=t('h.evolve',{c:'@'+CARDS[S.sel.card.id].evolveFrom});
-    else if(S.sel?.kind==='ally') hint=t('h.ally');
+    else if(S.sel?.kind==='ally') hint=t(S.sel.card.id==='pierce'?'h.pierce':'h.ally');
     else if(S.sel?.kind==='spell') hint=t('h.spell',{c:'@'+S.sel.card.id});
     else hint=t('h.default');
   }
@@ -1269,7 +1427,7 @@ function decksHTML(){
 function deckEditHTML(i){
   const d=SV.decks[i], n=deckCount(d.cards), ok=n===CONFIG.deckSize;
   const inDeck=CARD_IDS.filter(id=>d.cards[id]).map(id=>`<div class="drow"><span class="dot el-${CARDS[id].el}"></span><span class="dname">${esc(cardName(id))}</span><span class="meta">${esc(cardMotif(id))}</span><b class="num">×${d.cards[id]}</b><button class="mini" data-act="deckRemove" data-id="${id}" aria-label="−">−</button></div>`).join('') || `<p class="meta">${t('deck.empty')}</p>`;
-  const pool=CARD_IDS.filter(id=>SV.collection[id]).map(id=>{ const inD=d.cards[id]||0, lim=Math.min(SV.collection[id],CONFIG.maxCopies); return `<button class="cell sm ${inD>=lim||n>=CONFIG.deckSize?'maxed':''}" data-act="deckAdd" data-id="${id}">${cardHTML(id)}<span class="cnt">${inD}/${lim}</span></button>`; }).join('');
+  const pool=CARD_IDS.filter(id=>SV.collection[id]).map(id=>{ const inD=d.cards[id]||0, lim=Math.min(SV.collection[id],cardLimit(id)); return `<button class="cell sm ${inD>=lim||n>=CONFIG.deckSize?'maxed':''}" data-act="deckAdd" data-id="${id}">${cardHTML(id)}<span class="cnt">${inD}/${lim}</span></button>`; }).join('');
   return `<div class="row between"><button class="ghost-btn" data-act="deckBack">← ${t('deck.back')}</button><span class="num ${ok?'okc':'warnc'}">${t('deck.count',{n,m:CONFIG.deckSize})}</span></div>
     <label class="field"><span class="lbl">${t('deck.name')}</span><input id="deckName" data-i="${i}" value="${esc(deckName(i))}" maxlength="20"></label>
     <div class="row">${i===SV.active?`<span class="badge">${t('deck.active')}</span>`:`<button class="btn sm" data-act="deckUse" data-i="${i}" ${ok?'':'disabled'}>${t('deck.use')}</button>`}<button class="ghost-btn" data-act="deckClear">${t('deck.clear')}</button></div>
@@ -1282,15 +1440,15 @@ function deckEditHTML(i){
 function deckAdd(id){
   const d=SV.decks[APP.editing], n=deckCount(d.cards), inD=d.cards[id]||0;
   if(n>=CONFIG.deckSize){ toast(t('deck.full',{m:CONFIG.deckSize})); return; }
-  if(inD>=CONFIG.maxCopies){ toast(t('deck.maxCopies',{m:CONFIG.maxCopies})); return; }
+  if(inD>=cardLimit(id)){ toast(t('deck.maxCopies',{m:cardLimit(id)})); return; }
   if(inD>=(SV.collection[id]||0)){ toast(t('deck.noMore')); return; }
   d.cards[id]=inD+1; save(); renderApp(true);
 }
 function deckImport(){
-  const m=String($('#deckCodeIn')?.value||'').trim().toUpperCase().match(/^GATE1-(\d+)$/);
-  if(!m || m[1].length!==CARD_IDS.length){ toast(t('deck.badCode')); return; }
+  const dg=codeDigits($('#deckCodeIn')?.value);
+  if(!dg){ toast(t('deck.badCode')); return; }
   const cards={};
-  CARD_IDS.forEach((id,i)=>{ const n=Math.min(+m[1][i],CONFIG.maxCopies,SV.collection[id]||0); if(n) cards[id]=n; });
+  CARD_IDS.forEach((id,i)=>{ const n=Math.min(+dg[i],cardLimit(id),SV.collection[id]||0); if(n) cards[id]=n; });
   SV.decks[APP.editing].cards=cards; save(); toast(t('deck.imported')); renderApp(true);
 }
 function showCard(id){
@@ -1369,7 +1527,7 @@ function showModal(html,cls=''){ const m=$('#modal'); m.innerHTML=`<div class="s
 function closeModal(){ const m=$('#modal'); m.hidden=true; m.innerHTML=''; PACK=null; }
 function showRules(){
   const rows=CARD_IDS.map(id=>{ const d=CARDS[id]; return `<tr><td><b>${esc(cardName(id))}</b><br><span class="meta">${esc(cardMotif(id))}</span></td><td class="num">${d.cost}</td><td>${d.type==='monster'?`ATK ${d.atk} / HP ${d.hp}${d.tag?'<br>'+esc(cardText(id)):''}`:esc(cardText(id))}</td></tr>`; }).join('');
-  showModal(`<h2>${t('st.rules')}</h2><ul>${[1,2,3,4,5,6,7,8,9].map(i=>`<li>${t('r'+i)}</li>`).join('')}</ul>
+  showModal(`<h2>${t('st.rules')}</h2><ul>${[1,2,3,4,5,6,7,8,9,10].map(i=>`<li>${t('r'+i)}</li>`).join('')}</ul>
     <div class="cardtable"><table><tr><th></th><th>${t('cost')}</th><th></th></tr>${rows}</table></div>
     <p><button class="endbtn" data-act="closeModal">${t('close')}</button></p>`);
 }
@@ -1464,7 +1622,7 @@ const models=new Map(), fieldEnts=[null,null], hitList=[], tweens=[], bursts=[];
 const SLOT_X=[-2.6,0,2.6], SLOT_Z=2.3;
 const CRYSTAL=[new THREE.Vector3(0,1.3,5.3), new THREE.Vector3(0,1.3,-5.3)];
 const crystals=[];
-const LABEL_Y={ drake:1.45, dragon:2.5, golem:2.15, knight:2.45, scout:2.0 };
+const LABEL_Y={ drake:1.45, dragon:2.5, golem:2.15, knight:2.45, scout:2.0, phantom:2.3, wall:2.0, titan:2.9, egg:1.35 };
 const V=(x,y,z)=>new THREE.Vector3(x,y,z);
 const easeOut=k=>1-Math.pow(1-k,3);
 const easeBack=k=>{ const c=1.7; return 1+(c+1)*Math.pow(k-1,3)+c*Math.pow(k-1,2); };
@@ -1634,6 +1792,40 @@ function buildMonster(id){
     g.add(sw); g.userData.sword=sw;
     const sh=add(g,new THREE.CylinderGeometry(.32,.32,.06,10),gd,-.48,1.02,-.12); sh.rotation.z=Math.PI/2; sh.rotation.y=.3;
   }
+  else if(id==='wall'){
+    const st=M(0x7d7466), dk=M(0x544b3f), rune=M(0xf2e2a8,{emissive:col('#ffd77a'),emissiveIntensity:1.6});
+    add(g,new THREE.DodecahedronGeometry(.75),st,0,.85,.05,1.15,1,1);
+    add(g,new THREE.DodecahedronGeometry(.32),dk,.55,.35,.25); add(g,new THREE.DodecahedronGeometry(.28),dk,-.6,.3,.2);
+    const sh=add(g,new THREE.CylinderGeometry(.62,.62,.12,8),dk,0,.95,-.72); sh.rotation.x=Math.PI/2;
+    const rr2=add(g,new THREE.TorusGeometry(.42,.04,6,20),rune,0,.95,-.8); rr2.rotation.z=Math.PI/8;
+    add(g,new THREE.OctahedronGeometry(.13),rune,0,.95,-.82);
+  }
+  else if(id==='titan'){
+    const st=M(0x6f6656), dk=M(0x4a4236), glow=M(0xffb040,{emissive:col('#ff8a20'),emissiveIntensity:2.2});
+    add(g,new THREE.BoxGeometry(.42,.8,.46),dk,.36,.4,0); add(g,new THREE.BoxGeometry(.42,.8,.46),dk,-.36,.4,0);
+    add(g,new THREE.BoxGeometry(1.35,1.0,.8),st,0,1.3,0);
+    add(g,new THREE.DodecahedronGeometry(.42),st,.92,1.65,0); add(g,new THREE.DodecahedronGeometry(.42),st,-.92,1.65,0);
+    add(g,new THREE.BoxGeometry(.4,1.05,.42),dk,.98,.95,-.05); add(g,new THREE.BoxGeometry(.4,1.05,.42),dk,-.98,.95,-.05);
+    add(g,new THREE.BoxGeometry(.56,.48,.52),st,0,2.05,-.04);
+    add(g,new THREE.BoxGeometry(.42,.07,.03),glow,0,2.08,-.31);
+    add(g,new THREE.OctahedronGeometry(.2),glow,0,1.35,-.42);
+    for(const x of [-.18,0,.18]){ const sp=add(g,new THREE.ConeGeometry(.07,.3,4),glow,x,2.42,-.04); sp.rotation.z=x*-1.2; }
+  }
+  else if(id==='phantom'){
+    const body=M(0x8f9de0,{transparent:true,opacity:.55,emissive:col('#5f6fd0'),emissiveIntensity:.6});
+    const eye=M(0xffffff,{emissive:col('#c8d2ff'),emissiveIntensity:2.2});
+    const robe=add(g,new THREE.ConeGeometry(.55,1.3,9,1,true),body,0,.95,0); robe.material.side=THREE.DoubleSide;
+    add(g,new THREE.SphereGeometry(.32,10,8),body,0,1.72,0);
+    add(g,new THREE.SphereGeometry(.06,6,4),eye,.11,1.76,-.27); add(g,new THREE.SphereGeometry(.06,6,4),eye,-.11,1.76,-.27);
+    for(const s of [1,-1]){ const arm=add(g,new THREE.ConeGeometry(.12,.6,5),body,s*.48,1.15,-.1); arm.rotation.z=s*1.1; }
+    g.userData.flyer=true;
+  }
+  else if(id==='egg'){
+    const sh=M(0xf0a060,{emissive:col('#e5583c'),emissiveIntensity:.25}), crack=M(0xffd36b,{emissive:col('#ffb020'),emissiveIntensity:2});
+    add(g,new THREE.SphereGeometry(.42,14,12),sh,0,.5,0,1,1.3,1);
+    const c1=add(g,new THREE.TorusGeometry(.43,.025,5,24,Math.PI*1.2),crack,0,.62,0); c1.rotation.x=Math.PI/2; c1.rotation.z=.4;
+    add(g,new THREE.SphereGeometry(.14,8,6),M(0x7a5a3a),0,.08,0,2.2,.4,2.2);
+  }
   else if(id==='scout'){
     const bd=M(0x5fb8d8), lt=M(0xd6f3ff), wg=M(0x7fd0e8,{side:THREE.DoubleSide,emissive:col('#7fd0e8'),emissiveIntensity:.25});
     const bk=M(0xecc943), eye=M(0xffffff,{emissive:col('#ffffff'),emissiveIntensity:1.5});
@@ -1670,15 +1862,15 @@ function removeEnt(e,withFx){
 }
 function updateEnt(e,m,pi){
   const sel=S?.sel, myTurn=S.turn===0 && !S.over && !S.busy;
-  const badge = m.frozen ? '封' : m.guarded ? '護' : (pi===0 && S.turn===0 && !m.canAttack ? '休' : '');
+  const badge = m.frozen ? '封' : m.guarded ? '護' : m.pierce ? '抜' : CARDS[m.id].taunt ? '挑' : (pi===0 && S.turn===0 && !m.canAttack ? '休' : '');
   drawLabel(e.label, atkOf(pi,m), m.hp, m.maxHp, atkOf(pi,m)>m.atk, badge);
   let st=null;
   if(pi===0){
     if(sel?.kind==='attack' && sel.m===m) st='sel';
     else if(sel?.kind==='evolve' && evoTargets(0,CARDS[sel.card.id]).includes(m)) st='evo';
-    else if(sel?.kind==='ally') st='ally';
-    else if(myTurn && !sel && m.canAttack) st='ready';
-  } else if(myTurn && sel && sel.kind!=='evolve' && sel.kind!=='ally' && !(sel.kind==='attack' && m.guarded)) st='target';
+    else if(sel?.kind==='ally' && (sel.card.id!=='pierce' || pierceTargets(0).includes(m))) st='ally';
+    else if(myTurn && !sel && canAttackWith(0,m)) st='ready';
+  } else if(myTurn && sel && (sel.kind==='spell' || (sel.kind==='attack' && !monTargetBlock(0,sel.m,m)))) st='target';
   e.ringState=st; e.ring.visible=!!st;
   if(st) e.ring.material.color.set({ready:'#d9b45f',sel:'#ffffff',evo:'#ff7a2a',ally:'#f2e2a8',target:'#ff4a3a'}[st]);
   e.liftT = st==='sel' ? .45 : 0;
@@ -1756,6 +1948,8 @@ function buildCrystals(){
 function syncCrystals(){
   for(const pi of [0,1]){
     const c=crystals[pi], life=S.p[pi].life;
+    if(!c.fog){ c.fog=new THREE.Mesh(new THREE.SphereGeometry(1.35,20,14), new THREE.MeshBasicMaterial({color:col(EL.ward),transparent:true,opacity:.2,blending:THREE.AdditiveBlending,depthWrite:false})); c.g.add(c.fog); }
+    c.fog.visible = fogActive(pi);
     c.list.forEach((o,i)=>o.visible=i<life);
     if(!S.over || life>0){ c.gem.visible=true; }
     c.gem.material.emissiveIntensity=.25+.75*life/CONFIG.maxLife;
@@ -1963,7 +2157,7 @@ function loop(){
 function clearBoard3D(){
   for(const e of models.values()) world.remove(e.root); models.clear();
   for(const pi of [0,1]){ if(fieldEnts[pi]) world.remove(fieldEnts[pi].group); fieldEnts[pi]=null; }
-  crystals.forEach(c=>c.gem.visible=true);
+  crystals.forEach(c=>{ c.gem.visible=true; if(c.fog) c.fog.visible=false; });
 }
 
 
@@ -2088,11 +2282,13 @@ function float3D(pos,text,cls){
 
 /* ===== 起動 ===== */
 (async()=>{
-  SV=loadSave(); setLang(SV.lang); CONFIG.animSpeed=SV.settings.speed||1; viewIdx=SV.settings.view||0;
+  SV=loadSave(); setLang(SV.lang);
+  const gifted=applyGifts(); CONFIG.animSpeed=SV.settings.speed||1; viewIdx=SV.settings.view||0;
   try{ await Promise.race([Promise.all([document.fonts.load('40px "Dela Gothic One"'),document.fonts.load('bold 20px "JetBrains Mono"'),document.fonts.load('bold 20px "Zen Kaku Gothic New"')]), new Promise(r=>setTimeout(r,2500))]); }catch(e){}
   init3D();
   $('#loading').remove();
   showApp(true);
+  if(gifted) setTimeout(()=>toast(t('g.new',{n:NEW_V22.length})),600);
   try{ if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
 })();
 </script>
