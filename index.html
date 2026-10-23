@@ -267,6 +267,11 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 #toast.show{animation:toast 2.4s ease forwards}
 @keyframes toast{0%{opacity:0;transform:translate(-50%,8px)}10%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
 #modal{z-index:50}
+#devBanner{position:fixed;top:env(safe-area-inset-top,0px);left:50%;transform:translateX(-50%);z-index:70;background:var(--danger);color:#fff;font-size:11px;font-weight:700;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.ver{background:none;border:0;color:var(--muted);font-size:12px;padding:4px 0;cursor:pointer;align-self:flex-start}
+.rates{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.selgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.dim-panel{opacity:.5}
 @media (max-width:560px){ .stats3 .stat b{font-size:14px} .hud .tools .tool{padding:4px 8px} }
 *{box-sizing:border-box}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -317,11 +322,12 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 <div class="modal" id="overlay" hidden></div>
 <div class="modal" id="modal" hidden></div>
 <div id="toast" role="status" aria-live="polite"></div>
+<div id="devBanner" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== 調整用の設定 =====
-const APP_VERSION = '2.2.0';
+const APP_VERSION = '2.3.0';
 const CONFIG = {
   startLife: 5,          // 初期ライフ
   maxLife: 5,            // ライフ上限（回復の上限）
@@ -490,6 +496,50 @@ const STR = {
   'fx.hatch':['孵化','HATCH','孵化','ECLOSIÓN','부화','ECLOSÃO'],
   'g.new':['新カード{n}種を各2枚プレゼントしました','You received 2 copies each of {n} new cards','已赠送{n}种新卡各2张','Recibiste 2 copias de {n} cartas nuevas','신규 카드 {n}종을 2장씩 선물했습니다','Você recebeu 2 cópias de {n} cartas novas'],
   'r10':['挑発のモンスターがいる間、相手はそれ以外のモンスターを攻撃できない。幽体のモンスターは相手プレイヤーだけを攻撃でき、モンスターに防がれない。ATKが0のモンスターは攻撃できない。','While you have a Taunt monster, the opponent must attack it before your other monsters. Phantom monsters can only attack the opponent, and monsters can\'t block them. Monsters with 0 ATK can\'t attack.','有嘲讽怪兽时，对手不能攻击其他怪兽。幽体怪兽只能攻击对手，且不会被怪兽阻挡。ATK为0的怪兽无法攻击。','Mientras tengas un monstruo con Provocar, el rival debe atacarlo antes que a tus otros monstruos. Los Fantasmas solo atacan al rival y los monstruos no los bloquean. Los monstruos con 0 ATK no pueden atacar.','도발 몬스터가 있는 동안 상대는 다른 몬스터를 공격할 수 없다. 유령 몬스터는 상대 플레이어만 공격하며 몬스터에게 막히지 않는다. ATK 0 몬스터는 공격할 수 없다.','Enquanto houver um monstro com Provocar, o oponente deve atacá-lo antes dos outros. Fantasmas só atacam o oponente e monstros não os bloqueiam. Monstros com 0 ATK não podem atacar.'],
+  'gift.title':['ギフトコード','Gift code','礼品码','Código de regalo','선물 코드','Código de presente'],
+  'gift.redeem':['受け取る','Redeem','领取','Canjear','받기','Resgatar'],
+  'gift.ok':['「{c}」を{n}枚受け取りました','You received {n}× {c}','获得了{n}张「{c}」','Recibiste {n}× {c}','「{c}」을(를) {n}장 받았습니다','Você recebeu {n}× {c}'],
+  'gift.pts':['パックポイント{n}を受け取りました','You received {n} Pack Points','获得了{n}卡包点数','Recibiste {n} puntos de sobre','팩 포인트 {n}을(를) 받았습니다','Você recebeu {n} pontos de pacote'],
+  'gift.bad':['このコードは使えません','This code can\'t be used','此代码无法使用','Este código no se puede usar','이 코드는 사용할 수 없습니다','Este código não pode ser usado'],
+  'gift.used':['このコードは使用済みです','This code has already been used','此代码已被使用','Este código ya se usó','이미 사용된 코드입니다','Este código já foi usado'],
+  'gift.notYou':['このコードは別のプレイヤー宛てです','This code is for a different player','此代码属于其他玩家','Este código es para otro jugador','다른 플레이어용 코드입니다','Este código é para outro jogador'],
+  'dev.title':['開発者画面','Developer'],
+  'dev.unlocked':['開発者画面が使えるようになりました','Developer screen unlocked'],
+  'dev.taps':['あと{n}回','{n} more taps'],
+  'dev.open':['開発者画面を開く','Open developer screen'],
+  'dev.back':['設定に戻る','Back to settings'],
+  'dev.enabled':['開発者モード','Developer mode'],
+  'dev.bannerTxt':['開発者モード中：確率や所持カードが通常と異なります','Developer mode: odds and cards differ from normal'],
+  'dev.allCards':['全カードを使える（上限枚数まで）','All cards available (up to the limit)'],
+  'dev.rates':['パックの確率（%）','Pack odds (%)'],
+  'dev.ratesNote':['合計100%にしてください。開発者モードがオンのときだけ、この端末で有効です','Must total 100%. Applies only on this device while developer mode is on'],
+  'dev.god':['神パック','God pack'],
+  'dev.apply':['反映','Apply'],
+  'dev.resetRates':['標準に戻す','Reset'],
+  'dev.sum':['合計が100%になっていません','Rates must total 100%'],
+  'dev.saved':['反映しました','Applied'],
+  'dev.nextPack':['次のパックの中身を指定','Set the next pack'],
+  'dev.setPack':['この中身にする','Set pack'],
+  'dev.refill':['今日のパックを復活','Refill today\'s pack'],
+  'dev.random':['ランダム','Random'],
+  'dev.hand':['対戦の初期手札を指定（あなた）','Set your opening hand'],
+  'dev.none':['指定なし','None'],
+  'dev.cpuDeck':['練習・完全情報モードのCPUデッキ','CPU deck in Practice / Open Info'],
+  'dev.cpu_starter':['スターター','Starter'],
+  'dev.cpu_mine':['自分と同じ','Same as mine'],
+  'dev.cpu_random':['ランダム','Random'],
+  'dev.give':['この端末にカードを追加','Add cards to this device'],
+  'dev.points':['パックポイント','Pack Points'],
+  'dev.add':['追加','Add'],
+  'dev.added':['追加しました','Added'],
+  'dev.gift':['プレイヤーにカードを送る（ギフトコード発行）','Send cards to a player (gift code)'],
+  'dev.to':['宛先のプレイヤーID（相手の フレンド または 設定 画面に表示）','Recipient player ID (shown on their Friends or Settings screen)'],
+  'dev.count':['枚数','Copies'],
+  'dev.make':['コードを発行','Create code'],
+  'dev.giftNote':['相手は 設定 → ギフトコード に入力して受け取ります。1つのコードは宛先の人が1回だけ使えます','The recipient enters it in Settings → Gift code. Each code works once, only for that player'],
+  'dev.warn':['注意：この端末だけで動く簡易版です。ソースを読めばギフトコードを偽造できるので、公開前にサーバー側の仕組みに置き換えます','Note: device-only prototype. Gift codes can be forged by reading the source, so this must move to a server before release'],
+  'dev.badId':['プレイヤーIDは8文字です','Player ID must be 8 characters'],
+  'dev.needItem':['カードかパックポイントを指定してください','Choose a card or Pack Points'],
   'tab.home':['ホーム','Home','主页','Inicio','홈','Início'],
   'tab.cards':['マイカード','My Cards','我的卡牌','Mis cartas','내 카드','Minhas cartas'],
   'tab.friends':['フレンド','Friends','好友','Amigos','친구','Amigos'],
@@ -722,12 +772,13 @@ function defSave(){
     points:0, lastPack:'', pending:null,
     profile:{name:'Player', id:randId()}, friends:[],
     settings:{speed:1, view:0, hideLast:true, tableHeight:0.78, test:false},
-    stats:{w:0,l:0}, gifts:[] };
+    stats:{w:0,l:0}, gifts:[], usedGifts:[],
+    dev:{unlocked:false, enabled:false, allCards:false, rates:null, god:null, hand:[], cpu:'starter'} };
 }
 function loadSave(){
   try{
     const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
-    if(s && s.v===1){ const d=defSave(); return {...d, ...s, settings:{...d.settings,...(s.settings||{})}, profile:{...d.profile,...(s.profile||{})}, stats:{...d.stats,...(s.stats||{})}}; }
+    if(s && s.v===1){ const d=defSave(); return {...d, ...s, settings:{...d.settings,...(s.settings||{})}, profile:{...d.profile,...(s.profile||{})}, dev:{...d.dev,...(s.dev||{})}, stats:{...d.stats,...(s.stats||{})}}; }
   }catch(e){}
   return defSave();
 }
@@ -778,12 +829,14 @@ function startMatch(mode, friendIdx){
   const my=SV.decks[SV.active].cards;
   if(deckCount(my)!==CONFIG.deckSize){ toast(t('deck.invalid',{m:CONFIG.deckSize})); APP.tab='cards'; APP.cardsSub='decks'; APP.editing=SV.active; showApp(true); return; }
   let opp={...STARTER}, oppName=null;
+  if(mode!=='friend' && devOn()){ if(SV.dev.cpu==='mine') opp={...my}; else if(SV.dev.cpu==='random') opp=randDeck(); }
   if(mode==='friend'){
     const f=SV.friends[friendIdx]; if(!f){ toast(t('bt.noFriend')); return; }
     opp=parseCode(f.code)||opp; oppName=f.name;
   }
   S = { p:[newPlayer(my),newPlayer(opp)], turn:0, turnNo:0, sel:null, busy:false, over:false, overShown:false, winner:null,
         log:[], fx:[], hint:null, hintP:null, warn:false, gid:++gameSeq, mode, friendIdx, open:mode==='open', oppName };
+  if(devOn() && SV.dev.hand.some(Boolean)) forceHand(S.p[0],SV.dev.hand.filter(Boolean).slice(0,CONFIG.maxHand));
   clearBoard3D();
   $('#overlay').hidden=true;
   showApp(false);
@@ -1234,6 +1287,7 @@ function render(){
     oi.innerHTML=`<span class="lbl">${t('hud.order')}</span><div class="oi-cols">${col(0)}${col(1)}</div>`; oi.hidden=false;
   } else oi.hidden=true;
 
+  updateDevBanner();
   sync3D();
   if(renderer?.xr.isPresenting) updateXRHud();
   flushFx();
@@ -1311,7 +1365,8 @@ function renderApp(keepScroll){
   applyI18n();
   $('#tabbar').innerHTML=TABS.map(k=>`<button class="tab ${APP.tab===k?'on':''}" data-act="tab" data-tab="${k}" ${APP.tab===k?'aria-current="page"':''}>${ICON[k]}<span>${t('tab.'+k)}</span></button>`).join('');
   $('#topPoints').textContent=SV.points;
-  $('#screen').innerHTML=({home:homeHTML,cards:cardsHTML,friends:friendsHTML,battle:battleHTML,settings:settingsHTML})[APP.tab]();
+  $('#screen').innerHTML=({home:homeHTML,cards:cardsHTML,friends:friendsHTML,battle:battleHTML,settings:settingsHTML,dev:devHTML})[APP.tab]();
+  updateDevBanner();
   if(APP.tab==='home') bindPackDrag();
   wrap.scrollTop = keepScroll ? y : 0;
 }
@@ -1321,9 +1376,9 @@ function dayKey(d=new Date()){ const x=new Date(d.getTime()-CONFIG.dailyResetHou
 function canOpenPack(){ return SV.settings.test || SV.lastPack!==dayKey(); }
 function nextReset(){ const now=new Date(), r=new Date(now); r.setHours(CONFIG.dailyResetHour,0,0,0); if(r<=now) r.setDate(r.getDate()+1); return r; }
 function fmtLeft(ms){ const h=Math.floor(ms/3600e3), m=Math.floor(ms%3600e3/60e3); return `${h}:${String(m).padStart(2,'0')}`; }
-function rollRarity(){ const r=Math.random(); let acc=0; for(const [k,v] of Object.entries(RARITY)){ acc+=v.rate; if(r<acc) return k; } return 'C'; }
+function rollRarity(){ const r=Math.random(), rates=effRates(); let acc=0; for(const k of Object.keys(RARITY)){ acc+=rates[k]||0; if(r<acc) return k; } return 'C'; }
 function rollPack(){
-  const god=Math.random()<CONFIG.godPackRate, cards=[];
+  const god=Math.random()<effGod(), cards=[];
   for(let i=0;i<CONFIG.packSize;i++){ const rar=god?'R':rollRarity(); const pool=CARD_IDS.filter(id=>CARDS[id].rarity===rar); cards.push(pool[Math.floor(Math.random()*pool.length)]); }
   return {god,cards};
 }
@@ -1419,7 +1474,7 @@ function collectionHTML(){
   const ids=CARD_IDS.filter(id=>f==='all'||CARDS[id].type===f);
   const owned=CARD_IDS.filter(id=>SV.collection[id]).length;
   return `<div class="row between"><div class="chips">${chips}</div><span class="meta">${t('home.dex')} ${owned}/${CARD_IDS.length}</span></div>
-    <div class="grid">${ids.map(id=>{ const n=SV.collection[id]||0; return `<button class="cell ${n?'':'unowned'}" data-act="card" data-id="${id}">${cardHTML(id)}<span class="cnt">×${n}</span><span class="rar">${RARITY[CARDS[id].rarity].mark}</span></button>`; }).join('')}</div>`;
+    <div class="grid">${ids.map(id=>{ const n=owned(id); return `<button class="cell ${n?'':'unowned'}" data-act="card" data-id="${id}">${cardHTML(id)}<span class="cnt">×${n}</span><span class="rar">${RARITY[CARDS[id].rarity].mark}</span></button>`; }).join('')}</div>`;
 }
 function decksHTML(){
   return `<div class="list">${SV.decks.map((d,i)=>{ const n=deckCount(d.cards); return `<div class="item"><div><b>${esc(deckName(i))}</b> ${i===SV.active?`<span class="badge">${t('deck.active')}</span>`:''}<div class="meta">${t('deck.count',{n,m:CONFIG.deckSize})}</div></div><div class="row"><button class="ghost-btn" data-act="deckEdit" data-i="${i}">${t('deck.edit')}</button>${i!==SV.active?`<button class="btn sm" data-act="deckUse" data-i="${i}" ${n===CONFIG.deckSize?'':'disabled'}>${t('deck.use')}</button>`:''}</div></div>`; }).join('')}</div>`;
@@ -1427,7 +1482,7 @@ function decksHTML(){
 function deckEditHTML(i){
   const d=SV.decks[i], n=deckCount(d.cards), ok=n===CONFIG.deckSize;
   const inDeck=CARD_IDS.filter(id=>d.cards[id]).map(id=>`<div class="drow"><span class="dot el-${CARDS[id].el}"></span><span class="dname">${esc(cardName(id))}</span><span class="meta">${esc(cardMotif(id))}</span><b class="num">×${d.cards[id]}</b><button class="mini" data-act="deckRemove" data-id="${id}" aria-label="−">−</button></div>`).join('') || `<p class="meta">${t('deck.empty')}</p>`;
-  const pool=CARD_IDS.filter(id=>SV.collection[id]).map(id=>{ const inD=d.cards[id]||0, lim=Math.min(SV.collection[id],cardLimit(id)); return `<button class="cell sm ${inD>=lim||n>=CONFIG.deckSize?'maxed':''}" data-act="deckAdd" data-id="${id}">${cardHTML(id)}<span class="cnt">${inD}/${lim}</span></button>`; }).join('');
+  const pool=CARD_IDS.filter(id=>owned(id)).map(id=>{ const inD=d.cards[id]||0, lim=Math.min(owned(id),cardLimit(id)); return `<button class="cell sm ${inD>=lim||n>=CONFIG.deckSize?'maxed':''}" data-act="deckAdd" data-id="${id}">${cardHTML(id)}<span class="cnt">${inD}/${lim}</span></button>`; }).join('');
   return `<div class="row between"><button class="ghost-btn" data-act="deckBack">← ${t('deck.back')}</button><span class="num ${ok?'okc':'warnc'}">${t('deck.count',{n,m:CONFIG.deckSize})}</span></div>
     <label class="field"><span class="lbl">${t('deck.name')}</span><input id="deckName" data-i="${i}" value="${esc(deckName(i))}" maxlength="20"></label>
     <div class="row">${i===SV.active?`<span class="badge">${t('deck.active')}</span>`:`<button class="btn sm" data-act="deckUse" data-i="${i}" ${ok?'':'disabled'}>${t('deck.use')}</button>`}<button class="ghost-btn" data-act="deckClear">${t('deck.clear')}</button></div>
@@ -1441,18 +1496,18 @@ function deckAdd(id){
   const d=SV.decks[APP.editing], n=deckCount(d.cards), inD=d.cards[id]||0;
   if(n>=CONFIG.deckSize){ toast(t('deck.full',{m:CONFIG.deckSize})); return; }
   if(inD>=cardLimit(id)){ toast(t('deck.maxCopies',{m:cardLimit(id)})); return; }
-  if(inD>=(SV.collection[id]||0)){ toast(t('deck.noMore')); return; }
+  if(inD>=owned(id)){ toast(t('deck.noMore')); return; }
   d.cards[id]=inD+1; save(); renderApp(true);
 }
 function deckImport(){
   const dg=codeDigits($('#deckCodeIn')?.value);
   if(!dg){ toast(t('deck.badCode')); return; }
   const cards={};
-  CARD_IDS.forEach((id,i)=>{ const n=Math.min(+dg[i],cardLimit(id),SV.collection[id]||0); if(n) cards[id]=n; });
+  CARD_IDS.forEach((id,i)=>{ const n=Math.min(+dg[i],cardLimit(id),owned(id)); if(n) cards[id]=n; });
   SV.decks[APP.editing].cards=cards; save(); toast(t('deck.imported')); renderApp(true);
 }
 function showCard(id){
-  const d=CARDS[id], n=SV.collection[id]||0, cost=RARITY[d.rarity].craft;
+  const d=CARDS[id], n=owned(id), cost=RARITY[d.rarity].craft;
   showModal(`<div class="detail">${cardHTML(id,'big')}<div class="detail-body"><h2>${esc(cardName(id))}</h2>
     <p class="meta">${esc(cardMotif(id))} · ${t('kind.'+d.type)} · ${RARITY[d.rarity].mark}</p>
     ${cardText(id)?`<p>${esc(cardText(id))}</p>`:''}${d.type==='monster'?`<p class="num">ATK ${d.atk} / HP ${d.hp}</p>`:''}
@@ -1518,7 +1573,12 @@ function settingsHTML(){
       <h3>${t('st.test')}</h3>${seg('test',[1,0],s.test?1:0,v=>t(v?'st.on':'st.off'))}
       <p class="meta">${t('st.save')}</p>
       <button class="danger-btn" data-act="reset">${APP.resetArm?t('st.resetConfirm'):t('st.reset')}</button>
-      <p class="meta">${t('st.version')} ${APP_VERSION}</p>
+      <button class="ver" data-act="verTap">${t('st.version')} ${APP_VERSION}</button>
+      ${SV.dev.unlocked?`<button class="ghost-btn" data-act="devOpen">${t('dev.open')}</button>`:''}
+    </section>
+    <section class="panel"><h3>${t('gift.title')}</h3>
+      <p class="meta">${t('fr.id')}：<b class="num">${SV.profile.id}</b></p>
+      <div class="row"><input id="giftIn" placeholder="GIFT1-…" aria-label="${t('gift.title')}"><button class="btn sm" data-act="redeemGift">${t('gift.redeem')}</button></div>
     </section>`;
 }
 
@@ -1533,10 +1593,10 @@ function showRules(){
 }
 function showOdds(){
   const pct=x=>(x*100).toFixed(x<0.1?1:0)+'%';
-  const rows=Object.entries(RARITY).map(([k,v])=>`<tr><td class="rarc">${v.mark}</td><td class="num">${pct(v.rate)}</td><td>${CARD_IDS.filter(id=>CARDS[id].rarity===k).map(id=>esc(cardName(id))).join('、')}</td></tr>`).join('');
+  const rows=Object.entries(RARITY).map(([k,v])=>`<tr><td class="rarc">${v.mark}</td><td class="num">${pct(effRates()[k])}</td><td>${CARD_IDS.filter(id=>CARDS[id].rarity===k).map(id=>esc(cardName(id))).join('、')}</td></tr>`).join('');
   showModal(`<h2>${t('odds.title')}</h2><p class="meta">${t('set.origin')}</p>
     <h3>${t('odds.perCard')}</h3><div class="cardtable"><table>${rows}</table></div>
-    <p>${t('odds.god')}：<b class="num">${pct(CONFIG.godPackRate)}</b></p>
+    <p>${t('odds.god')}：<b class="num">${pct(effGod())}</b></p>${devOn()?`<p class="warnc">${t('dev.bannerTxt')}</p>`:''}
     <ul><li>${t('odds.same')}</li><li>${t('odds.note')}</li><li>${t('odds.pity',{p:CONFIG.packPoints})}</li></ul>
     <p><button class="endbtn" data-act="closeModal">${t('close')}</button></p>`);
 }
@@ -1548,8 +1608,135 @@ function copyFrom(src){
   try{ navigator.clipboard.writeText(inp.value).then(()=>toast(t('deck.copied')),fail); }catch(e){ fail(); }
 }
 
+
+/* =====================================================================
+   開発者画面（設定の「バージョン」を7回押すと出てくる）
+   確率の変更・全カード解放はこの端末で開発者モードがオンのときだけ効く
+   ===================================================================== */
+function devOn(){ return !!(SV?.dev?.enabled); }
+function owned(id){ return devOn() && SV.dev.allCards ? cardLimit(id) : (SV.collection[id]||0); }
+function effRates(){ if(devOn() && SV.dev.rates) return SV.dev.rates; const r={}; for(const [k,v] of Object.entries(RARITY)) r[k]=v.rate; return r; }
+function effGod(){ return devOn() && SV.dev.god!=null ? SV.dev.god : CONFIG.godPackRate; }
+function randDeck(){
+  const c={}; let n=0, guard=0;
+  while(n<CONFIG.deckSize && guard++<2000){
+    const id=CARD_IDS[Math.floor(Math.random()*CARD_IDS.length)];
+    if((c[id]||0)>=cardLimit(id)) continue;
+    const ev=CARDS[id].evolveFrom; if(ev && !c[ev]) continue;
+    c[id]=(c[id]||0)+1; n++;
+  }
+  return c;
+}
+function forceHand(p,ids){
+  p.deck.push(...p.hand); p.hand=[];
+  for(const id of ids){
+    const k=p.deck.findIndex(c=>c.id===id);
+    p.hand.push(k>=0 ? p.deck.splice(k,1)[0] : {uid:++uidSeq,id});
+  }
+  shuffle(p.deck);
+}
+
+// ----- ギフトコード（簡易版：公開前にサーバー側へ置き換える） -----
+const GIFT_SALT='gate-dev-v1';
+function fnv(s){ let h=0x811c9dc5; for(const ch of s){ h^=ch.codePointAt(0); h=Math.imul(h,0x01000193)>>>0; } return h.toString(36).toUpperCase(); }
+function b64u(s){ return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function unb64u(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return atob(s); }
+function makeGift(to,id,n,pts){ const p=b64u(JSON.stringify({v:1,to,id:id||null,n:n||0,pts:pts||0,k:randId()})); return 'GIFT1-'+p+'-'+fnv(GIFT_SALT+p); }
+function redeemGift(code){
+  const m=String(code||'').trim().match(/^GIFT1-([A-Za-z0-9_-]+)-([A-Z0-9]+)$/);
+  if(!m || fnv(GIFT_SALT+m[1])!==m[2]) return t('gift.bad');
+  let g; try{ g=JSON.parse(unb64u(m[1])); }catch(e){ return t('gift.bad'); }
+  if(g.to!==SV.profile.id) return t('gift.notYou');
+  SV.usedGifts=SV.usedGifts||[];
+  if(SV.usedGifts.includes(g.k)) return t('gift.used');
+  const msgs=[];
+  if(g.id && CARDS[g.id] && g.n>0){ SV.collection[g.id]=(SV.collection[g.id]||0)+Math.min(99,g.n); msgs.push(t('gift.ok',{c:'@'+g.id,n:g.n})); }
+  if(g.pts>0){ SV.points+=Math.min(9999,g.pts); msgs.push(t('gift.pts',{n:g.pts})); }
+  if(!msgs.length) return t('gift.bad');
+  SV.usedGifts.push(g.k); save();
+  return msgs.join(' / ');
+}
+
+function cardOptions(sel,withNone){
+  return (withNone?`<option value="">${t(withNone)}</option>`:'')+CARD_IDS.map(id=>`<option value="${id}" ${id===sel?'selected':''}>${esc(cardName(id))}（${RARITY[CARDS[id].rarity].mark}）</option>`).join('');
+}
+function devHTML(){
+  const D=SV.dev, r=effRates(), seg=(act,on)=>`<div class="seg"><button class="${on?'on':''}" data-act="${act}" data-v="1">${t('st.on')}</button><button class="${on?'':'on'}" data-act="${act}" data-v="0">${t('st.off')}</button></div>`;
+  const pend=SV.pending?.cards||[];
+  return `<div class="row between"><button class="ghost-btn" data-act="devBack">← ${t('dev.back')}</button><b class="eyebrow">${t('dev.title')}</b></div>
+  <section class="panel"><h3>${t('dev.enabled')}</h3>${seg('devToggle',D.enabled)}<p class="note">${t('dev.warn')}</p></section>
+  <section class="panel ${D.enabled?'':'dim-panel'}">
+    <h3>${t('dev.allCards')}</h3>${seg('devAll',D.allCards)}
+    <h3>${t('dev.rates')}</h3>
+    <div class="rates">${Object.keys(RARITY).map(k=>`<label class="field"><span class="lbl">${RARITY[k].mark}</span><input type="number" id="rate${k}" min="0" max="100" step="0.1" value="${+(r[k]*100).toFixed(2)}"></label>`).join('')}
+      <label class="field"><span class="lbl">${t('dev.god')}</span><input type="number" id="rateGod" min="0" max="100" step="0.1" value="${+(effGod()*100).toFixed(2)}"></label></div>
+    <p class="meta">${t('dev.ratesNote')}</p>
+    <div class="row"><button class="btn sm" data-act="devRates">${t('dev.apply')}</button><button class="ghost-btn" data-act="devRatesReset">${t('dev.resetRates')}</button></div>
+    <h3>${t('dev.nextPack')}</h3>
+    <div class="selgrid">${Array.from({length:CONFIG.packSize},(_,i)=>`<select id="devPack${i}">${cardOptions(pend[i],'dev.random')}</select>`).join('')}</div>
+    <div class="row"><button class="btn sm" data-act="devSetPack">${t('dev.setPack')}</button><button class="ghost-btn" data-act="devRefill">${t('dev.refill')}</button></div>
+    <h3>${t('dev.hand')}</h3>
+    <div class="selgrid">${Array.from({length:4},(_,i)=>`<select id="devHand${i}">${cardOptions(D.hand[i],'dev.none')}</select>`).join('')}</div>
+    <h3>${t('dev.cpuDeck')}</h3>
+    <div class="seg">${['starter','mine','random'].map(v=>`<button class="${D.cpu===v?'on':''}" data-act="devCpu" data-v="${v}">${t('dev.cpu_'+v)}</button>`).join('')}</div>
+  </section>
+  <section class="panel">
+    <h3>${t('dev.give')}</h3>
+    <div class="row"><select id="devGiveCard">${cardOptions('drake')}</select><input type="number" id="devGiveN" min="1" max="99" value="3" style="max-width:80px"><button class="btn sm" data-act="devGive">${t('dev.add')}</button></div>
+    <h3>${t('dev.points')}</h3>
+    <div class="row"><input type="number" id="devPts" min="1" max="9999" value="100" style="max-width:120px"><button class="btn sm" data-act="devPoints">${t('dev.add')}</button></div>
+  </section>
+  <section class="panel">
+    <h3>${t('dev.gift')}</h3>
+    <label class="field"><span class="lbl">${t('dev.to')}</span><input id="giftTo" maxlength="8" placeholder="ABCD2345" style="text-transform:uppercase"></label>
+    <div class="row"><select id="giftCard">${cardOptions('',`dev.none`)}</select><input type="number" id="giftN" min="1" max="99" value="1" style="max-width:80px" aria-label="${t('dev.count')}"></div>
+    <label class="field"><span class="lbl">${t('dev.points')}</span><input type="number" id="giftPts" min="0" max="9999" value="0"></label>
+    <button class="btn sm" data-act="devGift">${t('dev.make')}</button>
+    <div class="row"><input id="giftOut" readonly placeholder="GIFT1-…"><button class="ghost-btn" data-act="copy" data-src="giftOut">${t('deck.copy')}</button></div>
+    <p class="meta">${t('dev.giftNote')}</p>
+  </section>`;
+}
+function devAct(act,d){
+  const D=SV.dev;
+  switch(act){
+    case 'verTap':
+      if(D.unlocked){ APP.tab='dev'; renderApp(); return true; }
+      APP.verTaps=(APP.verTaps||0)+1;
+      if(APP.verTaps>=7){ D.unlocked=true; save(); toast(t('dev.unlocked')); renderApp(true); }
+      else if(APP.verTaps>=4) toast(t('dev.taps',{n:7-APP.verTaps}));
+      return true;
+    case 'devOpen': APP.tab='dev'; renderApp(); return true;
+    case 'devBack': APP.tab='settings'; renderApp(); return true;
+    case 'devToggle': D.enabled=d.v==='1'; save(); renderApp(true); return true;
+    case 'devAll': D.allCards=d.v==='1'; save(); renderApp(true); return true;
+    case 'devRates': {
+      const r={}; let sum=0; for(const k of Object.keys(RARITY)){ r[k]=Math.max(0,+$('#rate'+k).value||0)/100; sum+=r[k]; }
+      if(Math.abs(sum-1)>0.0005){ toast(t('dev.sum')); return true; }
+      D.rates=r; D.god=Math.min(1,Math.max(0,+$('#rateGod').value||0)/100);
+      SV.pending=null; save(); toast(t('dev.saved')); renderApp(true); return true; }
+    case 'devRatesReset': D.rates=null; D.god=null; SV.pending=null; save(); toast(t('dev.saved')); renderApp(true); return true;
+    case 'devSetPack': {
+      const cards=Array.from({length:CONFIG.packSize},(_,i)=>{ const v=$('#devPack'+i).value; if(v) return v; const rar=rollRarity(); const pool=CARD_IDS.filter(id=>CARDS[id].rarity===rar); return pool[Math.floor(Math.random()*pool.length)]; });
+      SV.pending={god:cards.every(id=>CARDS[id].rarity==='R'), cards, seed:Math.floor(Math.random()*1e9)};
+      save(); toast(t('dev.saved')); renderApp(true); return true; }
+    case 'devRefill': SV.lastPack=''; save(); toast(t('dev.saved')); return true;
+    case 'devCpu': D.cpu=d.v; save(); renderApp(true); return true;
+    case 'devGive': { const id=$('#devGiveCard').value, n=Math.min(99,Math.max(1,+$('#devGiveN').value||1)); SV.collection[id]=(SV.collection[id]||0)+n; save(); toast(t('dev.added')); renderApp(true); return true; }
+    case 'devPoints': { const n=Math.min(9999,Math.max(1,+$('#devPts').value||0)); SV.points+=n; save(); toast(t('dev.added')); renderApp(true); return true; }
+    case 'devGift': {
+      const to=($('#giftTo').value||'').trim().toUpperCase(), id=$('#giftCard').value, n=Math.min(99,Math.max(1,+$('#giftN').value||1)), pts=Math.min(9999,Math.max(0,+$('#giftPts').value||0));
+      if(!/^[A-Z0-9]{8}$/.test(to)){ toast(t('dev.badId')); return true; }
+      if(!id && !pts){ toast(t('dev.needItem')); return true; }
+      $('#giftOut').value=makeGift(to,id||null,id?n:0,pts); return true; }
+    case 'redeemGift': { const msg=redeemGift($('#giftIn')?.value); toast(msg); renderApp(true); return true; }
+  }
+  return false;
+}
+function updateDevBanner(){ const b=$('#devBanner'); if(b){ b.hidden=!devOn(); b.textContent=t('dev.bannerTxt'); } }
+
 /* ----- 操作の振り分け ----- */
 function appAct(act,d,el){
+  if(devAct(act,d)) return;
   switch(act){
     case 'tab': APP.tab=d.tab; APP.editing=null; APP.resetArm=false; renderApp(); return;
     case 'goDecks': APP.tab='cards'; APP.cardsSub='decks'; APP.editing=null; renderApp(); return;
@@ -1599,6 +1786,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('change',e=>{
   const el=e.target;
+  if(/^devHand\d$/.test(el.id)){ SV.dev.hand[+el.id.slice(7)]=el.value||''; save(); }
   if(el.id==='deckName'){ SV.decks[+el.dataset.i].name=el.value.trim().slice(0,20); save(); }
   if(el.id==='profName'){ SV.profile.name=el.value.trim().slice(0,16)||'Player'; save(); }
 });
