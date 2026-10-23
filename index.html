@@ -131,6 +131,142 @@ button.pp{cursor:default}
 @keyframes banner{0%{opacity:0;transform:scaleX(1.6)}20%{opacity:1;transform:scaleX(1)}75%{opacity:1}100%{opacity:0}}
 @keyframes flash{0%{opacity:.75}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+[hidden]{display:none!important}
+.card .kind{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(var(--cw) - 26px)}
+.card .text{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* --- アプリ画面 --- */
+#app{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(7,11,16,.55),rgba(7,11,16,.92) 40%)}
+.app-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:calc(10px + env(safe-area-inset-top,0px)) 8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.app-top .brand{font-size:17px}
+.pts{display:flex;align-items:baseline;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+.app-main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:4px 24px}
+.screen{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.tabbar{display:grid;grid-template-columns:repeat(5,1fr);background:rgba(10,16,18,.96);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tab{background:none;border:0;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 9px;cursor:pointer;font-size:11px;min-width:0}
+.tab span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tab svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab.on{color:var(--gate)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.panel h3,.screen h3{margin:6px 0 0;font-size:13px;color:var(--muted);letter-spacing:.06em;font-weight:700}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.row.between{justify-content:space-between}
+.row.center,.center{justify-content:center;text-align:center}
+.btn{background:var(--gate);color:#111;border:0;border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;letter-spacing:.03em}
+.btn.sm{padding:7px 12px;font-size:13px}
+.btn:disabled{background:#22362f;color:var(--muted);cursor:not-allowed}
+.ghost-btn{background:transparent;border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:8px 14px;cursor:pointer}
+.ghost-btn:disabled{opacity:.45;cursor:not-allowed}
+.danger-btn{background:transparent;border:1px solid var(--danger);color:var(--danger);border-radius:10px;padding:8px 14px;cursor:pointer;align-self:flex-start}
+.badge{font-size:11px;color:#111;background:var(--gate);border-radius:999px;padding:1px 8px;font-weight:700}
+.note{font-size:12px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin:4px 0 0}
+.okc{color:var(--good)} .warnc{color:var(--danger)}
+.eyebrow{margin:0;font-family:var(--f-display);color:var(--gate);letter-spacing:.12em;font-size:14px}
+input,select{font:inherit;color:var(--fg);background:#0c1416;border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0;flex:1}
+input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
+.field{display:flex;flex-direction:column;gap:4px}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;background:#0c1416;border:1px solid var(--line);border-radius:10px;padding:3px;align-self:flex-start}
+.seg button{background:none;border:0;color:var(--muted);border-radius:7px;padding:6px 12px;cursor:pointer}
+.seg button.on{background:var(--gate);color:#111;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:12px}
+.chip.on{border-color:var(--gate);color:var(--gate)}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;background:#0c1416;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.item .meta{word-break:break-all}
+
+/* ホーム */
+.home{display:flex;flex-direction:column;gap:16px;align-items:stretch}
+.hello{display:flex;align-items:baseline;gap:10px}
+.hello b{font-family:var(--f-display);font-size:18px;font-weight:400}
+.packzone{display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0}
+.pack-status{margin:0;font-weight:700;color:var(--muted)}
+.pack-status.ok{color:var(--gate)}
+.pack{--tear:0;--p1:#e5583c;--p2:#2a1d33;position:relative;width:min(54vw,210px);aspect-ratio:5/7.4;border-radius:14px;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;
+  background:linear-gradient(160deg,var(--p1),var(--p2));box-shadow:0 22px 50px rgba(0,0,0,.55),inset 0 0 0 2px rgba(217,180,95,.65);overflow:hidden;transform:rotate(-2deg)}
+.tod-morning{--p1:#f2a65a;--p2:#3b2a4a} .tod-day{--p1:#e5583c;--p2:#2a1d33} .tod-evening{--p1:#c2366a;--p2:#1e1430} .tod-night{--p1:#4a3fbf;--p2:#0d0f24}
+.pack-foil{position:absolute;inset:0;background:linear-gradient(105deg,transparent calc(var(--shine) - 9%),rgba(255,255,255,.32) var(--shine),transparent calc(var(--shine) + 9%));mix-blend-mode:screen;pointer-events:none}
+.pack-top{position:absolute;left:0;right:0;top:0;height:14%;background:rgba(0,0,0,.28);border-bottom:2px dashed rgba(217,180,95,.55);display:grid;place-items:center;transition:transform .35s ease}
+.seal{width:34%;height:30%;border-radius:4px;background:linear-gradient(90deg,#b8923f,#f3d58a,#b8923f);transform:rotate(var(--seal))}
+.pack-art{position:absolute;inset:18% 8% 8%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
+.pack-logo{font-family:var(--f-display);font-size:clamp(30px,10vw,44px);letter-spacing:.12em;color:#fff3d4;text-shadow:0 0 18px rgba(255,210,120,.7)}
+.pack-set{font-size:11px;letter-spacing:.14em;color:#f3d58a}
+.pack-glyphs{font-family:var(--f-display);font-size:15px;letter-spacing:.3em;color:rgba(255,255,255,.55)}
+.tearline{position:absolute;left:0;top:14%;height:3px;width:calc(var(--tear) * 100%);background:#fff3d4;box-shadow:0 0 12px #ffd36b}
+.pack[class*="corner-"]::after{content:"";position:absolute;width:20px;height:20px;pointer-events:none}
+.corner-0::after{display:none}
+.corner-1::after{top:0;right:0;background:linear-gradient(225deg,var(--bg) 50%,rgba(255,255,255,.4) 50%)}
+.corner-2::after{bottom:0;right:0;background:linear-gradient(315deg,var(--bg) 50%,rgba(255,255,255,.4) 50%)}
+.corner-3::after{bottom:0;left:0;background:linear-gradient(45deg,var(--bg) 50%,rgba(255,255,255,.4) 50%)}
+.corner-4::after{top:0;left:0;background:linear-gradient(135deg,var(--bg) 50%,rgba(255,255,255,.4) 50%)}
+.pack.locked{filter:grayscale(.75) brightness(.55);cursor:default}
+.pack.omen{animation:omen 2.6s ease-in-out infinite}
+.pack.torn .pack-top{transform:translate(30%,-130%) rotate(-10deg)}
+@keyframes omen{0%,100%{filter:none}50%{filter:brightness(1.1) drop-shadow(0 0 7px rgba(255,236,170,.5))}}
+.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat b{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* パック開封 */
+.sheet.pack-modal{max-width:760px;background:rgba(14,20,22,.97)}
+.godline{text-align:center;font-family:var(--f-display);font-size:28px;color:#ffe08a;letter-spacing:.12em;margin:0 0 8px;text-shadow:0 0 22px rgba(255,210,100,.8)}
+.reveal{--cw:clamp(76px,22vw,124px);display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.flip{width:var(--cw);aspect-ratio:5/7;background:none;border:0;padding:0;perspective:900px;cursor:pointer}
+.flip-in{position:relative;display:block;width:100%;height:100%;transition:transform .55s ease;transform-style:preserve-3d}
+.reveal.fast .flip-in{transition-duration:.3s} .reveal.slow .flip-in{transition-duration:.85s}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:9px}
+.face.back{display:grid;place-items:center;background:linear-gradient(160deg,#2a1d33,#0d0f24);border:2px solid var(--gate);font-family:var(--f-display);color:var(--gate);letter-spacing:.1em}
+.face.back em{position:absolute;bottom:8px;font-style:normal;color:#fff;font-size:20px}
+.flip.last .face.back{border-color:#fff;box-shadow:0 0 14px rgba(255,255,255,.35)}
+.face.front{transform:rotateY(180deg)}
+.face.front .card{width:100%;height:100%}
+.flip.r-U.on .face.front{box-shadow:0 0 16px rgba(190,215,255,.7)}
+.flip.r-R.on .face.front{box-shadow:0 0 28px rgba(255,210,100,.95)}
+.newb{position:absolute;top:-6px;right:-6px;background:var(--danger);color:#fff;font-size:10px;font-weight:700;border-radius:6px;padding:1px 5px}
+.rar{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--gate);background:var(--bg);border-radius:6px;padding:0 5px;white-space:nowrap}
+
+/* マイカード */
+.grid{--cw:clamp(78px,24vw,104px);display:flex;flex-wrap:wrap;gap:16px 10px;justify-content:center}
+.grid.sm{--cw:clamp(64px,19vw,84px)}
+.cell{position:relative;background:none;border:0;padding:0;cursor:pointer;width:var(--cw)}
+.cell .card{cursor:pointer}
+.cell .cnt{position:absolute;top:-6px;right:-6px;background:#0c1416;border:1px solid var(--line);border-radius:999px;font-size:11px;padding:0 6px;font-family:var(--f-num)}
+.cell.unowned .card{filter:grayscale(1) brightness(.4)}
+.cell.maxed .card{opacity:.4}
+.dlist{display:flex;flex-direction:column;gap:4px}
+.drow{display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:8px;background:#0c1416;border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+.drow .meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:34vw}
+.dname{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--el)}
+.mini{background:none;border:1px solid var(--line);color:var(--fg);border-radius:6px;width:28px;height:28px;cursor:pointer}
+.detail{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.detail .card.big{--cw:150px;cursor:default}
+.detail-body{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.detail-body h2{margin:0;font-family:var(--f-display);font-weight:400;color:var(--gate)}
+.detail-body p{margin:0}
+
+/* バトル */
+.modes{display:flex;flex-direction:column;gap:10px}
+.mode{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.mode-txt{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:4px}
+.mode-txt b{font-family:var(--f-display);font-weight:400;font-size:16px;letter-spacing:.04em}
+.mode-txt p{margin:0}
+.mode.off{opacity:.55}
+
+/* 対戦中 */
+#openInfo{position:fixed;left:max(16px,env(safe-area-inset-left,0px));top:calc(64px + env(safe-area-inset-top,0px));z-index:6;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;max-width:min(46vw,280px)}
+.oi-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.oi-cols ol{margin:2px 0 0;padding-left:18px}
+.oi-cols li{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--el)}
+.ov .row{justify-content:center}
+.ov .gain{color:var(--gate);font-weight:700}
+.rarc{color:var(--gate);white-space:nowrap}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:#14211f;border:1px solid var(--gate);color:var(--fg);border-radius:10px;padding:8px 14px;opacity:0;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+#toast.show{animation:toast 2.4s ease forwards}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,8px)}10%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
+#modal{z-index:50}
+@media (max-width:560px){ .stats3 .stat b{font-size:14px} .hud .tools .tool{padding:4px 8px} }
 *{box-sizing:border-box}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 </style>
@@ -140,65 +276,51 @@ button.pp{cursor:default}
 <div id="stage"></div>
 <div id="loading">LOADING GATE…</div>
 
-<div class="hud">
+<div id="app" hidden>
+  <header class="app-top">
+    <span class="brand">PROJECT GATE</span>
+    <span class="pts"><span class="lbl" data-i18n="home.points"></span><b class="num" id="topPoints">0</b></span>
+  </header>
+  <main class="app-main" id="screenWrap"><div class="screen" id="screen"></div></main>
+  <nav class="tabbar" id="tabbar" aria-label="menu"></nav>
+</div>
+
+<div class="hud" id="hud" hidden>
   <div class="hud-top">
     <button class="pp" id="enemyPanel" data-act="hero" data-pi="1"></button>
     <div class="tools">
-      <span class="brand">PROJECT GATE 3D　Ver.2</span>
-      <button class="tool xr" data-act="vr" id="vrBtn" hidden>VRで遊ぶ</button>
-      <button class="tool xr" data-act="mr" id="mrBtn" hidden>MRで遊ぶ</button>
-      <button class="tool" data-act="view" id="viewBtn">視点：俯瞰</button>
-      <button class="tool" data-act="log">ログ</button>
-      <button class="tool" data-act="rules">ルール</button>
-      <button class="tool" data-act="restart">最初から</button>
+      <button class="tool xr" data-act="vr" id="vrBtn" hidden data-i18n="hud.vr"></button>
+      <button class="tool xr" data-act="mr" id="mrBtn" hidden data-i18n="hud.mr"></button>
+      <button class="tool" data-act="view" id="viewBtn"></button>
+      <button class="tool" data-act="log" data-i18n="hud.log"></button>
+      <button class="tool" data-act="rules" data-i18n="st.rules"></button>
+      <button class="tool" data-act="menu" data-i18n="hud.menu"></button>
     </div>
   </div>
   <div class="hud-bottom">
     <div class="bar">
       <div class="pp" id="mePanel"></div>
       <div class="hint" id="hint" aria-live="polite"></div>
-      <button class="endbtn" data-act="end" id="endBtn">ターン終了</button>
+      <button class="endbtn" data-act="end" id="endBtn" data-i18n="hud.end"></button>
     </div>
     <div class="hand" id="hand"></div>
   </div>
 </div>
-<div class="logbox" id="logbox"><ol id="log"></ol></div>
+<div class="logbox" id="logbox" hidden><ol id="log"></ol></div>
+<div id="openInfo" hidden></div>
 
 <div id="cutin"></div>
 <div id="banner"></div>
 <div id="flash"></div>
 <div id="fx"></div>
 <div class="modal" id="overlay" hidden></div>
-<div class="modal" id="rulesPanel" hidden>
-  <div class="sheet">
-    <h2>ルール</h2>
-    <ul>
-      <li>デッキ20枚・初期手札3枚・ライフ5。先攻・後攻はランダム。</li>
-      <li>自分のターン開始時にエネルギーが3まで回復し、山札から1枚引く（ゲーム最初の先攻1ターン目は引かない）。</li>
-      <li>手札のカードを押すと出せる。火炎弾・封印の鎖は続けて卓上の対象を押す。</li>
-      <li>金色の輪が光る自分のモンスターを押し、赤く光る相手を押すと攻撃。</li>
-      <li>出したターンのモンスターは攻撃できない（速攻持ちは例外）。攻撃は1体につき1ターン1回。</li>
-      <li>進化：炎の竜は、前のターンから場にいる炎の幼竜に重ねて出す。ダメージと攻撃済みかどうかは引き継ぐ。</li>
-      <li>封印の鎖を受けたモンスターは、持ち主の次のターンが終わるまで攻撃できない。</li>
-      <li>守りの結界を張ったモンスターは、相手の次のターンが終わるまで攻撃の対象にならない（魔法は当たる）。結界中のモンスターは壁にならないので、他に壁がいなければ本体を直接攻撃される。</li>
-      <li>導きの書は山札が空だと使えない。</li>
-      <li>相手の場に攻撃できるモンスターがいる間は、相手のクリスタル（プレイヤー）を直接攻撃できない。</li>
-      <li>フィールドカードは1人1枚。別のフィールドを出すと張り替わる。</li>
-      <li>山札が尽きて引けないときは1ダメージ。相手のライフを0にしたら勝ち。</li>
-    </ul>
-    <div class="cardtable"><table id="cardTable"></table></div>
-    <h2 style="margin-top:14px">更新履歴</h2>
-    <ul>
-      <li><b>Ver.2</b>：導きの書（ドロー）と守りの結界（ガード）を追加。デッキ配分を変更（守護者1・火炎弾2・治癒1・封印1）。</li>
-      <li><b>Ver.1</b>：3D版の初版。カード10種・20枚デッキ。進化（炎の幼竜→炎の竜）、速攻、封印、フィールド張り替え。</li>
-    </ul>
-    <p><button class="endbtn" data-act="closeRules">閉じる</button></p>
-  </div>
-</div>
+<div class="modal" id="modal" hidden></div>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== 調整用の設定 =====
+const APP_VERSION = '2.1.0';
 const CONFIG = {
   startLife: 5,          // 初期ライフ
   maxLife: 5,            // ライフ上限（回復の上限）
@@ -206,66 +328,404 @@ const CONFIG = {
   handStart: 3,          // 初期手札
   maxHand: 7,            // 手札上限（超えたドローは捨てる）
   maxField: 3,           // 場に置けるモンスター数
-  altarBonus: 1,         // 古代の祭壇のATK上昇量
-  sanctuaryHeal: 1,      // 大地の聖域がターン開始時に回復するHP
+  altarBonus: 1,         // アルドリスのATK上昇量
+  sanctuaryHeal: 1,      // テラヴェルがターン開始時に回復するHP
   deckOutDamage: 1,      // 山札切れで引けないときのダメージ
   mustAttackMonsters: true, // true: 相手モンスターがいる間は直接攻撃不可
   cpuDelay: 500,         // CPUの行動の合間の待ち時間(ms)
-  animSpeed: 1,          // 演出の速さ（2で2倍速、0.5でゆっくり）
+  animSpeed: 1,          // 演出の速さ（設定画面から変更。2で2倍速）
+  deckSize: 20,          // デッキ枚数（固定）
+  maxCopies: 3,          // 同名カードの上限
+  packSize: 5,           // 1パックの枚数
+  godPackRate: 0.01,     // 神パック（全部◆◆◆）の確率
+  packPoints: 5,         // 1パック開けるともらえるパックポイント
+  winPoints: 2,          // 勝利でもらえるパックポイント
+  dailyResetHour: 4,     // 1日1パックが復活する時刻（端末の現地時間）
 };
 
-// ===== カード定義 =====
+// ===== レア度と提供割合（合計1.0） =====
+const RARITY = {
+  C: { rate: 0.65, craft: 15, mark: '◆' },
+  U: { rate: 0.27, craft: 30, mark: '◆◆' },
+  R: { rate: 0.08, craft: 60, mark: '◆◆◆' },
+};
+
+// ===== カード定義（名前と説明は下の多言語データ） =====
 const CARDS = {
-  drake:     { name:'炎の幼竜',     type:'monster', cost:1, atk:1, hp:2, el:'fire',  glyph:'炎' },
-  dragon:    { name:'炎の竜',       type:'monster', cost:1, atk:3, hp:5, el:'fire',  glyph:'竜', evolveFrom:'drake', tag:'進化', text:'炎の幼竜に重ねる' },
-  golem:     { name:'岩石の守護者', type:'monster', cost:2, atk:1, hp:4, el:'earth', glyph:'岩' },
-  knight:    { name:'雷の剣士',     type:'monster', cost:3, atk:3, hp:2, el:'bolt',  glyph:'雷' },
-  scout:     { name:'疾風の斥候',   type:'monster', cost:2, atk:2, hp:1, el:'wind',  glyph:'風', rush:true, tag:'速攻', text:'出したターンに攻撃できる' },
-  fireball:  { name:'火炎弾',       type:'magic',   cost:1, dmg:2,       el:'fire',  glyph:'弾', text:'敵モンスターか相手に2ダメージ' },
-  heal:      { name:'治癒の光',     type:'magic',   cost:1, amount:1,    el:'heal',  glyph:'癒', text:'ライフを1回復' },
-  chain:     { name:'封印の鎖',     type:'magic',   cost:2,              el:'seal',  glyph:'封', text:'敵モンスター1体は次のターン攻撃できない' },
-  book:      { name:'導きの書',     type:'magic',   cost:2, draw:2,      el:'lore',  glyph:'書', text:'カードを2枚引く' },
-  guard:     { name:'守りの結界',   type:'magic',   cost:1,              el:'ward',  glyph:'護', text:'味方1体は相手の次のターン攻撃されない' },
-  altar:     { name:'古代の祭壇',   type:'field',   cost:2,              el:'field', glyph:'壇', text:'味方モンスターのATK+1' },
-  sanctuary: { name:'大地の聖域',   type:'field',   cost:2,              el:'earth', glyph:'聖', text:'自分のターン開始時、味方モンスターのHPを1回復' },
+  drake:     { type:'monster', cost:1, atk:1, hp:2, el:'fire',  glyph:'炎', rarity:'C' },
+  dragon:    { type:'monster', cost:1, atk:3, hp:5, el:'fire',  glyph:'竜', rarity:'R', evolveFrom:'drake', tag:'evolve' },
+  golem:     { type:'monster', cost:2, atk:1, hp:4, el:'earth', glyph:'岩', rarity:'C' },
+  knight:    { type:'monster', cost:3, atk:3, hp:2, el:'bolt',  glyph:'雷', rarity:'U' },
+  scout:     { type:'monster', cost:2, atk:2, hp:1, el:'wind',  glyph:'風', rarity:'U', rush:true, tag:'rush' },
+  fireball:  { type:'magic',   cost:1, dmg:2,       el:'fire',  glyph:'弾', rarity:'C' },
+  heal:      { type:'magic',   cost:1, amount:1,    el:'heal',  glyph:'癒', rarity:'C' },
+  chain:     { type:'magic',   cost:2,              el:'seal',  glyph:'封', rarity:'U' },
+  book:      { type:'magic',   cost:2, draw:2,      el:'lore',  glyph:'書', rarity:'U' },
+  guard:     { type:'magic',   cost:1,              el:'ward',  glyph:'護', rarity:'U' },
+  altar:     { type:'field',   cost:2,              el:'field', glyph:'壇', rarity:'R' },
+  sanctuary: { type:'field',   cost:2,              el:'earth', glyph:'聖', rarity:'R' },
 };
+const CARD_IDS = Object.keys(CARDS);
 
-// ===== デッキ構成（合計20枚） =====
-const DECK_LIST = { drake:3, dragon:2, golem:1, knight:2, scout:2, fireball:2, heal:1, chain:1, book:2, guard:2, altar:1, sanctuary:1 };
+// ===== スターターデッキ（20枚）。最初の所持カードとCPUの練習デッキ =====
+const STARTER = { drake:3, dragon:2, golem:1, knight:2, scout:2, fireball:2, heal:1, chain:1, book:2, guard:2, altar:1, sanctuary:1 };
 
 // ===== 属性カラー =====
 const EL = { fire:'#e5583c', earth:'#b08f5e', bolt:'#ecc943', heal:'#57c08a', field:'#45b0ad', wind:'#7fd0e8', seal:'#a88be0', lore:'#5f9cff', ward:'#f2e2a8' };
 
 /* =====================================================================
-   ゲームロジック（2D版と共通）
+   多言語データ。並び順：日本語, English, 简体中文, Español, 한국어, Português
    ===================================================================== */
-const KIND = { monster:'モンスター', magic:'マジック', field:'フィールド' };
-const NAMES = ['あなた', 'CPU'];
+const LANGS = [['ja','日本語'],['en','English'],['zh','简体中文'],['es','Español'],['ko','한국어'],['pt','Português']];
+let LANG = 'ja', LI = 0;
+
+// カード名（造語）。ラテン文字の名前は英語・スペイン語・ポルトガル語で共通
+const NAME = {
+  drake:     ['エンブリル','Embrill','焰布里','Embrill','엠브릴','Embrill'],
+  dragon:    ['イグナロス','Ignaroth','伊格纳洛斯','Ignaroth','이그나로스','Ignaroth'],
+  golem:     ['グラヴォルム','Gravolm','格拉沃姆','Gravolm','그라볼름','Gravolm'],
+  knight:    ['ブロンテスク','Brontesk','布隆泰斯克','Brontesk','브론테스크','Brontesk'],
+  scout:     ['スカイロウ','Skyrrow','斯凯罗','Skyrrow','스카이로우','Skyrrow'],
+  fireball:  ['フレアリクス','Flarix','弗莱瑞克斯','Flarix','플레어릭스','Flarix'],
+  heal:      ['ルミヴィ','Lumivie','露米薇','Lumivie','루미비','Lumivie'],
+  chain:     ['シジロック','Sigilock','西吉洛克','Sigilock','시질록','Sigilock'],
+  book:      ['スクリヴラ','Scrivra','斯克里芙拉','Scrivra','스크리브라','Scrivra'],
+  guard:     ['イージルン','Aegirn','伊吉恩','Aegirn','이지른','Aegirn'],
+  altar:     ['アルドリス','Ardolith','阿尔多利斯','Ardolith','아르돌리스','Ardolith'],
+  sanctuary: ['テラヴェル','Terravel','特拉维尔','Terravel','테라벨','Terravel'],
+};
+// モチーフ（属性・何をもとにしたカードか）
+const MOTIF = {
+  drake:     ['火・竜の子','Fire · Hatchling dragon','火·幼龙','Fuego · Cría de dragón','불 · 아기 용','Fogo · Filhote de dragão'],
+  dragon:    ['火・成竜','Fire · Elder dragon','火·成龙','Fuego · Dragón adulto','불 · 성룡','Fogo · Dragão adulto'],
+  golem:     ['地・岩の巨人','Earth · Stone giant','地·岩石巨人','Tierra · Gigante de roca','땅 · 바위 거인','Terra · Gigante de pedra'],
+  knight:    ['雷・剣士','Thunder · Swordsman','雷·剑士','Trueno · Espadachín','번개 · 검사','Trovão · Espadachim'],
+  scout:     ['風・鷹','Wind · Hawk','风·鹰','Viento · Halcón','바람 · 매','Vento · Falcão'],
+  fireball:  ['火・術','Fire · Spell','火·法术','Fuego · Hechizo','불 · 주문','Fogo · Feitiço'],
+  heal:      ['光・癒し','Light · Healing','光·治愈','Luz · Curación','빛 · 치유','Luz · Cura'],
+  chain:     ['封・鎖','Seal · Chains','封·锁链','Sello · Cadenas','봉인 · 사슬','Selo · Correntes'],
+  book:      ['知・書物','Lore · Tome','知·典籍','Saber · Tomo','지식 · 서책','Saber · Tomo'],
+  guard:     ['護・結界','Ward · Barrier','护·结界','Guarda · Barrera','수호 · 결계','Guarda · Barreira'],
+  altar:     ['古・祭壇','Ancient · Altar','古·祭坛','Antiguo · Altar','고대 · 제단','Antigo · Altar'],
+  sanctuary: ['地・聖域','Earth · Sanctuary','地·圣域','Tierra · Santuario','땅 · 성역','Terra · Santuário'],
+};
+
+const STR = {
+  'you':['あなた','You','你','Tú','나','Você'],
+  'cpu':['CPU','CPU','CPU','CPU','CPU','CPU'],
+  'kind.monster':['モンスター','Monster','怪兽','Monstruo','몬스터','Monstro'],
+  'kind.magic':['マジック','Spell','魔法','Hechizo','마법','Feitiço'],
+  'kind.field':['フィールド','Field','场地','Campo','필드','Campo'],
+  'tag.evolve':['進化','Evolve','进化','Evolución','진화','Evolução'],
+  'tag.rush':['速攻','Rush','速攻','Rápido','속공','Investida'],
+  'txt.rush':['出したターンに攻撃できる','Can attack the turn it is played','登场回合即可攻击','Puede atacar el turno en que entra','낸 턴에 공격할 수 있다','Pode atacar no turno em que entra'],
+  'txt.evolve':['{c}に重ねる','Evolves from {c}','叠放在{c}上','Evoluciona de {c}','{c} 위에 겹친다','Evolui de {c}'],
+  'txt.fireball':['敵モンスターか相手に2ダメージ','Deal 2 damage to an enemy monster or the opponent','对敌方怪兽或对手造成2点伤害','Inflige 2 de daño a un monstruo enemigo o al rival','적 몬스터 또는 상대에게 2 데미지','Causa 2 de dano a um monstro inimigo ou ao oponente'],
+  'txt.heal':['ライフを1回復','Restore 1 life','回复1点生命','Recupera 1 de vida','라이프를 1 회복','Recupera 1 de vida'],
+  'txt.chain':['敵モンスター1体は次のターン攻撃できない','An enemy monster can\'t attack next turn','1只敌方怪兽下回合无法攻击','Un monstruo enemigo no puede atacar el próximo turno','적 몬스터 1체는 다음 턴 공격할 수 없다','Um monstro inimigo não pode atacar no próximo turno'],
+  'txt.book':['カードを2枚引く','Draw 2 cards','抽2张卡','Roba 2 cartas','카드를 2장 뽑는다','Compre 2 cartas'],
+  'txt.guard':['味方1体は相手の次のターン攻撃されない','An ally can\'t be attacked during the opponent\'s next turn','1只友方怪兽在对手下回合不会被攻击','Un aliado no puede ser atacado en el próximo turno rival','아군 1체는 상대의 다음 턴에 공격받지 않는다','Um aliado não pode ser atacado no próximo turno do oponente'],
+  'txt.altar':['味方モンスターのATK+1','Your monsters get +1 ATK','我方怪兽ATK+1','Tus monstruos obtienen +1 ATK','아군 몬스터 ATK+1','Seus monstros ganham +1 ATK'],
+  'txt.sanctuary':['自分のターン開始時、味方モンスターのHPを1回復','At the start of your turn, your monsters restore 1 HP','我方回合开始时，我方怪兽回复1点HP','Al inicio de tu turno, tus monstruos recuperan 1 HP','내 턴 시작 시 아군 몬스터 HP 1 회복','No início do seu turno, seus monstros recuperam 1 HP'],
+
+  'tab.home':['ホーム','Home','主页','Inicio','홈','Início'],
+  'tab.cards':['マイカード','My Cards','我的卡牌','Mis cartas','내 카드','Minhas cartas'],
+  'tab.friends':['フレンド','Friends','好友','Amigos','친구','Amigos'],
+  'tab.battle':['バトル','Battle','对战','Batalla','배틀','Batalha'],
+  'tab.settings':['設定','Settings','设置','Ajustes','설정','Configurações'],
+
+  'home.pack':['今日のパック','Today\'s Pack','今日卡包','Sobre de hoy','오늘의 팩','Pacote de hoje'],
+  'home.swipe':['パックの上を横になぞって開封','Swipe across the pack to open','横向划过卡包即可开启','Desliza sobre el sobre para abrirlo','팩 위를 옆으로 밀어서 개봉','Deslize sobre o pacote para abrir'],
+  'home.open':['開封する','Open','开启','Abrir','개봉','Abrir'],
+  'home.next':['次のパックまで {time}','Next pack in {time}','距离下个卡包 {time}','Próximo sobre en {time}','다음 팩까지 {time}','Próximo pacote em {time}'],
+  'home.ready':['開封できます','Ready to open','可以开启','Listo para abrir','개봉 가능','Pronto para abrir'],
+  'home.test':['テストモード：何度でも開封できます','Test mode: unlimited packs','测试模式：可无限开包','Modo de prueba: sobres ilimitados','테스트 모드: 무제한 개봉','Modo de teste: pacotes ilimitados'],
+  'home.points':['パックポイント','Pack Points','卡包点数','Puntos de sobre','팩 포인트','Pontos de pacote'],
+  'home.record':['{w}勝 {l}敗','{w}W {l}L','{w}胜 {l}负','{w}V {l}D','{w}승 {l}패','{w}V {l}D'],
+  'home.recordL':['戦績','Record','战绩','Récord','전적','Recorde'],
+  'home.dex':['図鑑','Collection','图鉴','Colección','도감','Coleção'],
+  'home.toBattle':['バトルへ','To Battle','去对战','A la batalla','배틀로','Batalhar'],
+  'set.origin':['第1弾 ORIGIN','Set 1: ORIGIN','第1弹 ORIGIN','Set 1: ORIGIN','제1탄 ORIGIN','Set 1: ORIGIN'],
+
+  'pack.flipAll':['すべてめくる','Reveal all','全部翻开','Revelar todo','모두 뒤집기','Revelar tudo'],
+  'pack.tap':['タップしてめくる','Tap to reveal','点击翻开','Toca para revelar','탭해서 뒤집기','Toque para revelar'],
+  'pack.done':['受け取る','Collect','收下','Recoger','받기','Coletar'],
+  'pack.god':['神パック！','GOD PACK!','神包！','¡SOBRE DIVINO!','신 팩!','PACOTE DIVINO!'],
+  'pack.gotPoints':['パックポイント +{n}','Pack Points +{n}','卡包点数 +{n}','Puntos +{n}','팩 포인트 +{n}','Pontos +{n}'],
+
+  'cards.collection':['コレクション','Collection','收藏','Colección','컬렉션','Coleção'],
+  'cards.decks':['デッキ','Decks','卡组','Mazos','덱','Decks'],
+  'filter.all':['すべて','All','全部','Todo','전체','Todos'],
+  'owned':['所持 {n}','Owned {n}','持有 {n}','Tienes {n}','보유 {n}','Possui {n}'],
+  'rarity':['レア度','Rarity','稀有度','Rareza','등급','Raridade'],
+  'cost':['コスト','Cost','费用','Coste','코스트','Custo'],
+  'craft':['{p}ptで作成','Craft ({p} pts)','用{p}点制作','Crear ({p} pts)','{p}pt로 제작','Criar ({p} pts)'],
+  'crafted':['作成しました','Crafted','已制作','Creada','제작 완료','Criada'],
+  'craftNo':['ポイントが足りません','Not enough points','点数不足','Puntos insuficientes','포인트 부족','Pontos insuficientes'],
+  'close':['閉じる','Close','关闭','Cerrar','닫기','Fechar'],
+
+  'deck.active':['使用中','In use','使用中','En uso','사용 중','Em uso'],
+  'deck.use':['このデッキを使う','Use this deck','使用此卡组','Usar este mazo','이 덱 사용','Usar este deck'],
+  'deck.edit':['編集','Edit','编辑','Editar','편집','Editar'],
+  'deck.count':['{n}/{m}枚','{n}/{m} cards','{n}/{m}张','{n}/{m} cartas','{n}/{m}장','{n}/{m} cartas'],
+  'deck.invalid':['デッキは{m}枚ちょうどにしてください','A deck must have exactly {m} cards','卡组必须正好{m}张','El mazo debe tener exactamente {m} cartas','덱은 정확히 {m}장이어야 합니다','O deck deve ter exatamente {m} cartas'],
+  'deck.maxCopies':['同じカードは{m}枚まで','Max {m} copies per card','同名卡最多{m}张','Máximo {m} copias por carta','같은 카드는 {m}장까지','Máximo de {m} cópias por carta'],
+  'deck.noMore':['所持数を超えています','You don\'t own more copies','超出持有数量','No tienes más copias','보유 수량을 초과합니다','Você não tem mais cópias'],
+  'deck.full':['デッキは{m}枚までです','The deck already has {m} cards','卡组已满{m}张','El mazo ya tiene {m} cartas','덱이 이미 {m}장입니다','O deck já tem {m} cartas'],
+  'deck.name':['デッキ名','Deck name','卡组名','Nombre del mazo','덱 이름','Nome do deck'],
+  'deck.code':['デッキコード','Deck code','卡组代码','Código de mazo','덱 코드','Código do deck'],
+  'deck.copy':['コピー','Copy','复制','Copiar','복사','Copiar'],
+  'deck.copied':['コピーしました','Copied','已复制','Copiado','복사했습니다','Copiado'],
+  'deck.copyFail':['自動でコピーできませんでした。選択された文字をコピーしてください','Couldn\'t copy automatically. Copy the selected text','无法自动复制，请复制已选中的文字','No se pudo copiar. Copia el texto seleccionado','자동 복사에 실패했습니다. 선택된 글자를 복사하세요','Não foi possível copiar. Copie o texto selecionado'],
+  'deck.import':['コードから読み込む','Load from code','从代码导入','Cargar desde código','코드로 불러오기','Carregar do código'],
+  'deck.imported':['読み込みました（持っていないカードは除外）','Loaded (cards you don\'t own were left out)','已导入（未持有的卡已排除）','Cargado (sin las cartas que no tienes)','불러왔습니다 (미보유 카드는 제외)','Carregado (cartas que você não tem ficaram de fora)'],
+  'deck.badCode':['コードが正しくありません','Invalid code','代码无效','Código no válido','잘못된 코드','Código inválido'],
+  'deck.back':['一覧へ戻る','Back','返回列表','Volver','목록으로','Voltar'],
+  'deck.clear':['空にする','Clear','清空','Vaciar','비우기','Limpar'],
+  'deck.contents':['デッキの中身','In this deck','卡组内容','Contenido','덱 구성','Neste deck'],
+  'deck.addCards':['カードを追加（タップ）','Add cards (tap)','添加卡牌（点击）','Añadir cartas (toca)','카드 추가 (탭)','Adicionar cartas (toque)'],
+  'deck.empty':['まだカードが入っていません','No cards yet','还没有卡牌','Aún no hay cartas','아직 카드가 없습니다','Ainda sem cartas'],
+  'deck.default':['デッキ{n}','Deck {n}','卡组{n}','Mazo {n}','덱{n}','Deck {n}'],
+  'deck.starter':['スターター','Starter','初始卡组','Inicial','스타터','Inicial'],
+
+  'fr.profile':['プロフィール','Profile','个人资料','Perfil','프로필','Perfil'],
+  'fr.name':['プレイヤー名','Player name','玩家名','Nombre','플레이어 이름','Nome'],
+  'fr.id':['プレイヤーID','Player ID','玩家ID','ID de jugador','플레이어 ID','ID do jogador'],
+  'fr.myCode':['自分のデッキコード（フレンドに送る）','Your deck code (send it to friends)','我的卡组代码（发给好友）','Tu código de mazo (envíalo a tus amigos)','내 덱 코드 (친구에게 보내기)','Seu código de deck (envie aos amigos)'],
+  'fr.add':['フレンドを追加','Add a friend','添加好友','Añadir amigo','친구 추가','Adicionar amigo'],
+  'fr.friendName':['フレンドの名前','Friend\'s name','好友名字','Nombre del amigo','친구 이름','Nome do amigo'],
+  'fr.friendCode':['フレンドのデッキコード','Friend\'s deck code','好友的卡组代码','Código de mazo del amigo','친구의 덱 코드','Código de deck do amigo'],
+  'fr.addBtn':['追加','Add','添加','Añadir','추가','Adicionar'],
+  'fr.added':['フレンドを追加しました','Friend added','已添加好友','Amigo añadido','친구를 추가했습니다','Amigo adicionado'],
+  'fr.list':['フレンド一覧','Friends','好友列表','Amigos','친구 목록','Amigos'],
+  'fr.empty':['まだフレンドがいません。デッキコードを交換して追加しましょう','No friends yet. Exchange deck codes to add one','还没有好友。交换卡组代码来添加吧','Aún no tienes amigos. Intercambia códigos de mazo','아직 친구가 없습니다. 덱 코드를 교환해 추가하세요','Nenhum amigo ainda. Troque códigos de deck'],
+  'fr.battle':['このデッキと対戦','Battle this deck','与此卡组对战','Luchar contra este mazo','이 덱과 대전','Batalhar contra este deck'],
+  'fr.remove':['削除','Remove','删除','Eliminar','삭제','Remover'],
+  'fr.online':['オンラインのフレンド対戦はサーバーを用意した後に追加予定です。今はフレンドのデッキをCPUが使って対戦します。','Online friend battles will come once a server is ready. For now, the CPU plays your friend\'s deck.','服务器准备好后将加入在线好友对战。目前由电脑使用好友的卡组。','Las batallas en línea llegarán con un servidor. Por ahora, la CPU usa el mazo de tu amigo.','온라인 친구 대전은 서버 준비 후 추가 예정입니다. 지금은 CPU가 친구의 덱을 사용합니다.','Batalhas online chegarão com um servidor. Por enquanto, a CPU usa o deck do seu amigo.'],
+
+  'bt.deck':['使用デッキ','Your deck','使用卡组','Tu mazo','사용 덱','Seu deck'],
+  'bt.change':['変更','Change','更改','Cambiar','변경','Trocar'],
+  'bt.practice':['練習','Practice','练习','Práctica','연습','Treino'],
+  'bt.practiceD':['スターターデッキを使うCPUと対戦','Battle a CPU that uses the starter deck','与使用初始卡组的电脑对战','Contra la CPU con el mazo inicial','스타터 덱을 쓰는 CPU와 대전','Contra a CPU com o deck inicial'],
+  'bt.open':['完全情報モード','Open Info Mode','全公开模式','Modo información abierta','완전 정보 모드','Modo informação aberta'],
+  'bt.openD':['お互いの山札の順番がすべて見える読み合いの勝負','Both players can see both decks\' draw order','双方都能看到彼此牌库的顺序','Ambos ven el orden de robo de los dos mazos','서로의 덱 순서가 모두 보이는 수읽기 승부','Ambos veem a ordem de compra dos dois decks'],
+  'bt.friend':['フレンドのデッキ','Friend\'s deck','好友卡组','Mazo de amigo','친구의 덱','Deck de amigo'],
+  'bt.friendD':['登録したフレンドのデッキをCPUが使う','The CPU plays a friend\'s deck','电脑使用已登记好友的卡组','La CPU usa el mazo de un amigo','CPU가 친구의 덱을 사용','A CPU usa o deck de um amigo'],
+  'bt.rank':['ランクマッチ','Ranked','排位赛','Clasificatoria','랭크 매치','Ranqueada'],
+  'bt.rankD':['オンライン対戦は準備中','Online play coming soon','在线对战准备中','Juego en línea próximamente','온라인 대전 준비 중','Online em breve'],
+  'bt.start':['対戦開始','Start','开始对战','Empezar','대전 시작','Começar'],
+  'bt.soon':['準備中','Soon','准备中','Pronto','준비 중','Em breve'],
+  'bt.noFriend':['先にフレンドを追加してください','Add a friend first','请先添加好友','Primero añade un amigo','먼저 친구를 추가하세요','Adicione um amigo primeiro'],
+  'bt.vrHint':['VR・MRは対戦中に右上のボタンから始められます（Meta Questのブラウザ）','Start VR/MR from the buttons at the top right during a battle (Meta Quest browser)','VR/MR可在对战中点击右上角按钮开始（Meta Quest浏览器）','Inicia VR/MR con los botones de arriba a la derecha durante la batalla (navegador de Meta Quest)','VR/MR은 대전 중 오른쪽 위 버튼으로 시작 (Meta Quest 브라우저)','Inicie VR/MR pelos botões no canto superior direito durante a batalha (navegador do Meta Quest)'],
+
+  'st.lang':['言語','Language','语言','Idioma','언어','Idioma'],
+  'st.speed':['演出の速さ','Animation speed','演出速度','Velocidad de animación','연출 속도','Velocidade da animação'],
+  'st.view':['カメラ','Camera','镜头','Cámara','카메라','Câmera'],
+  'st.hideLast':['最後の1枚を伏せて開封','Keep the last card face down','最后一张背面朝上','Última carta boca abajo','마지막 1장을 뒤집어서 개봉','Última carta virada para baixo'],
+  'st.table':['VR・MRの卓の高さ','VR/MR table height','VR/MR桌面高度','Altura de la mesa VR/MR','VR/MR 테이블 높이','Altura da mesa VR/MR'],
+  'st.rules':['ルール','Rules','规则','Reglas','규칙','Regras'],
+  'st.test':['テストモード（パック無制限）','Test mode (unlimited packs)','测试模式（无限卡包）','Modo de prueba (sobres ilimitados)','테스트 모드 (팩 무제한)','Modo de teste (pacotes ilimitados)'],
+  'st.reset':['データを消去','Delete data','删除数据','Borrar datos','데이터 삭제','Apagar dados'],
+  'st.resetConfirm':['もう一度押すと消去します','Press again to delete','再按一次即删除','Pulsa otra vez para borrar','한 번 더 누르면 삭제됩니다','Pressione de novo para apagar'],
+  'st.version':['バージョン','Version','版本','Versión','버전','Versão'],
+  'st.on':['オン','On','开','Sí','켜기','Ligado'],
+  'st.off':['オフ','Off','关','No','끄기','Desligado'],
+  'st.save':['データはこの端末のブラウザに保存されます','Data is saved in this device\'s browser','数据保存在此设备的浏览器中','Los datos se guardan en el navegador de este dispositivo','데이터는 이 기기의 브라우저에 저장됩니다','Os dados ficam salvos no navegador deste aparelho'],
+  'view.top':['俯瞰','Overview','俯视','General','부감','Geral'],
+  'view.close':['臨場','Close-up','临场','Cerca','근접','Perto'],
+
+  'hud.view':['視点','View','视角','Vista','시점','Vista'],
+  'hud.log':['ログ','Log','日志','Registro','로그','Registro'],
+  'hud.menu':['メニュー','Menu','菜单','Menú','메뉴','Menu'],
+  'hud.vr':['VRで遊ぶ','Play in VR','VR游玩','Jugar en VR','VR로 플레이','Jogar em VR'],
+  'hud.mr':['MRで遊ぶ','Play in MR','MR游玩','Jugar en MR','MR로 플레이','Jogar em MR'],
+  'hud.end':['ターン終了','End Turn','结束回合','Fin del turno','턴 종료','Encerrar turno'],
+  'hud.life':['ライフ','Life','生命','Vida','라이프','Vida'],
+  'hud.energy':['エネルギー','Energy','能量','Energía','에너지','Energia'],
+  'hud.deckhand':['山札{d}・手札{h}','Deck {d} · Hand {h}','牌库{d}·手牌{h}','Mazo {d} · Mano {h}','덱 {d} · 패 {h}','Deck {d} · Mão {h}'],
+  'hud.turn':['第{n}ターン','Turn {n}','第{n}回合','Turno {n}','{n}턴','Turno {n}'],
+  'hud.noHand':['手札なし','No cards in hand','没有手牌','Sin cartas','패 없음','Sem cartas'],
+  'hud.order':['山札の順番','Draw order','牌库顺序','Orden de robo','덱 순서','Ordem de compra'],
+  'banner.you':['あなたのターン','Your Turn','你的回合','Tu turno','당신의 턴','Seu turno'],
+  'banner.opp':['相手のターン','Opponent\'s Turn','对手回合','Turno rival','상대의 턴','Turno do oponente'],
+  'cut.summon':['召喚','Summon','召唤','Invocar','소환','Invocar'],
+  'cut.evolve':['進化','Evolve','进化','Evolucionar','진화','Evoluir'],
+  'cut.cast':['発動','Cast','发动','Lanzar','발동','Lançar'],
+  'cut.field':['展開','Deploy','展开','Desplegar','전개','Ativar'],
+  'fx.evolve':['進化','EVOLVE','进化','EVOLUCIÓN','진화','EVOLUÇÃO'],
+  'fx.seal':['封印','SEALED','封印','SELLADO','봉인','SELADO'],
+  'fx.guard':['結界','WARD','结界','BARRERA','결계','BARREIRA'],
+  'over.win':['勝利','VICTORY','胜利','VICTORIA','승리','VITÓRIA'],
+  'over.lose':['敗北','DEFEAT','失败','DERROTA','패배','DERROTA'],
+  'over.turns':['{n}ターンで決着','Decided in {n} turns','{n}回合决出胜负','Decidido en {n} turnos','{n}턴에 결판','Decidido em {n} turnos'],
+  'over.again':['もう一度','Play again','再来一局','Otra vez','다시 하기','Jogar de novo'],
+  'over.menu':['メニューへ','Menu','返回菜单','Menú','메뉴로','Menu'],
+  'over.restart':['金色のボタンでもう一度','Gold button: play again','按金色按钮再来一局','Botón dorado: otra vez','금색 버튼으로 다시 하기','Botão dourado: de novo'],
+
+  'h.default':['手札を出すか、金色の輪のモンスターで攻撃','Play a card, or attack with a gold-ringed monster','出牌，或用金色光环的怪兽攻击','Juega una carta o ataca con un monstruo de anillo dorado','카드를 내거나 금색 고리 몬스터로 공격','Jogue uma carta ou ataque com um monstro de anel dourado'],
+  'h.opp':['相手のターン…','Opponent\'s turn…','对手回合…','Turno rival…','상대 턴…','Turno do oponente…'],
+  'h.over':['決着しました','Game over','对战结束','Fin de la partida','대전 종료','Fim de jogo'],
+  'h.attack':['攻撃先を選んでください（同じモンスターで取消）','Choose a target (tap the same monster to cancel)','选择攻击目标（再点同一怪兽取消）','Elige un objetivo (toca el mismo monstruo para cancelar)','공격 대상을 고르세요 (같은 몬스터로 취소)','Escolha um alvo (toque o mesmo monstro para cancelar)'],
+  'h.evolve':['進化させる{c}を選んでください','Choose the {c} to evolve','选择要进化的{c}','Elige el {c} que evolucionará','진화시킬 {c}을(를) 고르세요','Escolha o {c} que vai evoluir'],
+  'h.ally':['結界を張る味方を選んでください','Choose an ally to protect','选择要保护的友方','Elige un aliado para proteger','보호할 아군을 고르세요','Escolha um aliado para proteger'],
+  'h.spell':['「{c}」の対象を選んでください','Choose a target for {c}','选择「{c}」的目标','Elige un objetivo para {c}','「{c}」의 대상을 고르세요','Escolha um alvo para {c}'],
+  'w.energy':['エネルギーが足りません','Not enough energy','能量不足','Energía insuficiente','에너지가 부족합니다','Energia insuficiente'],
+  'w.evolve':['進化できる{c}がいません（出した次のターンから重ねられます）','No {c} can evolve yet (it must be in play since last turn)','没有可进化的{c}（登场下回合起可叠放）','Ningún {c} puede evolucionar aún (debe estar en juego desde el turno anterior)','진화할 수 있는 {c}이(가) 없습니다 (낸 다음 턴부터 가능)','Nenhum {c} pode evoluir ainda (precisa estar em jogo desde o turno anterior)'],
+  'w.full':['場がいっぱいです','Your field is full','场地已满','Tu campo está lleno','필드가 가득 찼습니다','Seu campo está cheio'],
+  'w.fieldSame':['「{c}」はすでに出ています','{c} is already in play','「{c}」已在场上','{c} ya está en juego','「{c}」은(는) 이미 나와 있습니다','{c} já está em jogo'],
+  'w.lifeMax':['ライフはすでに最大です','Your life is already full','生命已满','Tu vida ya está al máximo','라이프가 이미 최대입니다','Sua vida já está cheia'],
+  'w.noEnemy':['対象になる相手モンスターがいません','No enemy monster to target','没有可选择的敌方怪兽','No hay monstruo enemigo al que apuntar','대상이 될 적 몬스터가 없습니다','Nenhum monstro inimigo para mirar'],
+  'w.noAlly':['守る味方モンスターがいません','No ally to protect','没有可保护的友方怪兽','No hay aliado que proteger','보호할 아군 몬스터가 없습니다','Nenhum aliado para proteger'],
+  'w.noDeck':['山札がありません','Your deck is empty','牌库已空','Tu mazo está vacío','덱이 비었습니다','Seu deck está vazio'],
+  'w.face':['相手のモンスターがいる間は直接攻撃できません','You can\'t attack directly while the opponent has monsters','对手有怪兽时无法直接攻击','No puedes atacar directamente mientras el rival tenga monstruos','상대 몬스터가 있는 동안 직접 공격할 수 없습니다','Não pode atacar diretamente enquanto o oponente tiver monstros'],
+  'w.guarded':['結界に守られたモンスターは攻撃できません','That monster is protected by a barrier','受结界保护的怪兽无法被攻击','Ese monstruo está protegido por una barrera','결계로 보호된 몬스터는 공격할 수 없습니다','Esse monstro está protegido por uma barreira'],
+  'w.monOnly':['「{c}」はモンスターにしか使えません','{c} can only target monsters','「{c}」只能对怪兽使用','{c} solo puede usarse en monstruos','「{c}」은(는) 몬스터에게만 사용할 수 있습니다','{c} só pode mirar monstros'],
+  'w.evolveTarget':['進化先に選べるのは、前のターンから場にいる{c}です','Choose a {c} that has been in play since last turn','只能选择上回合起在场的{c}','Elige un {c} en juego desde el turno anterior','이전 턴부터 필드에 있던 {c}만 고를 수 있습니다','Escolha um {c} em jogo desde o turno anterior'],
+  'w.frozen':['このモンスターは封印されています','This monster is sealed','该怪兽被封印了','Este monstruo está sellado','이 몬스터는 봉인되었습니다','Este monstro está selado'],
+  'w.tired':['このモンスターは今ターン攻撃できません','This monster can\'t attack this turn','该怪兽本回合无法攻击','Este monstruo no puede atacar este turno','이 몬스터는 이번 턴 공격할 수 없습니다','Este monstro não pode atacar neste turno'],
+  'w.xr':['VR/MRを開始できませんでした','Couldn\'t start VR/MR','无法启动VR/MR','No se pudo iniciar VR/MR','VR/MR을 시작할 수 없습니다','Não foi possível iniciar VR/MR'],
+
+  'l.start':['{p}の先攻で開始','{p} goes first','{p}先攻','{p} empieza','{p} 선공으로 시작','{p} começa'],
+  'l.deckout':['{p}は山札切れで{n}ダメージ','{p} takes {n} damage from an empty deck','{p}牌库耗尽，受到{n}点伤害','{p} recibe {n} de daño por mazo vacío','{p} 덱 소진으로 {n} 데미지','{p} sofre {n} de dano por deck vazio'],
+  'l.burn':['手札がいっぱいで「{c}」を捨てた','Hand full: {c} was discarded','手牌已满，丢弃了「{c}」','Mano llena: se descartó {c}','패가 가득 차서 「{c}」을(를) 버렸다','Mão cheia: {c} foi descartado'],
+  'l.win':['{p}の勝利','{p} wins','{p}获胜','¡{p} gana!','{p} 승리','{p} vence'],
+  'l.destroyed':['{p}の「{c}」が破壊された','{p}\'s {c} was destroyed','{p}的「{c}」被破坏','{c} de {p} fue destruido','{p}의 「{c}」 파괴','{c} de {p} foi destruído'],
+  'l.evolve':['{p}の「{a}」が「{c}」に進化','{p}\'s {a} evolved into {c}','{p}的「{a}」进化为「{c}」','{a} de {p} evolucionó a {c}','{p}의 「{a}」이(가) 「{c}」(으)로 진화','{a} de {p} evoluiu para {c}'],
+  'l.summon':['{p}は「{c}」を召喚','{p} summoned {c}','{p}召唤了「{c}」','{p} invocó a {c}','{p}은(는) 「{c}」을(를) 소환','{p} invocou {c}'],
+  'l.hitFace':['{p}の「{c}」が{q}に命中','{p}\'s {c} hit {q}','{p}的「{c}」命中{q}','{c} de {p} golpeó a {q}','{p}의 「{c}」이(가) {q}에게 명중','{c} de {p} atingiu {q}'],
+  'l.hitMon':['{p}の「{c}」が「{t}」に命中','{p}\'s {c} hit {t}','{p}的「{c}」命中「{t}」','{c} de {p} golpeó a {t}','{p}의 「{c}」이(가) 「{t}」에 명중','{c} de {p} atingiu {t}'],
+  'l.heal':['{p}はライフを{n}回復','{p} restored {n} life','{p}回复了{n}点生命','{p} recuperó {n} de vida','{p} 라이프 {n} 회복','{p} recuperou {n} de vida'],
+  'l.chain':['{p}は「{t}」を封印した','{p} sealed {t}','{p}封印了「{t}」','{p} selló a {t}','{p}은(는) 「{t}」을(를) 봉인했다','{p} selou {t}'],
+  'l.draw':['{p}はカードを{n}枚引いた','{p} drew {n} cards','{p}抽了{n}张卡','{p} robó {n} cartas','{p}은(는) 카드를 {n}장 뽑았다','{p} comprou {n} cartas'],
+  'l.guard':['{p}は「{t}」に結界を張った','{p} shielded {t}','{p}为「{t}」张开了结界','{p} protegió a {t}','{p}은(는) 「{t}」에 결계를 쳤다','{p} protegeu {t}'],
+  'l.field':['{p}は「{c}」を展開','{p} deployed {c}','{p}展开了「{c}」','{p} desplegó {c}','{p}은(는) 「{c}」을(를) 전개','{p} ativou {c}'],
+  'l.fieldSwap':['{p}は「{a}」を「{c}」に張り替えた','{p} replaced {a} with {c}','{p}将「{a}」替换为「{c}」','{p} reemplazó {a} por {c}','{p}은(는) 「{a}」을(를) 「{c}」(으)로 교체','{p} trocou {a} por {c}'],
+  'l.face':['「{c}」が{q}を直接攻撃（{n}）','{c} attacked {q} directly ({n})','「{c}」直接攻击{q}（{n}）','{c} atacó directamente a {q} ({n})','「{c}」이(가) {q}을(를) 직접 공격 ({n})','{c} atacou {q} diretamente ({n})'],
+  'l.battle':['「{c}」ATK{a} ⇄ 「{t}」ATK{b}','{c} ATK{a} ⇄ {t} ATK{b}','「{c}」ATK{a} ⇄ 「{t}」ATK{b}','{c} ATK{a} ⇄ {t} ATK{b}','「{c}」ATK{a} ⇄ 「{t}」ATK{b}','{c} ATK{a} ⇄ {t} ATK{b}'],
+
+  'odds.title':['提供割合','Drop rates','提供概率','Probabilidades','제공 확률','Probabilidades'],
+  'odds.perCard':['1枚ごとのレア度の確率','Chance of each rarity per card','每张卡的稀有度概率','Probabilidad de rareza por carta','카드 1장당 등급 확률','Chance de cada raridade por carta'],
+  'odds.god':['神パック（5枚すべて◆◆◆）','God Pack (all 5 are ◆◆◆)','神包（5张全是◆◆◆）','Sobre divino (las 5 son ◆◆◆)','신 팩 (5장 모두 ◆◆◆)','Pacote divino (todas as 5 são ◆◆◆)'],
+  'odds.same':['同じレア度の中では、どのカードも同じ確率です','Within a rarity, every card is equally likely','同一稀有度内每张卡概率相同','Dentro de una rareza, todas las cartas tienen la misma probabilidad','같은 등급 안에서는 모든 카드의 확률이 같습니다','Dentro de uma raridade, todas as cartas têm a mesma chance'],
+  'odds.note':['確率は全員共通です。パックの見た目や開け方では変わりません','Rates are the same for everyone and don\'t change with the pack\'s look or how you open it','概率对所有人相同，不会因卡包外观或开法而改变','Las probabilidades son iguales para todos y no cambian con el aspecto del sobre ni con cómo lo abras','확률은 모두에게 같으며 팩의 모양이나 여는 방법으로 바뀌지 않습니다','As chances são iguais para todos e não mudam com a aparência do pacote ou como você o abre'],
+  'odds.pity':['パックポイントで好きなカードを作成できます（1パック{p}pt）','Use Pack Points to craft any card ({p} pts per pack)','可用卡包点数制作任意卡牌（每包{p}点）','Usa Puntos de sobre para crear cualquier carta ({p} por sobre)','팩 포인트로 원하는 카드를 제작할 수 있습니다 (팩당 {p}pt)','Use Pontos de pacote para criar qualquer carta ({p} por pacote)'],
+
+  'r1':['デッキ20枚、初期手札3枚、ライフ5で始まる。','Decks have 20 cards. You start with 3 cards in hand and 5 life.','卡组20张，起手3张手牌，生命5。','Los mazos tienen 20 cartas. Empiezas con 3 cartas en mano y 5 de vida.','덱 20장, 시작 패 3장, 라이프 5로 시작한다.','Decks têm 20 cartas. Comece com 3 cartas na mão e 5 de vida.'],
+  'r2':['自分のターン開始時にエネルギーが3まで回復し、1枚引く（最初の先攻1ターン目は引かない）。','At the start of your turn, energy refills to 3 and you draw 1 card (the first player skips their first draw).','回合开始时能量恢复至3并抽1张（先攻第1回合不抽）。','Al inicio de tu turno la energía vuelve a 3 y robas 1 carta (quien empieza no roba en su primer turno).','내 턴 시작 시 에너지가 3으로 회복되고 1장 뽑는다 (선공 첫 턴은 뽑지 않음).','No início do seu turno a energia volta a 3 e você compra 1 carta (quem começa não compra no primeiro turno).'],
+  'r3':['カードはコスト分のエネルギーを払って出す。モンスターは場に3体まで。','Pay energy equal to a card\'s cost to play it. Up to 3 monsters on your field.','支付与费用相同的能量出牌。场上最多3只怪兽。','Paga energía igual al coste para jugar una carta. Hasta 3 monstruos en tu campo.','코스트만큼 에너지를 내고 카드를 낸다. 몬스터는 필드에 3체까지.','Pague energia igual ao custo para jogar. Até 3 monstros no seu campo.'],
+  'r4':['出したターンのモンスターは攻撃できない（速攻は例外）。攻撃は1体につき1ターン1回。','Monsters can\'t attack the turn they are played (except Rush). Each monster attacks once per turn.','怪兽登场回合无法攻击（速攻除外）。每只怪兽每回合攻击1次。','Los monstruos no pueden atacar el turno en que entran (salvo Rápido). Cada uno ataca una vez por turno.','낸 턴의 몬스터는 공격할 수 없다 (속공 제외). 1체당 턴에 1회 공격.','Monstros não atacam no turno em que entram (exceto Investida). Cada um ataca uma vez por turno.'],
+  'r5':['戦闘ではお互いのATK分のダメージを与え、HPが0になると破壊。','In combat, both monsters deal damage equal to their ATK. A monster at 0 HP is destroyed.','战斗中双方造成等同ATK的伤害，HP为0即被破坏。','En combate, ambos monstruos infligen daño igual a su ATK. Con 0 HP se destruye.','전투에서는 서로 ATK만큼 데미지를 주고, HP가 0이 되면 파괴된다.','Em combate, ambos causam dano igual ao ATK. Com 0 HP, o monstro é destruído.'],
+  'r6':['相手の場に攻撃できるモンスターがいる間は、相手を直接攻撃できない。','You can\'t attack the opponent directly while they have a monster you can attack.','对手场上有可攻击的怪兽时，无法直接攻击对手。','No puedes atacar al rival directamente mientras tenga un monstruo atacable.','상대 필드에 공격 가능한 몬스터가 있으면 직접 공격할 수 없다.','Não pode atacar o oponente diretamente enquanto ele tiver um monstro atacável.'],
+  'r7':['進化カードは、前のターンから場にいる進化元に重ねて出す。ダメージは引き継ぐ。','Evolution cards go on top of their base monster that has been in play since last turn. Damage carries over.','进化卡叠放在上回合起在场的进化源上，伤害会继承。','Las evoluciones se colocan sobre su monstruo base en juego desde el turno anterior. El daño se mantiene.','진화 카드는 이전 턴부터 필드에 있던 진화 전 몬스터 위에 겹쳐 낸다. 데미지는 이어진다.','Evoluções vão sobre o monstro base em jogo desde o turno anterior. O dano continua.'],
+  'r8':['フィールドカードは1人1枚。別のフィールドを出すと張り替わる。','One Field card per player. Playing a different one replaces it.','每人限1张场地卡，打出其他场地卡会替换。','Un Campo por jugador. Jugar otro lo reemplaza.','필드 카드는 1인 1장. 다른 필드를 내면 교체된다.','Um Campo por jogador. Jogar outro o substitui.'],
+  'r9':['山札が尽きて引けないと1ダメージ。相手のライフを0にしたら勝ち。','If you must draw from an empty deck, you take 1 damage. Reduce the opponent\'s life to 0 to win.','牌库耗尽无法抽牌时受到1点伤害。将对手生命降为0即可获胜。','Si debes robar de un mazo vacío, recibes 1 de daño. Gana dejando la vida del rival en 0.','덱이 비어 뽑을 수 없으면 1 데미지. 상대 라이프를 0으로 만들면 승리.','Se precisar comprar de um deck vazio, sofre 1 de dano. Zere a vida do oponente para vencer.'],
+};
+
+function t(k,p){
+  const a=STR[k]; let s = a ? (a[LI] ?? a[1]) : k;
+  if(p) s=s.replace(/\{(\w+)\}/g,(_,n)=>resolveParam(p[n]));
+  return s;
+}
+function resolveParam(v){
+  if(typeof v==='string'){
+    if(v[0]==='@') return cardName(v.slice(1));
+    if(v[0]==='#') return who(+v.slice(1));
+  }
+  return v==null ? '' : v;
+}
+function cardName(id){ return NAME[id][LI]; }
+function cardMotif(id){ return MOTIF[id][LI]; }
+function who(pi){ return pi===0 ? t('you') : (S?.oppName || t('cpu')); }
+function cardText(id){
+  const d=CARDS[id];
+  if(d.evolveFrom) return t('txt.evolve',{c:'@'+d.evolveFrom});
+  if(d.rush) return t('txt.rush');
+  return STR['txt.'+id] ? t('txt.'+id) : '';
+}
+function setLang(code){
+  const i=LANGS.findIndex(l=>l[0]===code); LI=i<0?1:i; LANG=LANGS[LI][0];
+  document.documentElement.lang = LANG==='zh' ? 'zh-CN' : LANG;
+}
+
+/* =====================================================================
+   セーブデータ（この端末のブラウザに保存）
+   ===================================================================== */
+const SAVE_KEY='gate.save.v1';
+let SV;
+function randId(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for(let i=0;i<8;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
+function guessLang(){ const n=(navigator.language||'ja').slice(0,2).toLowerCase(); return LANGS.some(l=>l[0]===n)?n:'en'; }
+function defSave(){
+  return { v:1, lang:guessLang(), collection:{...STARTER},
+    decks:[{name:'',cards:{...STARTER}},{name:'',cards:{}},{name:'',cards:{}}], active:0,
+    points:0, lastPack:'', pending:null,
+    profile:{name:'Player', id:randId()}, friends:[],
+    settings:{speed:1, view:0, hideLast:true, tableHeight:0.78, test:false},
+    stats:{w:0,l:0} };
+}
+function loadSave(){
+  try{
+    const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
+    if(s && s.v===1){ const d=defSave(); return {...d, ...s, settings:{...d.settings,...(s.settings||{})}, profile:{...d.profile,...(s.profile||{})}, stats:{...d.stats,...(s.stats||{})}}; }
+  }catch(e){}
+  return defSave();
+}
+function save(){ try{ localStorage.setItem(SAVE_KEY,JSON.stringify(SV)); }catch(e){} }
+function deckCount(c){ return Object.values(c||{}).reduce((s,n)=>s+(n||0),0); }
+function deckName(i){ const d=SV.decks[i]; return d.name || (i===0 ? t('deck.starter') : t('deck.default',{n:i+1})); }
+
+// デッキコード：GATE1- のあとにカードごとの枚数を並べた文字列
+function deckCode(cards){ return 'GATE1-'+CARD_IDS.map(id=>Math.min(9,cards[id]||0)).join(''); }
+function parseCode(code){
+  const m=String(code||'').trim().toUpperCase().match(/^GATE1-(\d+)$/);
+  if(!m || m[1].length!==CARD_IDS.length) return null;
+  const cards={}; CARD_IDS.forEach((id,i)=>{ const n=+m[1][i]; if(n) cards[id]=Math.min(n,CONFIG.maxCopies); });
+  return deckCount(cards)===CONFIG.deckSize ? cards : null;
+}
+
+/* =====================================================================
+   ゲームロジック
+   ===================================================================== */
 const $ = s => document.querySelector(s);
 const sleep = ms => new Promise(r => setTimeout(r, ms / CONFIG.animSpeed));
-let S, uidSeq = 0, gameSeq = 0;
+let S=null, uidSeq=0, gameSeq=0;
 
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-function buildDeck(){ const d=[]; for(const [id,n] of Object.entries(DECK_LIST)) for(let k=0;k<n;k++) d.push({uid:++uidSeq,id}); return shuffle(d); }
-function newPlayer(){ const deck=buildDeck(); return { life:CONFIG.startLife, energy:0, deck, hand:deck.splice(0,CONFIG.handStart), field:Array(CONFIG.maxField).fill(null), fieldCard:null }; }
+function buildDeck(counts){ const d=[]; for(const id of CARD_IDS) for(let k=0;k<(counts[id]||0);k++) d.push({uid:++uidSeq,id}); return shuffle(d); }
+function newPlayer(counts){ const deck=buildDeck(counts); return { life:CONFIG.startLife, energy:0, deck, hand:deck.splice(0,CONFIG.handStart), field:Array(CONFIG.maxField).fill(null), fieldCard:null }; }
 function atkOf(pi,m){ return m.atk + (S.p[pi].fieldCard==='altar' ? CONFIG.altarBonus : 0); }
-function addLog(pi,text){ S.log.unshift({pi,text}); if(S.log.length>80) S.log.pop(); }
+function addLog(pi,key,params){ S.log.unshift({pi,key,params}); if(S.log.length>80) S.log.pop(); }
 function fx(key,text,cls){ S.fx.push([key,text,cls]); }
 function evoTargets(pi,d){ return S.p[pi].field.filter(m=>m && m.id===d.evolveFrom && m.summonTurn<S.turnNo); }
 function blockers(pi){ return S.p[pi].field.filter(m=>m && !m.guarded); }
 function slotKey(pi,m){ return `s${pi}${S.p[pi].field.indexOf(m)}`; }
+function alive(gid){ return !!S && S.gid===gid; }
 
-function newGame(){
-  S = { p:[newPlayer(),newPlayer()], turn:0, turnNo:0, sel:null, busy:false, over:false, overShown:false, winner:null, log:[], fx:[], hint:'', warn:false, gid:++gameSeq };
+function startMatch(mode, friendIdx){
+  const my=SV.decks[SV.active].cards;
+  if(deckCount(my)!==CONFIG.deckSize){ toast(t('deck.invalid',{m:CONFIG.deckSize})); APP.tab='cards'; APP.cardsSub='decks'; APP.editing=SV.active; showApp(true); return; }
+  let opp={...STARTER}, oppName=null;
+  if(mode==='friend'){
+    const f=SV.friends[friendIdx]; if(!f){ toast(t('bt.noFriend')); return; }
+    opp=parseCode(f.code)||opp; oppName=f.name;
+  }
+  S = { p:[newPlayer(my),newPlayer(opp)], turn:0, turnNo:0, sel:null, busy:false, over:false, overShown:false, winner:null,
+        log:[], fx:[], hint:null, hintP:null, warn:false, gid:++gameSeq, mode, friendIdx, open:mode==='open', oppName };
   clearBoard3D();
   $('#overlay').hidden=true;
+  showApp(false);
   const first = Math.random()<.5 ? 0 : 1;
-  addLog(null, `${NAMES[first]}の先攻で開始`);
+  addLog(null,'l.start',{p:'#'+first});
   startTurn(first);
+}
+function toMenu(){
+  if(renderer?.xr.isPresenting) renderer.xr.getSession()?.end();
+  gameSeq++; S=null; clearBoard3D();
+  $('#overlay').hidden=true;
+  showApp(true);
 }
 
 function startTurn(pi){
-  S.turn=pi; S.turnNo++; S.sel=null; S.hint=''; S.warn=false;
+  S.turn=pi; S.turnNo++; S.sel=null; S.hint=null; S.warn=false;
   const p=S.p[pi];
   p.energy=CONFIG.maxEnergy;
   p.field.forEach(m=>{ if(m) m.canAttack=!m.frozen; });
@@ -273,7 +733,7 @@ function startTurn(pi){
     p.field.forEach(m=>{ if(m && m.hp<m.maxHp){ const n=Math.min(CONFIG.sanctuaryHeal,m.maxHp-m.hp); m.hp+=n; fx(slotKey(pi,m),`+${n}`,'heal'); }});
   }
   if(S.turnNo>1) draw(pi);
-  showBanner(pi===0?'あなたのターン':'相手のターン', pi===0?'me':'foe');
+  showBanner(t(pi===0?'banner.you':'banner.opp'), pi===0?'me':'foe');
   render();
   if(!S.over && pi===1) cpuTurn(S.gid);
 }
@@ -286,37 +746,39 @@ function endTurn(){
 
 function draw(pi){
   const p=S.p[pi];
-  if(!p.deck.length){ addLog(pi, `${NAMES[pi]}は山札切れで${CONFIG.deckOutDamage}ダメージ`); damagePlayer(pi,CONFIG.deckOutDamage); return; }
+  if(!p.deck.length){ addLog(pi,'l.deckout',{p:'#'+pi,n:CONFIG.deckOutDamage}); damagePlayer(pi,CONFIG.deckOutDamage); return; }
   const c=p.deck.shift();
-  if(p.hand.length>=CONFIG.maxHand){ addLog(pi, `手札がいっぱいで「${CARDS[c.id].name}」を捨てた`); return; }
+  if(p.hand.length>=CONFIG.maxHand){ addLog(pi,'l.burn',{c:'@'+c.id}); return; }
   p.hand.push(c);
 }
 
 function damagePlayer(pi,n){
   const p=S.p[pi]; p.life=Math.max(0,p.life-n);
   fx(`h${pi}`,`-${n}`,'dmg');
-  if(p.life<=0 && !S.over){ S.over=true; S.winner=1-pi; addLog(1-pi, `${NAMES[1-pi]}の勝利`); }
+  if(p.life<=0 && !S.over){ S.over=true; S.winner=1-pi; addLog(1-pi,'l.win',{p:'#'+(1-pi)}); finishMatch(); }
+}
+function finishMatch(){
+  if(S.winner===0){ SV.stats.w++; SV.points+=CONFIG.winPoints; } else SV.stats.l++;
+  save();
 }
 function damageMonster(owner,m,n){ m.hp-=n; fx(slotKey(owner,m),`-${n}`,'dmg'); killCheck(owner); }
 function killCheck(pi){
   const p=S.p[pi];
-  p.field.forEach((m,i)=>{ if(m && m.hp<=0){ p.field[i]=null; addLog(pi, `${NAMES[pi]}の「${CARDS[m.id].name}」が破壊された`); }});
+  p.field.forEach((m,i)=>{ if(m && m.hp<=0){ p.field[i]=null; addLog(pi,'l.destroyed',{p:'#'+pi,c:'@'+m.id}); }});
 }
 
+// 出せない理由を [文言キー, 値] で返す。出せるなら null
 function canPlay(pi,c){
   const p=S.p[pi], d=CARDS[c.id];
-  if(d.cost>p.energy) return 'エネルギーが足りません';
-  if(d.evolveFrom){
-    if(!evoTargets(pi,d).length) return `進化できる「${CARDS[d.evolveFrom].name}」がいません（出した次のターンから重ねられます）`;
-    return '';
-  }
-  if(d.type==='monster' && !p.field.includes(null)) return '場がいっぱいです（最大'+CONFIG.maxField+'体）';
-  if(d.type==='field' && p.fieldCard===c.id) return `「${d.name}」はすでに出ています`;
-  if(c.id==='heal' && p.life>=CONFIG.maxLife) return 'ライフはすでに最大です';
-  if(c.id==='chain' && !S.p[1-pi].field.some(Boolean)) return '対象になる相手モンスターがいません';
-  if(c.id==='guard' && !p.field.some(Boolean)) return '守る味方モンスターがいません';
-  if(c.id==='book' && !p.deck.length) return '山札がありません';
-  return '';
+  if(d.cost>p.energy) return ['w.energy'];
+  if(d.evolveFrom) return evoTargets(pi,d).length ? null : ['w.evolve',{c:'@'+d.evolveFrom}];
+  if(d.type==='monster' && !p.field.includes(null)) return ['w.full'];
+  if(d.type==='field' && p.fieldCard===c.id) return ['w.fieldSame',{c:'@'+c.id}];
+  if(c.id==='heal' && p.life>=CONFIG.maxLife) return ['w.lifeMax'];
+  if(c.id==='chain' && !S.p[1-pi].field.some(Boolean)) return ['w.noEnemy'];
+  if(c.id==='guard' && !p.field.some(Boolean)) return ['w.noAlly'];
+  if(c.id==='book' && !p.deck.length) return ['w.noDeck'];
+  return null;
 }
 
 function doPlay(pi,c,target){
@@ -326,36 +788,38 @@ function doPlay(pi,c,target){
   if(d.evolveFrom){
     const i=p.field.indexOf(target), dmg=target.maxHp-target.hp;
     p.field[i]={ uid:c.uid, id:c.id, atk:d.atk, hp:d.hp-dmg, maxHp:d.hp, summonTurn:target.summonTurn,
-                 canAttack:target.canAttack, frozen:target.frozen, frozenSince:target.frozenSince, guarded:target.guarded, guardSince:target.guardSince, evolvedFrom:target.uid };
-    addLog(pi, `${NAMES[pi]}の「${CARDS[target.id].name}」が「${d.name}」に進化`);
-    fx(`s${pi}${i}`,'進化','info');
+                 canAttack:target.canAttack, frozen:target.frozen, frozenSince:target.frozenSince,
+                 guarded:target.guarded, guardSince:target.guardSince, evolvedFrom:target.uid };
+    addLog(pi,'l.evolve',{p:'#'+pi,a:'@'+target.id,c:'@'+c.id});
+    fx(`s${pi}${i}`,t('fx.evolve'),'info');
   } else if(d.type==='monster'){
     const i=p.field.indexOf(null);
     p.field[i]={ uid:c.uid, id:c.id, atk:d.atk, hp:d.hp, maxHp:d.hp, summonTurn:S.turnNo, canAttack:!!d.rush, frozen:false };
-    addLog(pi, `${NAMES[pi]}は「${d.name}」を召喚${d.rush?'（速攻）':''}`);
+    addLog(pi,'l.summon',{p:'#'+pi,c:'@'+c.id});
   } else if(c.id==='fireball'){
-    if(target==='face'){ addLog(pi, `${NAMES[pi]}の火炎弾が${NAMES[o]}に命中`); damagePlayer(o,d.dmg); }
-    else { addLog(pi, `${NAMES[pi]}の火炎弾が「${CARDS[target.id].name}」に命中`); damageMonster(o,target,d.dmg); }
+    if(target==='face'){ addLog(pi,'l.hitFace',{p:'#'+pi,c:'@'+c.id,q:'#'+o}); damagePlayer(o,d.dmg); }
+    else { addLog(pi,'l.hitMon',{p:'#'+pi,c:'@'+c.id,t:'@'+target.id}); damageMonster(o,target,d.dmg); }
   } else if(c.id==='heal'){
     p.life=Math.min(CONFIG.maxLife,p.life+d.amount);
-    addLog(pi, `${NAMES[pi]}はライフを${d.amount}回復`);
+    addLog(pi,'l.heal',{p:'#'+pi,n:d.amount});
     fx(`h${pi}`,`+${d.amount}`,'heal');
   } else if(c.id==='chain'){
     target.frozen=true; target.frozenSince=S.turnNo; target.canAttack=false;
-    addLog(pi, `${NAMES[pi]}は「${CARDS[target.id].name}」を封印した`);
-    fx(slotKey(o,target),'封印','info');
+    addLog(pi,'l.chain',{p:'#'+pi,t:'@'+target.id});
+    fx(slotKey(o,target),t('fx.seal'),'info');
   } else if(c.id==='book'){
     const n=Math.min(d.draw,p.deck.length);
     for(let k=0;k<n;k++) draw(pi);
-    addLog(pi, `${NAMES[pi]}は導きの書でカードを${n}枚引いた`);
-    fx(`h${pi}`,`+${n}枚`,'info');
+    addLog(pi,'l.draw',{p:'#'+pi,n});
+    fx(`h${pi}`,`+${n}`,'info');
   } else if(c.id==='guard'){
     target.guarded=true; target.guardSince=S.turnNo;
-    addLog(pi, `${NAMES[pi]}は「${CARDS[target.id].name}」に守りの結界を張った`);
-    fx(slotKey(pi,target),'結界','info');
+    addLog(pi,'l.guard',{p:'#'+pi,t:'@'+target.id});
+    fx(slotKey(pi,target),t('fx.guard'),'info');
   } else if(d.type==='field'){
     const old=p.fieldCard; p.fieldCard=c.id;
-    addLog(pi, old ? `${NAMES[pi]}は「${CARDS[old].name}」を「${d.name}」に張り替えた` : `${NAMES[pi]}は「${d.name}」を配置`);
+    if(old) addLog(pi,'l.fieldSwap',{p:'#'+pi,a:'@'+old,c:'@'+c.id});
+    else addLog(pi,'l.field',{p:'#'+pi,c:'@'+c.id});
   }
 }
 
@@ -363,11 +827,11 @@ function attack(pi,m,target){
   const o=1-pi, a=atkOf(pi,m), mk=slotKey(pi,m);
   m.canAttack=false;
   if(target==='face'){
-    addLog(pi, `「${CARDS[m.id].name}」が${NAMES[o]}を直接攻撃（${a}）`);
+    addLog(pi,'l.face',{c:'@'+m.id,q:'#'+o,n:a});
     damagePlayer(o,a);
   } else {
     const tk=slotKey(o,target), b=atkOf(o,target);
-    addLog(pi, `「${CARDS[m.id].name}」ATK${a} ⇄ 「${CARDS[target.id].name}」ATK${b}`);
+    addLog(pi,'l.battle',{c:'@'+m.id,a,t:'@'+target.id,b});
     target.hp-=a; m.hp-=b;
     fx(tk,`-${a}`,'dmg'); if(b>0) fx(mk,`-${b}`,'dmg');
     killCheck(o); killCheck(pi);
@@ -377,12 +841,13 @@ function attack(pi,m,target){
 /* ===== 演出つきの行動 ===== */
 async function playAnimated(pi,c,target){
   const d=CARDS[c.id], o=1-pi;
-  cutIn(pi,d);
+  cutIn(pi,c.id);
   if(pi===1) await sleep(650);
   if(c.id==='fireball' || c.id==='chain'){
     const to = target==='face' ? CRYSTAL[o].clone() : slotPos(o,S.p[o].field.indexOf(target)).add(new THREE.Vector3(0,1,0));
     await projectile(CRYSTAL[pi].clone().add(new THREE.Vector3(0,.4,0)), to, EL[d.el]);
   }
+  if(!S) return;
   doPlay(pi,c,target);
   render();
   if(c.id==='heal') healFx(pi);
@@ -401,6 +866,7 @@ async function attackAnimated(pi,m,target){
     const hit=dir.clone().multiplyScalar(Math.max(0,len-1.25)); hit.y=target==='face'?.7:.25;
     await tween(.18, k=>{ e.holder.position.copy(back).multiplyScalar(easeOut(k)); });
     await tween(.2, k=>{ e.holder.position.lerpVectors(back,hit,k*k); });
+    if(!S) return;
     burst(to, EL[CARDS[m.id].el], 70, 6, .7, .24);
     burst(to, '#ffffff', 25, 4, .35, .3);
     shake(atkOf(pi,m)>=3 ? .45 : .25);
@@ -415,18 +881,18 @@ async function attackAnimated(pi,m,target){
 /* ===== CPU ===== */
 async function cpuTurn(gid){
   S.busy=true; render();
-  await sleep(1100); if(gid!==S.gid) return;
+  await sleep(1100); if(!alive(gid)) return;
   for(let guard=0; guard<12 && !S.over; guard++){
     const pick=cpuPickPlay(); if(!pick) break;
-    await playAnimated(1,pick.card,pick.target); if(gid!==S.gid) return;
-    await sleep(CONFIG.cpuDelay); if(gid!==S.gid) return;
+    await playAnimated(1,pick.card,pick.target); if(!alive(gid)) return;
+    await sleep(CONFIG.cpuDelay); if(!alive(gid)) return;
   }
   for(const m of [...S.p[1].field]){
     if(S.over) break;
     if(!m || !m.canAttack || !S.p[1].field.includes(m)) continue;
-    const t=cpuPickAttack(m); if(!t) continue;
-    await attackAnimated(1,m,t); if(gid!==S.gid) return;
-    await sleep(CONFIG.cpuDelay); if(gid!==S.gid) return;
+    const tg=cpuPickAttack(m); if(!tg) continue;
+    await attackAnimated(1,m,tg); if(!alive(gid)) return;
+    await sleep(CONFIG.cpuDelay); if(!alive(gid)) return;
   }
   S.busy=false;
   if(!S.over) endTurn(); else render();
@@ -476,19 +942,19 @@ function cpuPickAttack(m){
   return CONFIG.mustAttackMonsters ? null : 'face';
 }
 
-/* ===== プレイヤー操作 ===== */
-function setHint(t,warn){ S.hint=t; S.warn=!!warn; }
+/* ===== 対戦中のプレイヤー操作 ===== */
+function setHint(key,params,warn){ if(!S) return; S.hint=key; S.hintP=params||null; S.warn=!!warn; }
 async function run(fn){
   const gid=S.gid; S.busy=true; render();
-  try{ await fn(); } finally { if(gid===S.gid){ S.busy=false; render(); } }
+  try{ await fn(); } finally { if(alive(gid)){ S.busy=false; render(); } }
 }
 
 function clickHand(c){
   if(S.sel?.card===c){ S.sel=null; return; }
   S.sel=null;
   const why=canPlay(0,c);
-  if(why){ setHint(why,true); return; }
-  setHint('');
+  if(why){ setHint(why[0],why[1],true); return; }
+  setHint(null);
   const d=CARDS[c.id];
   if(d.evolveFrom){
     const ts=evoTargets(0,d);
@@ -506,74 +972,72 @@ function clickHand(c){
   run(()=>playAnimated(0,c));
 }
 
-function resolveTarget(t){
+function resolveTarget(tg){
   const sel=S.sel; if(!sel) return;
   if(sel.kind==='attack'){
-    if(t==='face' && CONFIG.mustAttackMonsters && blockers(1).length){ setHint('相手のモンスターがいる間は直接攻撃できません',true); return; }
-    if(t!=='face' && t.guarded){ setHint('結界に守られたモンスターは攻撃できません',true); return; }
-    S.sel=null; setHint(''); run(()=>attackAnimated(0,sel.m,t));
+    if(tg==='face' && CONFIG.mustAttackMonsters && blockers(1).length){ setHint('w.face',null,true); return; }
+    if(tg!=='face' && tg.guarded){ setHint('w.guarded',null,true); return; }
+    S.sel=null; setHint(null); run(()=>attackAnimated(0,sel.m,tg));
   } else if(sel.kind==='spell'){
-    if(t==='face' && sel.card.id==='chain'){ setHint('封印の鎖はモンスターにしか使えません',true); return; }
-    S.sel=null; setHint(''); run(()=>playAnimated(0,sel.card,t));
+    if(tg==='face' && sel.card.id==='chain'){ setHint('w.monOnly',{c:'@chain'},true); return; }
+    S.sel=null; setHint(null); run(()=>playAnimated(0,sel.card,tg));
   }
 }
 
 function heroIsTarget(){
+  if(!S) return false;
   const sel=S.sel, myTurn=S.turn===0 && !S.over && !S.busy;
   return !!(myTurn && sel && ((sel.kind==='spell' && sel.card.id==='fireball') || (sel.kind==='attack' && (!CONFIG.mustAttackMonsters || !blockers(1).length))));
 }
 
-function handle(act,data){
-  if(act==='restart'){ newGame(); return; }
+function battleAct(act,data){
+  if(act==='again'){ startMatch(S?.mode||'practice', S?.friendIdx); return; }
+  if(act==='menu'){ toMenu(); return; }
   if(act==='vr'){ startXR('immersive-vr'); return; }
   if(act==='mr'){ startXR('immersive-ar'); return; }
-  if(act==='view'){ viewIdx=(viewIdx+1)%VIEWS.length; $('#viewBtn').textContent='視点：'+VIEWS[viewIdx].name; fitCamera(); return; }
-  if(act==='rules'){ $('#rulesPanel').hidden=false; return; }
-  if(act==='closeRules'){ $('#rulesPanel').hidden=true; return; }
+  if(act==='view'){ SV.settings.view=(SV.settings.view+1)%VIEWS.length; viewIdx=SV.settings.view; save(); fitCamera(); applyI18n(); return; }
   if(act==='log'){ $('#logbox').classList.toggle('open'); return; }
+  if(act==='rules'){ showRules(); return; }
   if(!S || S.over || S.busy || S.turn!==0) return;
   if(act==='end'){ S.sel=null; endTurn(); return; }
   if(act==='hand'){ const c=S.p[0].hand.find(c=>String(c.uid)===String(data.uid)); if(c) clickHand(c); }
   else if(act==='mon'){
     const pi=+data.pi, m=S.p[pi].field[+data.i];
-    if(!m){ if(S.sel) { S.sel=null; setHint(''); } render(); return; }
+    if(!m){ if(S.sel){ S.sel=null; setHint(null); } render(); return; }
     if(pi===0){
       if(S.sel?.kind==='evolve'){
         const sel=S.sel, d=CARDS[sel.card.id];
-        if(evoTargets(0,d).includes(m)){ S.sel=null; setHint(''); run(()=>playAnimated(0,sel.card,m)); }
-        else setHint(`進化先に選べるのは、前のターンから場にいる「${CARDS[d.evolveFrom].name}」です`,true);
+        if(evoTargets(0,d).includes(m)){ S.sel=null; setHint(null); run(()=>playAnimated(0,sel.card,m)); }
+        else setHint('w.evolveTarget',{c:'@'+d.evolveFrom},true);
       }
-      else if(S.sel?.kind==='ally'){ const sel=S.sel; S.sel=null; setHint(''); run(()=>playAnimated(0,sel.card,m)); }
-      else if(S.sel?.kind==='attack' && S.sel.m===m){ S.sel=null; setHint(''); }
-      else if(m.canAttack){ S.sel={kind:'attack',m}; setHint(''); }
-      else setHint(m.frozen ? 'このモンスターは封印されています' : 'このモンスターは今ターン攻撃できません',true);
+      else if(S.sel?.kind==='ally'){ const sel=S.sel; S.sel=null; setHint(null); run(()=>playAnimated(0,sel.card,m)); }
+      else if(S.sel?.kind==='attack' && S.sel.m===m){ S.sel=null; setHint(null); }
+      else if(m.canAttack){ S.sel={kind:'attack',m}; setHint(null); }
+      else setHint(m.frozen?'w.frozen':'w.tired',null,true);
     } else resolveTarget(m);
   }
   else if(act==='hero' && String(data.pi)==='1') resolveTarget('face');
   render();
 }
 
-document.addEventListener('click',e=>{
-  const b=e.target.closest('[data-act]'); if(!b) return;
-  handle(b.dataset.act, b.dataset);
-});
-
-/* ===== HUD描画 ===== */
+/* ===== 対戦画面の表示（HUD） ===== */
 function pips(n,max,cls){ let s=''; for(let i=0;i<max;i++) s+=`<span class="pip ${cls} ${i<n?'on':''}"></span>`; return `<span class="pips">${s}</span>`; }
-function cardBody(d){
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function cardBody(id){
+  const d=CARDS[id];
   const stats = d.type==='monster'
-    ? `<span class="stats"><b class="atk">${d.atk}</b><b class="hp">${d.hp}</b></span>`
-    : `<span class="text">${d.text}</span>`;
-  const kind = d.tag ? `<span class="kind tag">${d.tag}</span>` : `<span class="kind">${KIND[d.type]}</span>`;
-  return `<span class="cost">${d.cost}</span>${kind}<span class="glyph" aria-hidden="true">${d.glyph}</span><span class="name">${d.name}</span>${stats}`;
+    ? `${d.tag?`<span class="text">${esc(cardText(id))}</span>`:''}<span class="stats"><b class="atk">${d.atk}</b><b class="hp">${d.hp}</b></span>`
+    : `<span class="text">${esc(cardText(id))}</span>`;
+  return `<span class="cost">${d.cost}</span><span class="kind">${esc(cardMotif(id))}</span><span class="glyph" aria-hidden="true">${d.glyph}</span><span class="name">${esc(cardName(id))}</span>${stats}`;
 }
+function cardHTML(id,extra=''){ return `<div class="card el-${CARDS[id].el} ${extra}">${cardBody(id)}</div>`; }
 function panelHTML(pi){
-  const p=S.p[pi], fc=p.fieldCard?CARDS[p.fieldCard]:null;
-  return `<span class="who">${NAMES[pi]}</span>
-    <span class="lbl">ライフ</span>${pips(p.life,CONFIG.maxLife,'life')}<span class="num">${p.life}</span>
-    <span class="lbl">エネルギー</span>${pips(p.energy,CONFIG.maxEnergy,'en')}
-    <span class="meta">山札${p.deck.length}・手札${p.hand.length}</span>
-    ${fc?`<span class="fbadge el-${fc.el}">${fc.name}</span>`:''}`;
+  const p=S.p[pi];
+  return `<span class="who">${esc(who(pi))}</span>
+    <span class="lbl">${t('hud.life')}</span>${pips(p.life,CONFIG.maxLife,'life')}<span class="num">${p.life}</span>
+    <span class="lbl">${t('hud.energy')}</span>${pips(p.energy,CONFIG.maxEnergy,'en')}
+    <span class="meta">${t('hud.deckhand',{d:p.deck.length,h:p.hand.length})}</span>
+    ${p.fieldCard?`<span class="fbadge el-${CARDS[p.fieldCard].el}">${esc(cardName(p.fieldCard))}</span>`:''}`;
 }
 
 function render(){
@@ -588,23 +1052,29 @@ function render(){
     const d=CARDS[c.id], cls=['card','el-'+d.el];
     cls.push(myTurn && !canPlay(0,c) ? 'playable' : 'dim');
     if(S.sel?.card===c) cls.push('selected');
-    return `<button class="${cls.join(' ')}" data-act="hand" data-uid="${c.uid}">${cardBody(d)}</button>`;
-  }).join('') || '<span class="meta">手札なし</span>';
+    return `<button class="${cls.join(' ')}" data-act="hand" data-uid="${c.uid}">${cardBody(c.id)}</button>`;
+  }).join('') || `<span class="meta">${t('hud.noHand')}</span>`;
 
-  let hint=S.hint;
+  let hint = S.hint ? t(S.hint,S.hintP) : '';
   if(!hint){
-    if(S.over) hint='決着しました';
-    else if(S.turn!==0) hint='相手のターン…';
+    if(S.over) hint=t('h.over');
+    else if(S.turn!==0) hint=t('h.opp');
     else if(S.busy) hint='';
-    else if(S.sel?.kind==='attack') hint='攻撃先を選んでください（同じモンスターを押すと取消）';
-    else if(S.sel?.kind==='evolve') hint='進化させる炎の幼竜を選んでください';
-    else if(S.sel?.kind==='ally') hint='結界を張る味方モンスターを選んでください';
-    else if(S.sel?.kind==='spell') hint=`「${CARDS[S.sel.card.id].name}」の対象を選んでください（赤く光る相手）`;
-    else hint='手札を出すか、金色の輪のモンスターで攻撃';
+    else if(S.sel?.kind==='attack') hint=t('h.attack');
+    else if(S.sel?.kind==='evolve') hint=t('h.evolve',{c:'@'+CARDS[S.sel.card.id].evolveFrom});
+    else if(S.sel?.kind==='ally') hint=t('h.ally');
+    else if(S.sel?.kind==='spell') hint=t('h.spell',{c:'@'+S.sel.card.id});
+    else hint=t('h.default');
   }
-  const h=$('#hint'); h.textContent=`第${S.turnNo}ターン　${hint}`; h.classList.toggle('warn',S.warn);
+  const h=$('#hint'); h.textContent=`${t('hud.turn',{n:S.turnNo})}　${hint}`; h.classList.toggle('warn',S.warn);
   $('#endBtn').disabled=!myTurn;
-  $('#log').innerHTML = S.log.map(l=>`<li class="${l.pi===null?'':'p'+l.pi}">${l.text}</li>`).join('');
+  $('#log').innerHTML = S.log.map(l=>`<li class="${l.pi==null?'':'p'+l.pi}">${esc(t(l.key,l.params))}</li>`).join('');
+
+  const oi=$('#openInfo');
+  if(S.open){
+    const col=pi=>`<div><b>${esc(who(pi))}</b><ol>${S.p[pi].deck.slice(0,5).map(c=>`<li class="el-${CARDS[c.id].el}">${esc(cardName(c.id))}</li>`).join('')}</ol></div>`;
+    oi.innerHTML=`<span class="lbl">${t('hud.order')}</span><div class="oi-cols">${col(0)}${col(1)}</div>`; oi.hidden=false;
+  } else oi.hidden=true;
 
   sync3D();
   if(renderer?.xr.isPresenting) updateXRHud();
@@ -614,50 +1084,371 @@ function render(){
     S.overShown=true; const gid=S.gid;
     shatterCrystal(1-S.winner);
     setTimeout(()=>{
-      if(gid!==S.gid) return;
-      const ov=$('#overlay');
-      ov.innerHTML=`<div class="ov"><p>${S.turnNo}ターンで決着</p><h2>${S.winner===0?'勝利':'敗北'}</h2><button class="endbtn" data-act="restart">もう一度</button></div>`;
+      if(!alive(gid)) return;
+      const ov=$('#overlay'), win=S.winner===0;
+      ov.innerHTML=`<div class="ov"><p>${t('over.turns',{n:S.turnNo})}</p><h2>${t(win?'over.win':'over.lose')}</h2>${win?`<p class="gain">${t('pack.gotPoints',{n:CONFIG.winPoints})}</p>`:''}<div class="row"><button class="endbtn" data-act="again">${t('over.again')}</button><button class="ghost-btn" data-act="menu">${t('over.menu')}</button></div></div>`;
       ov.hidden=false;
     }, 1300);
   }
 }
 
-function cutIn(pi,d){
-  const el=$('#cutin');
-  const verb = d.type==='monster' ? (d.evolveFrom?'進化':'召喚') : (d.type==='field'?'展開':'発動');
-  el.innerHTML=`<div class="cut ${pi?'foe':'me'}"><span class="cap">${NAMES[pi]}　${verb}</span><div class="card el-${d.el}">${cardBody(d)}</div></div>`;
+function cutIn(pi,id){
+  const el=$('#cutin'), d=CARDS[id];
+  const verb = d.type==='monster' ? (d.evolveFrom?t('cut.evolve'):t('cut.summon')) : (d.type==='field'?t('cut.field'):t('cut.cast'));
+  el.innerHTML=`<div class="cut ${pi?'foe':'me'}"><span class="cap">${esc(who(pi))}　${verb}</span>${cardHTML(id)}</div>`;
   el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
 }
-function showBanner(text,cls){
-  const el=$('#banner'); el.textContent=text; el.className=cls; void el.offsetWidth; el.classList.add('show');
-}
+function showBanner(text,cls){ const el=$('#banner'); el.textContent=text; el.className=cls; void el.offsetWidth; el.classList.add('show'); }
 function flash(){ const f=$('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
 
 function flushFx(){
-  if(renderer?.xr.isPresenting){ for(const [k,t,cls] of S.fx){ float3D(keyPos(k),t,cls); if(cls==='dmg'){ if(k[0]==='h') crystalHit(+k[1]); else { const m=S.p[+k[1]].field[+k[2]]; const e=m&&models.get(m.uid); if(e) e.shakeT=.4; } } } S.fx=[]; return; }
+  if(renderer?.xr.isPresenting){
+    for(const [k,tx,cls] of S.fx){ float3D(keyPos(k),tx,cls); if(cls==='dmg'){ if(k[0]==='h') crystalHit(+k[1]); else { const m=S.p[+k[1]].field[+k[2]]; const e=m&&models.get(m.uid); if(e) e.shakeT=.4; } } }
+    S.fx=[]; return;
+  }
   const layer=$('#fx'), W=innerWidth, H=innerHeight, bottomLimit=H-$('.hud-bottom').offsetHeight-30;
-  for(const [k,t,cls] of S.fx){
+  for(const [k,tx,cls] of S.fx){
     const p=keyPos(k).project(camera);
     let x=(p.x+1)/2*W, y=(1-p.y)/2*H;
     x=Math.min(W-30,Math.max(30,x)); y=Math.min(bottomLimit,Math.max(70,y));
     const s=document.createElement('span');
-    s.className='float '+cls; s.textContent=t; s.style.left=x+'px'; s.style.top=y+'px';
+    s.className='float '+cls; s.textContent=tx; s.style.left=x+'px'; s.style.top=y+'px';
     layer.append(s); setTimeout(()=>s.remove(),1050);
     if(cls==='dmg'){
       if(k[0]==='h'){ crystalHit(+k[1]); const panel=k[1]==='0'?$('#mePanel'):$('#enemyPanel'); panel.classList.remove('hit'); void panel.offsetWidth; panel.classList.add('hit'); }
-      else { const pi=+k[1], m=S.p[pi].field[+k[2]]; const e=m&&models.get(m.uid); if(e) e.shakeT=.4; }
+      else { const m=S.p[+k[1]].field[+k[2]]; const e=m&&models.get(m.uid); if(e) e.shakeT=.4; }
     }
   }
   S.fx=[];
 }
 
-function renderCardTable(){
-  const rows = Object.entries(CARDS).map(([id,d])=>{
-    const body = d.type==='monster' ? `ATK ${d.atk} / HP ${d.hp}${d.text?'。'+d.text:''}` : d.text;
-    return `<tr><td>${d.name}</td><td>${d.tag||KIND[d.type]}</td><td class="num">${d.cost}</td><td class="num">${DECK_LIST[id]||0}</td><td>${body}</td></tr>`;
-  }).join('');
-  $('#cardTable').innerHTML = `<tr><th>カード</th><th>種類</th><th>コスト</th><th>枚数</th><th>内容</th></tr>${rows}`;
+/* =====================================================================
+   アプリ画面：ホーム / マイカード / フレンド / バトル / 設定
+   ===================================================================== */
+const TABS=['home','cards','friends','battle','settings'];
+const ICON={
+  home:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+  cards:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="11" height="15" rx="2"/><path d="M9 21h9a2 2 0 0 0 2-2V8"/></svg>',
+  friends:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.5c2.6.2 4.4 1.8 5 5"/></svg>',
+  battle:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 3H21v6.5L10 20.5 6.5 17z"/><path d="M4 14l6 6M3 21l3-3"/></svg>',
+  settings:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+};
+const APP={ tab:'home', cardsSub:'collection', filter:'all', editing:null, resetArm:false };
+let PACK=null;
+
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n); });
+  const vb=$('#viewBtn'); if(vb) vb.textContent=`${t('hud.view')}：${t(viewIdx?'view.close':'view.top')}`;
 }
+function showApp(on){
+  $('#app').hidden=!on; $('#hud').hidden=on; $('#logbox').hidden=on;
+  if(on){ $('#openInfo').hidden=true; renderApp(); }
+  applyI18n();
+  setTimeout(fitCamera,0);
+}
+function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); }
+function renderApp(keepScroll){
+  if($('#app').hidden) return;
+  const wrap=$('#screenWrap'), y=wrap.scrollTop;
+  applyI18n();
+  $('#tabbar').innerHTML=TABS.map(k=>`<button class="tab ${APP.tab===k?'on':''}" data-act="tab" data-tab="${k}" ${APP.tab===k?'aria-current="page"':''}>${ICON[k]}<span>${t('tab.'+k)}</span></button>`).join('');
+  $('#topPoints').textContent=SV.points;
+  $('#screen').innerHTML=({home:homeHTML,cards:cardsHTML,friends:friendsHTML,battle:battleHTML,settings:settingsHTML})[APP.tab]();
+  if(APP.tab==='home') bindPackDrag();
+  wrap.scrollTop = keepScroll ? y : 0;
+}
+
+/* ----- 1日1パック ----- */
+function dayKey(d=new Date()){ const x=new Date(d.getTime()-CONFIG.dailyResetHour*3600e3); return `${x.getFullYear()}-${x.getMonth()+1}-${x.getDate()}`; }
+function canOpenPack(){ return SV.settings.test || SV.lastPack!==dayKey(); }
+function nextReset(){ const now=new Date(), r=new Date(now); r.setHours(CONFIG.dailyResetHour,0,0,0); if(r<=now) r.setDate(r.getDate()+1); return r; }
+function fmtLeft(ms){ const h=Math.floor(ms/3600e3), m=Math.floor(ms%3600e3/60e3); return `${h}:${String(m).padStart(2,'0')}`; }
+function rollRarity(){ const r=Math.random(); let acc=0; for(const [k,v] of Object.entries(RARITY)){ acc+=v.rate; if(r<acc) return k; } return 'C'; }
+function rollPack(){
+  const god=Math.random()<CONFIG.godPackRate, cards=[];
+  for(let i=0;i<CONFIG.packSize;i++){ const rar=god?'R':rollRarity(); const pool=CARD_IDS.filter(id=>CARDS[id].rarity===rar); cards.push(pool[Math.floor(Math.random()*pool.length)]); }
+  return {god,cards};
+}
+// 中身は開ける前に決めて保存する（再読み込みで引き直せないように）
+function ensurePending(){ if(!SV.pending){ SV.pending={...rollPack(), seed:Math.floor(Math.random()*1e9)}; save(); } return SV.pending; }
+function rng(seed){ let a=seed>>>0; return ()=>{ a=a+0x6D2B79F5|0; let x=Math.imul(a^a>>>15,1|a); x=x+Math.imul(x^x>>>7,61|x)^x; return ((x^x>>>14)>>>0)/4294967296; }; }
+function todName(){ const h=new Date().getHours(); return h<5?'night':h<10?'morning':h<16?'day':h<19?'evening':'night'; }
+// 謎の仕掛け1〜4は見た目だけ。5（神パックの予兆）だけが中身と結びついている
+function packLook(){ const p=ensurePending(), r=rng(p.seed); return { corner:Math.floor(r()*5), seal:((r()-.5)*16).toFixed(1), shine:Math.round(10+r()*80), tod:todName(), omen:p.god }; }
+
+function homeHTML(){
+  const can=canOpenPack(), L=packLook(), owned=CARD_IDS.filter(id=>SV.collection[id]).length;
+  const status = SV.settings.test ? t('home.test') : can ? t('home.ready') : t('home.next',{time:fmtLeft(nextReset()-new Date())});
+  return `<section class="home">
+    <div class="hello"><b>${esc(SV.profile.name)}</b><span class="meta">ID ${SV.profile.id}</span></div>
+    <div class="packzone">
+      <p class="eyebrow">${t('home.pack')}</p>
+      <div class="pack tod-${L.tod} corner-${L.corner} ${can&&L.omen?'omen':''} ${can?'':'locked'}" id="pack" style="--seal:${L.seal}deg;--shine:${L.shine}%">
+        <div class="pack-foil"></div>
+        <div class="pack-top"><span class="seal"></span></div>
+        <div class="pack-art"><span class="pack-logo">GATE</span><span class="pack-set">${t('set.origin')}</span><span class="pack-glyphs" aria-hidden="true">炎 岩 雷 風</span></div>
+        <div class="tearline"></div>
+      </div>
+      <p class="pack-status ${can?'ok':''}">${status}</p>
+      ${can?`<p class="meta">${t('home.swipe')}</p><button class="btn" data-act="openPack">${t('home.open')}</button>`:''}
+    </div>
+    <div class="stats3">
+      <div class="stat"><span class="lbl">${t('home.points')}</span><b class="num">${SV.points}</b></div>
+      <div class="stat"><span class="lbl">${t('home.dex')}</span><b class="num">${owned}/${CARD_IDS.length}</b></div>
+      <div class="stat"><span class="lbl">${t('home.recordL')}</span><b class="num">${t('home.record',{w:SV.stats.w,l:SV.stats.l})}</b></div>
+    </div>
+    <div class="row center"><button class="ghost-btn" data-act="odds">${t('odds.title')}</button><button class="btn" data-act="tab" data-tab="battle">${t('home.toBattle')}</button></div>
+  </section>`;
+}
+function bindPackDrag(){
+  const el=$('#pack'); if(!el || el.classList.contains('locked')) return;
+  let st=null;
+  el.addEventListener('pointerdown',e=>{ st={x:e.clientX,t:performance.now(),w:el.offsetWidth}; try{ el.setPointerCapture(e.pointerId); }catch(_){} });
+  el.addEventListener('pointermove',e=>{
+    if(!st) return;
+    const dx=Math.abs(e.clientX-st.x), k=Math.min(1,dx/(st.w*.7));
+    el.style.setProperty('--tear',k);
+    if(k>=1){ const sp=dx/Math.max(1,performance.now()-st.t); st=null; el.classList.add('torn'); setTimeout(()=>openPack(sp),300); }
+  });
+  const stop=()=>{ if(st){ st=null; el.style.setProperty('--tear',0); } };
+  el.addEventListener('pointerup',stop); el.addEventListener('pointercancel',stop);
+}
+function openPack(speed){
+  if(!canOpenPack()) return;
+  const pk=ensurePending(), before={...SV.collection};
+  pk.cards.forEach(id=>{ SV.collection[id]=(SV.collection[id]||0)+1; });
+  SV.points+=CONFIG.packPoints;
+  if(!SV.settings.test) SV.lastPack=dayKey();
+  SV.pending=null; save();
+  const seen={};
+  PACK={ cards:pk.cards, god:pk.god, flipped:pk.cards.map(()=>false), fast:speed>1.2,
+         isNew:pk.cards.map(id=>{ const n=!before[id] && !seen[id]; seen[id]=true; return n; }) };
+  renderPackModal();
+  renderApp();
+}
+function renderPackModal(){
+  const P=PACK, hide=SV.settings.hideLast;
+  showModal(`${P.god?`<p class="godline">${t('pack.god')}</p>`:''}
+    <div class="reveal ${P.fast?'fast':'slow'}">${P.cards.map((id,i)=>{
+      const last=hide && i===P.cards.length-1;
+      return `<button class="flip r-${CARDS[id].rarity} ${last?'last':''}" data-act="flip" data-i="${i}" aria-label="${t('pack.tap')}"><span class="flip-in"><span class="face back"><span>GATE</span>${last?'<em>?</em>':''}</span><span class="face front">${cardHTML(id)}${P.isNew[i]?'<span class="newb">NEW</span>':''}<span class="rar">${RARITY[CARDS[id].rarity].mark}</span></span></span></button>`;
+    }).join('')}</div>
+    <p class="meta center">${t('pack.gotPoints',{n:CONFIG.packPoints})}</p>
+    <div class="row center" id="packActions"><button class="ghost-btn" data-act="flipAll">${t('pack.flipAll')}</button></div>`,'pack-modal');
+}
+function flipCard(i,el){
+  if(!PACK || PACK.flipped[i]) return;
+  PACK.flipped[i]=true;
+  (el||document.querySelector(`.flip[data-i="${i}"]`))?.classList.add('on');
+  if(CARDS[PACK.cards[i]].rarity==='R') flash();
+  if(PACK.flipped.every(Boolean)) $('#packActions').innerHTML=`<button class="btn" data-act="collect">${t('pack.done')}</button>`;
+}
+function flipAll(){
+  if(!PACK) return;
+  const hide=SV.settings.hideLast, last=PACK.cards.length-1;
+  PACK.cards.forEach((_,i)=>{ if(hide && i===last) return; setTimeout(()=>flipCard(i),i*160); });
+}
+
+/* ----- マイカード ----- */
+function cardsHTML(){
+  const seg=`<div class="seg"><button class="${APP.cardsSub==='collection'?'on':''}" data-act="sub" data-sub="collection">${t('cards.collection')}</button><button class="${APP.cardsSub==='decks'?'on':''}" data-act="sub" data-sub="decks">${t('cards.decks')}</button></div>`;
+  if(APP.cardsSub==='collection') return seg+collectionHTML();
+  return seg+(APP.editing==null ? decksHTML() : deckEditHTML(APP.editing));
+}
+function collectionHTML(){
+  const f=APP.filter;
+  const chips=['all','monster','magic','field'].map(k=>`<button class="chip ${f===k?'on':''}" data-act="filter" data-f="${k}">${k==='all'?t('filter.all'):t('kind.'+k)}</button>`).join('');
+  const ids=CARD_IDS.filter(id=>f==='all'||CARDS[id].type===f);
+  const owned=CARD_IDS.filter(id=>SV.collection[id]).length;
+  return `<div class="row between"><div class="chips">${chips}</div><span class="meta">${t('home.dex')} ${owned}/${CARD_IDS.length}</span></div>
+    <div class="grid">${ids.map(id=>{ const n=SV.collection[id]||0; return `<button class="cell ${n?'':'unowned'}" data-act="card" data-id="${id}">${cardHTML(id)}<span class="cnt">×${n}</span><span class="rar">${RARITY[CARDS[id].rarity].mark}</span></button>`; }).join('')}</div>`;
+}
+function decksHTML(){
+  return `<div class="list">${SV.decks.map((d,i)=>{ const n=deckCount(d.cards); return `<div class="item"><div><b>${esc(deckName(i))}</b> ${i===SV.active?`<span class="badge">${t('deck.active')}</span>`:''}<div class="meta">${t('deck.count',{n,m:CONFIG.deckSize})}</div></div><div class="row"><button class="ghost-btn" data-act="deckEdit" data-i="${i}">${t('deck.edit')}</button>${i!==SV.active?`<button class="btn sm" data-act="deckUse" data-i="${i}" ${n===CONFIG.deckSize?'':'disabled'}>${t('deck.use')}</button>`:''}</div></div>`; }).join('')}</div>`;
+}
+function deckEditHTML(i){
+  const d=SV.decks[i], n=deckCount(d.cards), ok=n===CONFIG.deckSize;
+  const inDeck=CARD_IDS.filter(id=>d.cards[id]).map(id=>`<div class="drow"><span class="dot el-${CARDS[id].el}"></span><span class="dname">${esc(cardName(id))}</span><span class="meta">${esc(cardMotif(id))}</span><b class="num">×${d.cards[id]}</b><button class="mini" data-act="deckRemove" data-id="${id}" aria-label="−">−</button></div>`).join('') || `<p class="meta">${t('deck.empty')}</p>`;
+  const pool=CARD_IDS.filter(id=>SV.collection[id]).map(id=>{ const inD=d.cards[id]||0, lim=Math.min(SV.collection[id],CONFIG.maxCopies); return `<button class="cell sm ${inD>=lim||n>=CONFIG.deckSize?'maxed':''}" data-act="deckAdd" data-id="${id}">${cardHTML(id)}<span class="cnt">${inD}/${lim}</span></button>`; }).join('');
+  return `<div class="row between"><button class="ghost-btn" data-act="deckBack">← ${t('deck.back')}</button><span class="num ${ok?'okc':'warnc'}">${t('deck.count',{n,m:CONFIG.deckSize})}</span></div>
+    <label class="field"><span class="lbl">${t('deck.name')}</span><input id="deckName" data-i="${i}" value="${esc(deckName(i))}" maxlength="20"></label>
+    <div class="row">${i===SV.active?`<span class="badge">${t('deck.active')}</span>`:`<button class="btn sm" data-act="deckUse" data-i="${i}" ${ok?'':'disabled'}>${t('deck.use')}</button>`}<button class="ghost-btn" data-act="deckClear">${t('deck.clear')}</button></div>
+    <h3>${t('deck.contents')}</h3><div class="dlist">${inDeck}</div>
+    <h3>${t('deck.addCards')}</h3><p class="meta">${t('deck.maxCopies',{m:CONFIG.maxCopies})}</p><div class="grid sm">${pool}</div>
+    <h3>${t('deck.code')}</h3>
+    <div class="row"><input id="deckCodeOut" readonly value="${deckCode(d.cards)}"><button class="ghost-btn" data-act="copy" data-src="deckCodeOut">${t('deck.copy')}</button></div>
+    <div class="row"><input id="deckCodeIn" placeholder="GATE1-…"><button class="ghost-btn" data-act="deckImport">${t('deck.import')}</button></div>`;
+}
+function deckAdd(id){
+  const d=SV.decks[APP.editing], n=deckCount(d.cards), inD=d.cards[id]||0;
+  if(n>=CONFIG.deckSize){ toast(t('deck.full',{m:CONFIG.deckSize})); return; }
+  if(inD>=CONFIG.maxCopies){ toast(t('deck.maxCopies',{m:CONFIG.maxCopies})); return; }
+  if(inD>=(SV.collection[id]||0)){ toast(t('deck.noMore')); return; }
+  d.cards[id]=inD+1; save(); renderApp(true);
+}
+function deckImport(){
+  const m=String($('#deckCodeIn')?.value||'').trim().toUpperCase().match(/^GATE1-(\d+)$/);
+  if(!m || m[1].length!==CARD_IDS.length){ toast(t('deck.badCode')); return; }
+  const cards={};
+  CARD_IDS.forEach((id,i)=>{ const n=Math.min(+m[1][i],CONFIG.maxCopies,SV.collection[id]||0); if(n) cards[id]=n; });
+  SV.decks[APP.editing].cards=cards; save(); toast(t('deck.imported')); renderApp(true);
+}
+function showCard(id){
+  const d=CARDS[id], n=SV.collection[id]||0, cost=RARITY[d.rarity].craft;
+  showModal(`<div class="detail">${cardHTML(id,'big')}<div class="detail-body"><h2>${esc(cardName(id))}</h2>
+    <p class="meta">${esc(cardMotif(id))} · ${t('kind.'+d.type)} · ${RARITY[d.rarity].mark}</p>
+    ${cardText(id)?`<p>${esc(cardText(id))}</p>`:''}${d.type==='monster'?`<p class="num">ATK ${d.atk} / HP ${d.hp}</p>`:''}
+    <p class="meta">${t('cost')} ${d.cost} · ${t('owned',{n})}</p>
+    <div class="row"><button class="btn" data-act="craft" data-id="${id}" ${SV.points>=cost?'':'disabled'}>${t('craft',{p:cost})}</button><button class="ghost-btn" data-act="closeModal">${t('close')}</button></div></div></div>`);
+}
+
+/* ----- フレンド ----- */
+function friendsHTML(){
+  const my=SV.decks[SV.active], ok=deckCount(my.cards)===CONFIG.deckSize;
+  return `<section class="panel"><h3>${t('fr.profile')}</h3>
+      <label class="field"><span class="lbl">${t('fr.name')}</span><input id="profName" value="${esc(SV.profile.name)}" maxlength="16"></label>
+      <p class="meta">${t('fr.id')}：<b class="num">${SV.profile.id}</b></p>
+      <span class="lbl">${t('fr.myCode')}</span>
+      <div class="row"><input id="myCode" readonly value="${ok?deckCode(my.cards):''}"><button class="ghost-btn" data-act="copy" data-src="myCode" ${ok?'':'disabled'}>${t('deck.copy')}</button></div></section>
+    <section class="panel"><h3>${t('fr.add')}</h3>
+      <label class="field"><span class="lbl">${t('fr.friendName')}</span><input id="frName" maxlength="16"></label>
+      <label class="field"><span class="lbl">${t('fr.friendCode')}</span><input id="frCode" placeholder="GATE1-…"></label>
+      <button class="btn" data-act="addFriend">${t('fr.addBtn')}</button></section>
+    <section class="panel"><h3>${t('fr.list')}</h3>
+      ${SV.friends.length?`<div class="list">${SV.friends.map((f,i)=>`<div class="item"><div><b>${esc(f.name)}</b><div class="meta num">${esc(f.code)}</div></div><div class="row"><button class="btn sm" data-act="friendBattle" data-i="${i}">${t('fr.battle')}</button><button class="ghost-btn" data-act="friendRemove" data-i="${i}">${t('fr.remove')}</button></div></div>`).join('')}</div>`:`<p class="meta">${t('fr.empty')}</p>`}
+      <p class="note">${t('fr.online')}</p></section>`;
+}
+function addFriend(){
+  const name=($('#frName')?.value||'').trim().slice(0,16), code=($('#frCode')?.value||'').trim().toUpperCase();
+  if(!parseCode(code)){ toast(t('deck.badCode')); return; }
+  SV.friends.push({name:name||t('tab.friends')+' '+(SV.friends.length+1), code}); save();
+  toast(t('fr.added')); renderApp(true);
+}
+
+/* ----- バトル ----- */
+function battleHTML(){
+  const d=SV.decks[SV.active], n=deckCount(d.cards), ok=n===CONFIG.deckSize;
+  const mode=(key,desc,act,extra,soon,block)=>`<div class="mode ${soon?'off':''}"><div class="mode-txt"><b>${t(key)}</b><p class="meta">${t(desc)}</p>${extra||''}</div><button class="btn" data-act="${act}" ${soon||block||!ok?'disabled':''}>${soon?t('bt.soon'):t('bt.start')}</button></div>`;
+  const fsel = SV.friends.length ? `<select id="friendSel" aria-label="${t('bt.friend')}">${SV.friends.map((f,i)=>`<option value="${i}">${esc(f.name)}</option>`).join('')}</select>` : `<p class="meta warnc">${t('bt.noFriend')}</p>`;
+  return `<section class="panel"><span class="lbl">${t('bt.deck')}</span>
+      <div class="row between"><b>${esc(deckName(SV.active))}</b><span class="num ${ok?'okc':'warnc'}">${t('deck.count',{n,m:CONFIG.deckSize})}</span><button class="ghost-btn" data-act="goDecks">${t('bt.change')}</button></div>
+      ${ok?'':`<p class="warnc">${t('deck.invalid',{m:CONFIG.deckSize})}</p>`}</section>
+    <div class="modes">
+      ${mode('bt.practice','bt.practiceD','startPractice')}
+      ${mode('bt.open','bt.openD','startOpen')}
+      ${mode('bt.friend','bt.friendD','startFriend',fsel,false,!SV.friends.length)}
+      ${mode('bt.rank','bt.rankD','none','',true)}
+    </div>
+    <p class="meta center">${t('home.recordL')}：${t('home.record',{w:SV.stats.w,l:SV.stats.l})}</p>
+    <p class="note">${t('bt.vrHint')}</p>`;
+}
+
+/* ----- 設定 ----- */
+function settingsHTML(){
+  const s=SV.settings;
+  const seg=(act,vals,cur,lab)=>`<div class="seg">${vals.map(v=>`<button class="${v===cur?'on':''}" data-act="${act}" data-v="${v}">${lab(v)}</button>`).join('')}</div>`;
+  const cm=Math.round(s.tableHeight*100);
+  return `<section class="panel"><h3>${t('st.lang')}</h3><div class="seg wrap">${LANGS.map(([c,n])=>`<button class="${c===LANG?'on':''}" data-act="lang" data-v="${c}" lang="${c}">${n}</button>`).join('')}</div></section>
+    <section class="panel">
+      <h3>${t('st.speed')}</h3>${seg('speed',[0.5,1,2],s.speed,v=>'×'+v)}
+      <h3>${t('st.view')}</h3>${seg('viewSet',[0,1],s.view,v=>t(v?'view.close':'view.top'))}
+      <h3>${t('st.hideLast')}</h3>${seg('hideLast',[1,0],s.hideLast?1:0,v=>t(v?'st.on':'st.off'))}
+      <h3>${t('st.table')}</h3><div class="row"><input type="range" id="tableH" min="55" max="100" step="1" value="${cm}" aria-label="${t('st.table')}"><b class="num" id="tableHv">${cm} cm</b></div>
+    </section>
+    <section class="panel">
+      <div class="row"><button class="ghost-btn" data-act="rules">${t('st.rules')}</button><button class="ghost-btn" data-act="odds">${t('odds.title')}</button></div>
+      <h3>${t('st.test')}</h3>${seg('test',[1,0],s.test?1:0,v=>t(v?'st.on':'st.off'))}
+      <p class="meta">${t('st.save')}</p>
+      <button class="danger-btn" data-act="reset">${APP.resetArm?t('st.resetConfirm'):t('st.reset')}</button>
+      <p class="meta">${t('st.version')} ${APP_VERSION}</p>
+    </section>`;
+}
+
+/* ----- モーダル ----- */
+function showModal(html,cls=''){ const m=$('#modal'); m.innerHTML=`<div class="sheet ${cls}" role="dialog" aria-modal="true">${html}</div>`; m.hidden=false; }
+function closeModal(){ const m=$('#modal'); m.hidden=true; m.innerHTML=''; PACK=null; }
+function showRules(){
+  const rows=CARD_IDS.map(id=>{ const d=CARDS[id]; return `<tr><td><b>${esc(cardName(id))}</b><br><span class="meta">${esc(cardMotif(id))}</span></td><td class="num">${d.cost}</td><td>${d.type==='monster'?`ATK ${d.atk} / HP ${d.hp}${d.tag?'<br>'+esc(cardText(id)):''}`:esc(cardText(id))}</td></tr>`; }).join('');
+  showModal(`<h2>${t('st.rules')}</h2><ul>${[1,2,3,4,5,6,7,8,9].map(i=>`<li>${t('r'+i)}</li>`).join('')}</ul>
+    <div class="cardtable"><table><tr><th></th><th>${t('cost')}</th><th></th></tr>${rows}</table></div>
+    <p><button class="endbtn" data-act="closeModal">${t('close')}</button></p>`);
+}
+function showOdds(){
+  const pct=x=>(x*100).toFixed(x<0.1?1:0)+'%';
+  const rows=Object.entries(RARITY).map(([k,v])=>`<tr><td class="rarc">${v.mark}</td><td class="num">${pct(v.rate)}</td><td>${CARD_IDS.filter(id=>CARDS[id].rarity===k).map(id=>esc(cardName(id))).join('、')}</td></tr>`).join('');
+  showModal(`<h2>${t('odds.title')}</h2><p class="meta">${t('set.origin')}</p>
+    <h3>${t('odds.perCard')}</h3><div class="cardtable"><table>${rows}</table></div>
+    <p>${t('odds.god')}：<b class="num">${pct(CONFIG.godPackRate)}</b></p>
+    <ul><li>${t('odds.same')}</li><li>${t('odds.note')}</li><li>${t('odds.pity',{p:CONFIG.packPoints})}</li></ul>
+    <p><button class="endbtn" data-act="closeModal">${t('close')}</button></p>`);
+}
+
+/* ----- コピー ----- */
+function copyFrom(src){
+  const inp=$('#'+src); if(!inp || !inp.value) return;
+  const fail=()=>{ inp.focus(); inp.select(); toast(t('deck.copyFail')); };
+  try{ navigator.clipboard.writeText(inp.value).then(()=>toast(t('deck.copied')),fail); }catch(e){ fail(); }
+}
+
+/* ----- 操作の振り分け ----- */
+function appAct(act,d,el){
+  switch(act){
+    case 'tab': APP.tab=d.tab; APP.editing=null; APP.resetArm=false; renderApp(); return;
+    case 'goDecks': APP.tab='cards'; APP.cardsSub='decks'; APP.editing=null; renderApp(); return;
+    case 'sub': APP.cardsSub=d.sub; APP.editing=null; renderApp(); return;
+    case 'filter': APP.filter=d.f; renderApp(true); return;
+    case 'card': showCard(d.id); return;
+    case 'craft': { const c=RARITY[CARDS[d.id].rarity].craft; if(SV.points<c){ toast(t('craftNo')); return; } SV.points-=c; SV.collection[d.id]=(SV.collection[d.id]||0)+1; save(); toast(t('crafted')); showCard(d.id); renderApp(true); return; }
+    case 'closeModal': closeModal(); return;
+    case 'openPack': openPack(1); return;
+    case 'flip': flipCard(+d.i,el); return;
+    case 'flipAll': flipAll(); return;
+    case 'collect': closeModal(); renderApp(); return;
+    case 'odds': showOdds(); return;
+    case 'rules': showRules(); return;
+    case 'deckEdit': APP.editing=+d.i; renderApp(); return;
+    case 'deckBack': APP.editing=null; renderApp(); return;
+    case 'deckUse': SV.active=+d.i; save(); renderApp(true); return;
+    case 'deckAdd': deckAdd(d.id); return;
+    case 'deckRemove': { const c=SV.decks[APP.editing].cards; if(c[d.id]>1) c[d.id]--; else delete c[d.id]; save(); renderApp(true); return; }
+    case 'deckClear': SV.decks[APP.editing].cards={}; save(); renderApp(true); return;
+    case 'deckImport': deckImport(); return;
+    case 'copy': copyFrom(d.src); return;
+    case 'addFriend': addFriend(); return;
+    case 'friendBattle': startMatch('friend',+d.i); return;
+    case 'friendRemove': SV.friends.splice(+d.i,1); save(); renderApp(true); return;
+    case 'startPractice': startMatch('practice'); return;
+    case 'startOpen': startMatch('open'); return;
+    case 'startFriend': startMatch('friend',+($('#friendSel')?.value||0)); return;
+    case 'lang': SV.lang=d.v; setLang(d.v); save(); renderApp(true); if(S) render(); return;
+    case 'speed': SV.settings.speed=+d.v; CONFIG.animSpeed=+d.v; save(); renderApp(true); return;
+    case 'viewSet': SV.settings.view=+d.v; viewIdx=+d.v; save(); fitCamera(); renderApp(true); return;
+    case 'hideLast': SV.settings.hideLast=d.v==='1'; save(); renderApp(true); return;
+    case 'test': SV.settings.test=d.v==='1'; save(); renderApp(true); return;
+    case 'reset':
+      if(!APP.resetArm){ APP.resetArm=true; renderApp(true); return; }
+      try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
+      SV=defSave(); setLang(SV.lang); CONFIG.animSpeed=1; viewIdx=0; APP.resetArm=false; APP.tab='home'; renderApp(); return;
+  }
+  battleAct(act,d);
+}
+
+document.addEventListener('click',e=>{
+  const m=$('#modal');
+  if(e.target===m && !m.hidden){ closeModal(); renderApp(true); return; }
+  const b=e.target.closest('[data-act]'); if(!b || b.disabled) return;
+  appAct(b.dataset.act,b.dataset,b);
+});
+document.addEventListener('change',e=>{
+  const el=e.target;
+  if(el.id==='deckName'){ SV.decks[+el.dataset.i].name=el.value.trim().slice(0,20); save(); }
+  if(el.id==='profName'){ SV.profile.name=el.value.trim().slice(0,16)||'Player'; save(); }
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='tableH'){ SV.settings.tableHeight=+e.target.value/100; $('#tableHv').textContent=e.target.value+' cm'; save(); }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#modal').hidden){ closeModal(); renderApp(true); } });
+setInterval(()=>{ if(SV && !$('#app').hidden && APP.tab==='home' && $('#modal').hidden && !canOpenPack()) renderApp(true); },30000);
 
 /* =====================================================================
    3D表示（Three.js）
@@ -686,23 +1477,44 @@ const col=c=>new THREE.Color(c);
 /* --- テクスチャ --- */
 function rr(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
 const texCache={};
+const UIFONT='"Zen Kaku Gothic New","Noto Sans SC","Noto Sans KR","Hiragino Sans","Microsoft YaHei","Malgun Gothic",sans-serif';
+function wrapText(g,text,maxW,maxLines){
+  const cjk=/[぀-ヿ㐀-鿿가-힯]/.test(text);
+  const tokens=cjk?[...text]:text.split(/(\s+)/);
+  const out=[]; let line='';
+  for(const tk of tokens){
+    const test=line+tk;
+    if(g.measureText(test).width>maxW && line.trim()){ out.push(line.trim()); line=tk.trim()?tk:''; if(out.length>=maxLines) return out; }
+    else line=test;
+  }
+  if(line.trim() && out.length<maxLines) out.push(line.trim());
+  return out;
+}
+function fitFont(g,text,maxW,size,weight,family){ let s=size; do{ g.font=`${weight} ${s}px ${family}`; }while(g.measureText(text).width>maxW && --s>11); return s; }
 function cardTex(id){
-  if(texCache[id]) return texCache[id];
+  const key=id+'|'+LANG; if(texCache[key]) return texCache[key];
   const d=CARDS[id], c=document.createElement('canvas'); c.width=256; c.height=358;
   const g=c.getContext('2d'), e=EL[d.el];
   rr(g,0,0,256,358,18); g.fillStyle='#0d1517'; g.fill();
   const gr=g.createLinearGradient(0,0,180,358); gr.addColorStop(0,e); gr.addColorStop(.65,'#14211f');
   rr(g,8,8,240,342,14); g.fillStyle=gr; g.globalAlpha=.85; g.fill(); g.globalAlpha=1;
   g.lineWidth=6; g.strokeStyle=e; rr(g,8,8,240,342,14); g.stroke();
-  g.fillStyle=e; g.font='150px "Dela Gothic One", sans-serif'; g.textAlign='center'; g.textBaseline='middle';
-  g.shadowColor=e; g.shadowBlur=24; g.fillText(d.glyph,128,168); g.shadowBlur=0;
+  g.textAlign='center'; g.textBaseline='middle';
+  g.fillStyle=e; g.font='128px "Dela Gothic One", sans-serif'; g.shadowColor=e; g.shadowBlur=24; g.fillText(d.glyph,128,150); g.shadowBlur=0;
   g.fillStyle='#0d1517'; g.beginPath(); g.arc(36,36,22,0,Math.PI*2); g.fill();
   g.lineWidth=4; g.strokeStyle='#d9b45f'; g.stroke();
   g.fillStyle='#d9b45f'; g.font='bold 26px "JetBrains Mono", monospace'; g.fillText(d.cost,36,38);
-  g.fillStyle='#eaf1ec'; g.font='bold 26px "Zen Kaku Gothic New", sans-serif'; g.fillText(d.name,128,284);
-  if(d.type==='monster'){ g.font='bold 24px "JetBrains Mono", monospace'; g.fillStyle='#d9b45f'; g.fillText('ATK '+d.atk,72,322); g.fillStyle='#ff8a75'; g.fillText('HP '+d.hp,184,322); }
-  else { g.font='17px "Zen Kaku Gothic New", sans-serif'; g.fillStyle='#b9c9c3'; g.fillText(d.text.slice(0,13),128,316); if(d.text.length>13) g.fillText(d.text.slice(13,26),128,338); }
-  const t=new THREE.CanvasTexture(c); t.anisotropy=4; texCache[id]=t; return t;
+  g.textAlign='right'; g.font='16px sans-serif'; g.fillText(RARITY[d.rarity].mark,232,34); g.textAlign='center';
+  g.fillStyle='#b9c9c3'; fitFont(g,cardMotif(id),220,16,'',UIFONT); g.fillText(cardMotif(id),128,240);
+  g.fillStyle='#eaf1ec'; fitFont(g,cardName(id),224,28,'bold',UIFONT); g.fillText(cardName(id),128,270);
+  if(d.type==='monster'){
+    if(d.tag){ g.fillStyle=e; g.font=`bold 15px ${UIFONT}`; g.fillText(t('tag.'+d.tag),128,298); }
+    g.font='bold 24px "JetBrains Mono", monospace'; g.fillStyle='#d9b45f'; g.fillText('ATK '+d.atk,72,326); g.fillStyle='#ff8a75'; g.fillText('HP '+d.hp,184,326);
+  } else {
+    g.font=`15px ${UIFONT}`; g.fillStyle='#c9d6d1';
+    wrapText(g,cardText(id),220,2).forEach((l,i)=>g.fillText(l,128,304+i*22));
+  }
+  const tx=new THREE.CanvasTexture(c); tx.anisotropy=4; texCache[key]=tx; return tx;
 }
 function tableTex(){
   const W=1024, H=1195, c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d');
@@ -1086,7 +1898,7 @@ function init3D(){
   renderer.domElement.addEventListener('pointerup',e=>{
     if(!down) return; const moved=Math.hypot(e.clientX-down[0],e.clientY-down[1]); down=null;
     if(moved>8) return;
-    const hit=pick(e); if(hit) handle(hit.act,hit); else if(S?.sel){ S.sel=null; setHint(''); render(); }
+    const hit=pick(e); if(hit) battleAct(hit.act,hit); else if(S?.sel){ S.sel=null; setHint(''); render(); }
   });
   renderer.domElement.addEventListener('pointermove',e=>{
     if(e.pointerType!=='mouse') return;
@@ -1142,6 +1954,7 @@ function loop(){
   for(const f of fieldEnts) if(f) f.rune.rotation.z=t*.5;
   scene.traverse(o=>{ if(o.userData.spin) o.rotation.y=t; });
   const ma=_motes.geometry.attributes.position; for(let i=0;i<ma.count;i++){ let y=ma.array[i*3+1]+dt*.25; if(y>8) y=0; ma.array[i*3+1]=y; } ma.needsUpdate=true;
+  if(!S && !renderer.xr.isPresenting){ const a=t*.07; camera.position.set(Math.sin(a)*15,9.5,Math.cos(a)*15); camera.lookAt(0,0,0); renderer.render(scene,camera); return; }
   camera.position.copy(camBase);
   if(shakeAmt>0){ camera.position.x+=(Math.random()-.5)*shakeAmt; camera.position.y+=(Math.random()-.5)*shakeAmt; shakeAmt=Math.max(0,shakeAmt-dt*1.6); }
   camera.lookAt(camLook);
@@ -1195,11 +2008,11 @@ async function startXR(mode){
     await renderer.xr.setSession(session);
     xrMode=mode; enterXR();
     session.addEventListener('end',exitXR);
-  }catch(e){ if(S){ setHint('VR/MRを開始できませんでした：'+(e.message||e),true); render(); } }
+  }catch(e){ if(S){ setHint('w.xr',null,true); render(); } }
 }
 function enterXR(){
   xrSaved={fog:scene.fog,bg:scene.background};
-  WS=XR.scale; world.scale.setScalar(WS); world.position.set(0,XR.tableHeight,-XR.tableDistance);
+  WS=XR.scale; world.scale.setScalar(WS); world.position.set(0,SV.settings.tableHeight,-XR.tableDistance);
   scene.fog=null;
   if(xrMode==='immersive-ar'){ scene.background=null; floorMesh.visible=false; propsGroup.visible=false; }
   _motes.material.size=.09*WS;
@@ -1221,33 +2034,34 @@ function onXRSelect(e){
   const hits=raycaster.intersectObjects([...xrHits,xrEnd,...hitList],false);
   if(!hits.length){ if(S?.sel){ S.sel=null; setHint(''); render(); } return; }
   const d=hits[0].object.userData;
-  if(d.act==='end' && S?.over){ newGame(); return; }
-  handle(d.act,d);
+  if(d.act==='end' && S?.over){ startMatch(S.mode,S.friendIdx); return; }
+  battleAct(d.act,d);
 }
 
 function updateXRHud(){
   if(!S) return;
   const me=S.p[0], op=S.p[1], myTurn=S.turn===0 && !S.over && !S.busy;
-  // 状況表示
   const c=xrStatus.userData.c, g=c.getContext('2d'); g.clearRect(0,0,1024,300);
   rr(g,8,8,1008,284,28); g.fillStyle='rgba(8,12,14,.86)'; g.fill(); g.lineWidth=4; g.strokeStyle='rgba(217,180,95,.7)'; g.stroke();
   g.textBaseline='middle'; g.textAlign='left';
-  g.font='46px "Dela Gothic One", sans-serif'; g.fillStyle=S.over?'#d9b45f':(S.turn===0?'#d9b45f':'#ff6a55');
-  g.fillText(S.over?(S.winner===0?'勝利！':'敗北'):(`第${S.turnNo}ターン　${S.turn===0?'あなたの番':'相手の番'}`),40,62);
-  g.font='bold 36px "Zen Kaku Gothic New", sans-serif'; g.fillStyle='#eaf1ec';
-  g.fillText(`ライフ　あなた ${me.life}　/　CPU ${op.life}`,40,130);
-  g.fillText(`エネルギー ${'◆'.repeat(me.energy)}${'◇'.repeat(Math.max(0,CONFIG.maxEnergy-me.energy))}　山札 ${me.deck.length}`,40,182);
-  g.font='30px "Zen Kaku Gothic New", sans-serif'; g.fillStyle=S.warn?'#ff6a55':'#93a8a1';
-  const line = S.over ? '金色のボタンでもう一度' : (S.hint || (S.log[0]?.text ?? ''));
-  g.fillText(line.slice(0,30),40,244);
+  g.fillStyle=S.over?'#d9b45f':(S.turn===0?'#d9b45f':'#ff6a55');
+  const head = S.over ? t(S.winner===0?'over.win':'over.lose') : `${t('hud.turn',{n:S.turnNo})}　${t(S.turn===0?'banner.you':'banner.opp')}`;
+  fitFont(g,head,940,46,'',`"Dela Gothic One", ${UIFONT}`); g.fillText(head,40,62);
+  g.fillStyle='#eaf1ec';
+  const l2=`${t('hud.life')}　${who(0)} ${me.life}　/　${who(1)} ${op.life}`;
+  fitFont(g,l2,940,36,'bold',UIFONT); g.fillText(l2,40,130);
+  const l3=`${t('hud.energy')} ${'◆'.repeat(me.energy)}${'◇'.repeat(Math.max(0,CONFIG.maxEnergy-me.energy))}　${t('hud.deckhand',{d:me.deck.length,h:me.hand.length})}`;
+  fitFont(g,l3,940,36,'bold',UIFONT); g.fillText(l3,40,182);
+  g.fillStyle=S.warn?'#ff6a55':'#93a8a1';
+  const line = S.over ? t('over.restart') : (S.hint ? t(S.hint,S.hintP) : (S.log[0] ? t(S.log[0].key,S.log[0].params) : ''));
+  g.font=`30px ${UIFONT}`; g.fillText(wrapText(g,line,940,1)[0]||'',40,244);
   xrStatus.material.map.needsUpdate=true;
-  // ターン終了ボタン
   const bc=xrEnd.userData.c, bg=bc.getContext('2d');
   bg.fillStyle=(myTurn||S.over)?'#d9b45f':'#3a4a46'; bg.fillRect(0,0,256,96);
-  bg.fillStyle='#111'; bg.font='bold 40px "Zen Kaku Gothic New", sans-serif'; bg.textAlign='center'; bg.textBaseline='middle';
-  bg.fillText(S.over?'もう一度':'ターン終了',128,50); xrEnd.material[2].map.needsUpdate=true;
-  // 手札
-  while(xrHand.children.length){ const g=xrHand.children[0]; g.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); }); xrHand.remove(g); }
+  bg.fillStyle='#111'; bg.textAlign='center'; bg.textBaseline='middle';
+  const bl=S.over?t('over.again'):t('hud.end'); fitFont(bg,bl,236,40,'bold',UIFONT); bg.fillText(bl,128,50);
+  xrEnd.material[2].map.needsUpdate=true;
+  while(xrHand.children.length){ const gr=xrHand.children[0]; gr.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); }); xrHand.remove(gr); }
   xrHits=[];
   const n=me.hand.length, gap=1.75;
   me.hand.forEach((card,i)=>{
@@ -1261,7 +2075,6 @@ function updateXRHud(){
     grp.add(glow,face); xrHand.add(grp); xrHits.push(face);
   });
 }
-
 function float3D(pos,text,cls){
   const c=document.createElement('canvas'); c.width=256; c.height=128; const g=c.getContext('2d');
   g.font=cls==='info'?'64px "Dela Gothic One", sans-serif':'bold 84px "JetBrains Mono", monospace';
@@ -1275,13 +2088,12 @@ function float3D(pos,text,cls){
 
 /* ===== 起動 ===== */
 (async()=>{
+  SV=loadSave(); setLang(SV.lang); CONFIG.animSpeed=SV.settings.speed||1; viewIdx=SV.settings.view||0;
   try{ await Promise.race([Promise.all([document.fonts.load('40px "Dela Gothic One"'),document.fonts.load('bold 20px "JetBrains Mono"'),document.fonts.load('bold 20px "Zen Kaku Gothic New"')]), new Promise(r=>setTimeout(r,2500))]); }catch(e){}
-  renderCardTable();
   init3D();
   $('#loading').remove();
-  newGame();
-  setTimeout(fitCamera,50);
-  try{ if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js'); }catch(e){}
+  showApp(true);
+  try{ if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
 })();
 </script>
 </body>
