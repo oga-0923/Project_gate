@@ -276,6 +276,29 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 #toast.show{animation:toast 2.4s ease forwards}
 @keyframes toast{0%{opacity:0;transform:translate(-50%,8px)}10%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
 #modal{z-index:50}
+/* ショップ・分解 */
+button.pts{color:var(--fg);cursor:pointer;font:inherit}
+.gold{color:var(--gate)}
+.craftbox{display:flex;flex-direction:column;gap:6px;background:#0c1416;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.sheet.shop-modal{max-width:620px}
+.shopgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin:12px 0}
+.shopitem{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;background:#0c1416;border:1px solid var(--line);border-radius:12px;padding:12px 8px}
+.shopitem.on{border-color:var(--gate);box-shadow:0 0 12px rgba(217,180,95,.4)}
+.title-chip{font-size:12px;font-weight:700;color:#111;background:linear-gradient(90deg,#b8923f,#ffe08a);border-radius:999px;padding:3px 10px}
+.gcst.big{font-size:22px}
+.mini-back{width:46px;height:64px;border-radius:6px;display:grid;place-items:center;font-family:var(--f-display);font-size:10px;color:var(--gate);background:linear-gradient(160deg,#2a1d33,#0d0f24);border:2px solid var(--gate)}
+.avatar.f-flame{border-color:#ff7a3a;box-shadow:0 0 0 3px rgba(255,90,40,.35),0 0 18px rgba(255,120,40,.8)}
+.avatar.f-ice{border-color:#9fe3f0;box-shadow:0 0 0 3px rgba(159,227,240,.35),0 0 18px rgba(159,227,240,.8)}
+.avatar.f-forest{border-color:#6cbf4a;box-shadow:0 0 0 3px rgba(108,191,74,.35),0 0 18px rgba(108,191,74,.7)}
+.avatar.f-gold{border:3px solid #ffd36b;box-shadow:0 0 0 3px #8a6e34,0 0 22px rgba(255,214,120,.9)}
+.avatar.f-rainbow{border:3px solid transparent;background:radial-gradient(circle at 35% 30%,color-mix(in oklab,var(--ac) 35%,#0c1416),#0c1416 70%) padding-box,conic-gradient(#ff6a55,#ffd36b,#6cbf4a,#4aa3df,#a88be0,#ff6a55) border-box;animation:spinGlow 4s linear infinite}
+@keyframes spinGlow{50%{filter:hue-rotate(60deg) brightness(1.15)}}
+.face.back.b-night,.mini-back.b-night{background:radial-gradient(circle at 30% 20%,#3a4fb0 0,transparent 40%),linear-gradient(160deg,#0d1240,#03040d);border-color:#c8d2ff;color:#c8d2ff}
+.face.back.b-ember,.mini-back.b-ember{background:radial-gradient(circle at 50% 110%,#ff7a3a 0,transparent 55%),linear-gradient(160deg,#3a1208,#100503);border-color:#ff9a50;color:#ffd36b}
+.face.back.b-aurora,.mini-back.b-aurora{background:linear-gradient(160deg,#0b3a3a,#3a1a5a 50%,#0d2a4a);border-color:#9fe3f0;color:#fff3d4;position:relative;overflow:hidden}
+.face.back.b-aurora::after,.mini-back.b-aurora::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(120,255,200,.35) 40%,rgba(200,120,255,.3) 60%,transparent 80%);animation:aurora 3s ease-in-out infinite}
+@keyframes aurora{50%{transform:translateX(18%)}}
+
 /* --- Ver.2.5 ホーム --- */
 .pstrip{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;color:var(--fg);cursor:pointer;text-align:left;width:100%}
 .pstrip-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
@@ -404,7 +427,7 @@ textarea{font:inherit;color:var(--fg);background:#0c1416;border:1px solid var(--
 <div id="app" hidden>
   <header class="app-top">
     <span class="brand">PROJECT GATE</span>
-    <span class="pts"><span class="lbl" data-i18n="home.points"></span><b class="num" id="topPoints">0</b></span>
+    <button class="pts" data-act="shop"><span class="lbl" data-i18n="home.points"></span><b class="num" id="topPoints">0</b><span class="lbl">›</span></button>
   </header>
   <main class="app-main" id="screenWrap"><div class="screen" id="screen"></div></main>
   <nav class="tabbar" id="tabbar" aria-label="menu"></nav>
@@ -446,7 +469,7 @@ textarea{font:inherit;color:var(--fg);background:#0c1416;border:1px solid var(--
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== 調整用の設定 =====
-const APP_VERSION = '2.5.0';
+const APP_VERSION = '2.5.1';
 // 'dev'：開発用（設定にユーザー／開発者の切り替えが出る）。'release'：一般公開用（ユーザー画面のみ）
 // 一般公開用は tools/build_release.py が自動で 'release' に書き換えて index.html を作る
 const BUILD = 'dev';
@@ -907,6 +930,42 @@ const STR = {
   'rar.U':['アンコモン','Uncommon','稀少','Poco común','언커먼','Incomum'],
   'rar.R':['レア','Rare','稀有','Rara','레어','Rara'],
   'rar.L':['レジェンド','Legend','传说','Legendaria','레전드','Lendária'],
+  'craft.max':['上限まで持っています','You already own the deck limit','已拥有上限数量','Ya tienes el máximo','상한까지 보유 중','Você já tem o máximo'],
+  'dust.btn':['余り{n}枚を分解（+{p}pt）','Dismantle {n} extra (+{p} pts)','分解多余的{n}张（+{p}点）','Desmontar {n} extra (+{p})','남는 {n}장 분해 (+{p}pt)','Desmontar {n} extra (+{p})'],
+  'dust.done':['{n}枚を分解してパックポイント+{p}','Dismantled {n} for +{p} pts','分解{n}张，获得{p}点','Desmontaste {n}: +{p}','{n}장을 분해해 +{p}pt','Desmontou {n}: +{p}'],
+  'dust.doneAll':['まとめて分解してパックポイント+{p}','Dismantled extras for +{p} pts','批量分解获得{p}点','Desmontaste extras: +{p}','일괄 분해로 +{p}pt','Desmontou extras: +{p}'],
+  'dust.hint':['デッキの上限を超えた分は分解してポイントにできます','Copies above the deck limit can be dismantled into points','超出卡组上限的卡可以分解成点数','Las copias sobre el límite se pueden desmontar','덱 상한을 넘은 카드는 분해해 포인트로 바꿀 수 있습니다','Cópias acima do limite viram pontos'],
+  'dust.allBtn':['余りをまとめて分解（+{p}pt）','Dismantle all extras (+{p} pts)','批量分解（+{p}点）','Desmontar extras (+{p})','남는 카드 일괄 분해 (+{p}pt)','Desmontar extras (+{p})'],
+  'dust.allTitle':['まとめて分解','Dismantle extras','批量分解','Desmontar extras','일괄 분해','Desmontar extras'],
+  'dust.desc':['デッキに入れられる上限を超えた分だけを分解します。作成コストの1/5がパックポイントに戻ります','Only copies above the deck limit are dismantled. You get back 1/5 of the crafting cost'],
+  'dust.total':['合計 +{p}pt','Total +{p} pts','合计 +{p}点','Total +{p}','합계 +{p}pt','Total +{p}'],
+  'dust.go':['分解する','Dismantle','分解','Desmontar','분해','Desmontar'],
+  'dust.none':['上限を超えて持っているカードはありません','No copies above the deck limit','没有超出上限的卡','No hay copias de sobra','상한을 넘은 카드가 없습니다','Nenhuma cópia extra'],
+  'shop.title':['ショップ','Shop','商店','Tienda','상점','Loja'],
+  'shop.desc':['パックポイントで、見た目のアイテムやチャレンジ力と交換できます。カードの強さに関わるものは売っていません','Trade Pack Points for cosmetics and Challenge. Nothing here makes cards stronger'],
+  'shop.k_item':['アイテム','Items','道具','Objetos','아이템','Itens'],
+  'shop.k_frame':['アイコン枠','Frames','头像框','Marcos','아이콘 테두리','Molduras'],
+  'shop.k_title':['称号','Titles','称号','Títulos','칭호','Títulos'],
+  'shop.k_back':['カード裏面','Card backs','卡背','Reversos','카드 뒷면','Versos'],
+  'shop.use':['使う','Use','使用','Usar','사용','Usar'],
+  'shop.using':['使用中','In use','使用中','En uso','사용 중','Em uso'],
+  'shop.default':['標準に戻す','Use default','恢复默认','Por defecto','기본으로','Padrão'],
+  'shop.bought':['「{x}」を手に入れました','You got {x}','获得了「{x}」','Conseguiste {x}','「{x}」을(를) 얻었습니다','Você conseguiu {x}'],
+  'shop.gc1':['チャレンジ力+1','Challenge +1','挑战力+1','Reto +1','챌린지 +1','Desafio +1'],
+  'shop.gc1d':['今 {n}','Now {n}','当前 {n}','Ahora {n}','현재 {n}','Agora {n}'],
+  'shop.frame_flame':['炎の枠','Flame frame','火焰框','Marco de llamas','불꽃 테두리','Moldura de chamas'],
+  'shop.frame_ice':['氷の枠','Ice frame','冰霜框','Marco de hielo','얼음 테두리','Moldura de gelo'],
+  'shop.frame_forest':['森の枠','Forest frame','森林框','Marco del bosque','숲 테두리','Moldura da floresta'],
+  'shop.frame_gold':['黄金の枠','Golden frame','黄金框','Marco dorado','황금 테두리','Moldura dourada'],
+  'shop.frame_rainbow':['虹の枠','Rainbow frame','彩虹框','Marco arcoíris','무지개 테두리','Moldura arco-íris'],
+  'shop.title_collector':['コレクター','Collector','收藏家','Coleccionista','컬렉터','Colecionador'],
+  'shop.title_dragon':['竜の友','Dragon\'s Friend','龙之友','Amigo de dragones','용의 친구','Amigo dos dragões'],
+  'shop.title_night':['夜更かしゲーター','Night Owl Gater','夜猫子守门者','Búho nocturno','올빼미 게이터','Coruja noturna'],
+  'shop.title_gambler':['運まかせ','Lucky Roller','听天由命','Lanzador afortunado','운에 맡기는 자','Sortudo'],
+  'shop.title_legend':['ゲートの伝説','Legend of the Gate','门之传说','Leyenda del Portal','게이트의 전설','Lenda do Portal'],
+  'shop.back_night':['夜空の裏面','Night sky back','夜空卡背','Reverso nocturno','밤하늘 뒷면','Verso noturno'],
+  'shop.back_ember':['残り火の裏面','Ember back','余烬卡背','Reverso de brasas','불씨 뒷면','Verso de brasas'],
+  'shop.back_aurora':['オーロラの裏面','Aurora back','极光卡背','Reverso aurora','오로라 뒷면','Verso aurora'],
   'tab.home':['ホーム','Home','主页','Inicio','홈','Início'],
   'tab.cards':['マイカード','My Cards','我的卡牌','Mis cartas','내 카드','Minhas cartas'],
   'tab.friends':['フレンド','Friends','好友','Amigos','친구','Amigos'],
@@ -1139,7 +1198,7 @@ function defSave(){
     decks:[{name:'',cards:{...STARTER}},{name:'',cards:{}},{name:'',cards:{}},{name:'',cards:{}},{name:'',cards:{}}], active:0,
     points:0, pending:null,
     pk:{stock:CONFIG.packStockMax, t:Date.now(), bonus:0}, gc:{stock:CONFIG.gcMax, t:Date.now(), list:[]},
-    ms:{day:'',prog:{},claimed:{},all:false}, login:{day:'',count:0}, xp:0,
+    ms:{day:'',prog:{},claimed:{},all:false}, login:{day:'',count:0}, xp:0, shop:{owned:[],frame:'',title:'',back:''},
     profile:{name:'Player', id:randId(), bio:'', fav:''}, friends:[],
     settings:{speed:1, view:0, hideLast:true, tableHeight:0.78, test:false},
     stats:{w:0,l:0,packs:0,streak:0,best:0}, gifts:[], usedGifts:[],
@@ -1148,7 +1207,7 @@ function defSave(){
 function loadSave(){
   try{
     const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
-    if(s && s.v===1){ const d=defSave(); const o={...d, ...s, settings:{...d.settings,...(s.settings||{})}, profile:{...d.profile,...(s.profile||{})}, dev:{...d.dev,...(s.dev||{})}, stats:{...d.stats,...(s.stats||{})}, pk:{...d.pk,...(s.pk||{})}, gc:{...d.gc,...(s.gc||{})}, login:{...d.login,...(s.login||{})}}; while(o.decks.length<5) o.decks.push({name:'',cards:{}}); return o; }
+    if(s && s.v===1){ const d=defSave(); const o={...d, ...s, settings:{...d.settings,...(s.settings||{})}, profile:{...d.profile,...(s.profile||{})}, dev:{...d.dev,...(s.dev||{})}, stats:{...d.stats,...(s.stats||{})}, pk:{...d.pk,...(s.pk||{})}, gc:{...d.gc,...(s.gc||{})}, login:{...d.login,...(s.login||{})}, shop:{...d.shop,...(s.shop||{})}}; while(o.decks.length<5) o.decks.push({name:'',cards:{}}); return o; }
   }catch(e){}
   return defSave();
 }
@@ -1947,9 +2006,9 @@ function renderGC(isNew){
   const G=GC, who=G.ch.who || t('gc.keeper');
   const head = G.phase==='show' ? t('gc.memorize') : G.phase==='done' ? t('gc.got',{c:'@'+G.ch.cards[G.order[G.picked]]}) : t('gc.pick');
   const cells = G.phase==='show'
-    ? G.ch.cards.map(id=>`<div class="flip on r-${CARDS[id].rarity}"><span class="flip-in"><span class="face back"><span>GATE</span></span><span class="face front">${cardHTML(id)}</span></span></div>`).join('')
+    ? G.ch.cards.map(id=>`<div class="flip on r-${CARDS[id].rarity}"><span class="flip-in"><span class="face back ${backCls()}"><span>GATE</span></span><span class="face front">${cardHTML(id)}</span></span></div>`).join('')
     : G.order.map((k,i)=>{ const id=G.ch.cards[k], open=G.phase==='done'; const mine=i===G.picked;
-        return `<button class="flip gc-slot ${open?'on':''} ${mine?'mine':''} ${G.phase==='done'&&!mine?'other':''} r-${CARDS[id].rarity}" data-act="gcPick" data-i="${i}" style="--d:${i}" ${G.phase!=='pick'?'disabled':''}><span class="flip-in"><span class="face back"><span>GATE</span></span><span class="face front">${cardHTML(id)}${mine&&isNew?'<span class="newb">NEW</span>':''}</span></span></button>`; }).join('');
+        return `<button class="flip gc-slot ${open?'on':''} ${mine?'mine':''} ${G.phase==='done'&&!mine?'other':''} r-${CARDS[id].rarity}" data-act="gcPick" data-i="${i}" style="--d:${i}" ${G.phase!=='pick'?'disabled':''}><span class="flip-in"><span class="face back ${backCls()}"><span>GATE</span></span><span class="face front">${cardHTML(id)}${mine&&isNew?'<span class="newb">NEW</span>':''}</span></span></button>`; }).join('');
   showModal(`<p class="eyebrow center">${t('gc.title')}</p><h2 class="center">${esc(t('gc.from',{p:who}))}</h2>
     <p class="center gc-head">${head}</p>
     <div class="reveal gc-board ${G.phase}">${cells}</div>
@@ -1974,10 +2033,10 @@ function showNews(i){
 
 /* ----- プロフィール ----- */
 function favGlyph(){ const f=SV.profile.fav; return f&&CARDS[f] ? {g:CARDS[f].glyph, c:EL[CARDS[f].el]} : {g:'G', c:'#d9b45f'}; }
-function avatarHTML(size=''){ const a=favGlyph(); return `<span class="avatar ${size}" style="--ac:${a.c}">${a.g}</span>`; }
+function avatarHTML(size=''){ const a=favGlyph(); return `<span class="avatar ${size} ${frameCls()}" style="--ac:${a.c}">${a.g}</span>`; }
 function showProfile(){
   const L=levelInfo(), st=SV.stats, games=st.w+st.l, dex=CARD_IDS.filter(id=>SV.collection[id]).length, fav=SV.profile.fav;
-  showModal(`<div class="pcard">${avatarHTML('lg')}<div class="pcard-main"><span class="lbl">${esc(titleOf(L.lv))}</span><h2>${esc(SV.profile.name)}</h2><span class="meta">ID ${SV.profile.id}　Lv.${L.lv}</span>
+  showModal(`<div class="pcard">${avatarHTML('lg')}<div class="pcard-main"><span class="lbl">${esc(shownTitle(L.lv))}</span><h2>${esc(SV.profile.name)}</h2><span class="meta">ID ${SV.profile.id}　Lv.${L.lv}</span>
       <div class="xpbar"><i style="width:${Math.round(L.cur/L.need*100)}%"></i></div><span class="meta">${t('lv.next',{n:L.need-L.cur})}</span></div></div>
     <h3>${t('pf.bio')}</h3><p class="bio">${esc(SV.profile.bio||t('pf.bioEmpty'))}</p>
     <div class="pstats">
@@ -2007,7 +2066,7 @@ function homeHTML(){
   const mrows=MISSIONS.map(m=>{ const p=Math.min(m.n,SV.ms.prog[m.k]||0), done=p>=m.n, got=SV.ms.claimed[m.k];
     return `<div class="mrow ${got?'got':''}"><div class="mtxt"><b>${t('m.'+m.k,{n:m.n})}</b><div class="mbar"><i style="width:${p/m.n*100}%"></i></div><span class="meta">${p}/${m.n}　EXP+${m.xp}・${t('rw.pts',{n:m.pts})}</span></div>${got?`<span class="meta">${t('home.claimed')}</span>`:`<button class="btn sm" data-act="claim" data-k="${m.k}" ${done?'':'disabled'}>${t('home.claim')}</button>`}</div>`; }).join('');
   return `<section class="home">
-    <button class="pstrip" data-act="profile">${avatarHTML()}<span class="pstrip-main"><b>${esc(SV.profile.name)}</b><span class="meta">Lv.${lv.lv}・${esc(titleOf(lv.lv))}</span><span class="xpbar"><i style="width:${Math.round(lv.cur/lv.need*100)}%"></i></span></span><span class="lbl">${t('pf.title')} ›</span></button>
+    <button class="pstrip" data-act="profile">${avatarHTML()}<span class="pstrip-main"><b>${esc(SV.profile.name)}</b><span class="meta">Lv.${lv.lv}・${esc(shownTitle(lv.lv))}</span><span class="xpbar"><i style="width:${Math.round(lv.cur/lv.need*100)}%"></i></span></span><span class="lbl">${t('pf.title')} ›</span></button>
 
     <div class="news" aria-label="${t('news.title')}">${NEWS.slice(0,3).map((n,i)=>`<button class="newscard tag-${n.tag}" data-act="news" data-i="${i}"><span class="tag tag-${n.tag}">${t('news.'+n.tag)}</span><b>${esc(newsTitle(n))}</b><span class="meta">${n.date}</span></button>`).join('')}</div>
 
@@ -2044,7 +2103,7 @@ function homeHTML(){
       <div class="stat"><span class="lbl">${t('home.points')}</span><b class="num">${SV.points}</b></div>
       <div class="stat"><span class="lbl">${t('home.recordL')}</span><b class="num">${t('home.record',{w:SV.stats.w,l:SV.stats.l})}</b></div>
     </div>
-    <div class="row center"><button class="ghost-btn" data-act="login">${t('home.login')}</button><button class="ghost-btn" data-act="odds">${t('odds.title')}</button><button class="btn" data-act="tab" data-tab="battle">${t('home.toBattle')}</button></div>
+    <div class="row center"><button class="btn" data-act="shop">${t('shop.title')}</button><button class="ghost-btn" data-act="login">${t('home.login')}</button><button class="ghost-btn" data-act="odds">${t('odds.title')}</button><button class="btn" data-act="tab" data-tab="battle">${t('home.toBattle')}</button></div>
   </section>`;
 }
 function bindPackDrag(){
@@ -2080,7 +2139,7 @@ function renderPackModal(){
   showModal(`${P.god?`<p class="godline">${t('pack.god')}</p>`:''}
     <div class="reveal ${P.fast?'fast':'slow'}">${P.cards.map((id,i)=>{
       const last=hide && i===P.cards.length-1;
-      return `<button class="flip r-${CARDS[id].rarity} ${last?'last':''}" data-act="flip" data-i="${i}" aria-label="${t('pack.tap')}"><span class="flip-in"><span class="face back"><span>GATE</span>${last?'<em>?</em>':''}</span><span class="face front">${cardHTML(id)}${P.isNew[i]?'<span class="newb">NEW</span>':''}<span class="rar">${RARITY[CARDS[id].rarity].mark}</span></span></span></button>`;
+      return `<button class="flip r-${CARDS[id].rarity} ${last?'last':''}" data-act="flip" data-i="${i}" aria-label="${t('pack.tap')}"><span class="flip-in"><span class="face back ${backCls()}"><span>GATE</span>${last?'<em>?</em>':''}</span><span class="face front">${cardHTML(id)}${P.isNew[i]?'<span class="newb">NEW</span>':''}<span class="rar">${RARITY[CARDS[id].rarity].mark}</span></span></span></button>`;
     }).join('')}</div>
     <p class="meta center">${t('pack.gotPoints',{n:CONFIG.packPoints})}・EXP+10</p>
     <div class="row center" id="packActions"><button class="ghost-btn" data-act="flipAll">${t('pack.flipAll')}</button></div>`,'pack-modal');
@@ -2098,6 +2157,85 @@ function flipAll(){
   if(!PACK) return;
   const hide=SV.settings.hideLast, last=PACK.cards.length-1;
   PACK.cards.forEach((_,i)=>{ if(hide && i===last) return; setTimeout(()=>flipCard(i),i*160); });
+}
+
+
+/* ----- パックポイントの使い道：作成・分解・ショップ ----- */
+// 分解：上限（同名3枚、★は1枚など）を超えて持っている分だけポイントに戻せる。戻る量は作成コストの1/5
+function dustOf(id){ return Math.round(RARITY[CARDS[id].rarity].craft/5); }
+function extraOf(id){ return Math.max(0,(SV.collection[id]||0)-cardLimit(id)); }
+function canCraft(id){ return !CARDS[id].token && (SV.collection[id]||0)<cardLimit(id); }
+function craftCard(id){
+  const c=RARITY[CARDS[id].rarity].craft;
+  if(!canCraft(id)){ toast(t('craft.max')); return; }
+  if(SV.points<c){ toast(t('craftNo')); return; }
+  SV.points-=c; SV.collection[id]=(SV.collection[id]||0)+1; save(); toast(t('crafted'));
+  if(CARDS[id].rarity==='R'||CARDS[id].rarity==='L') flash();
+  showCard(id); renderApp(true);
+}
+function dismantle(id){
+  const n=extraOf(id); if(!n) return;
+  SV.collection[id]-=n; SV.points+=n*dustOf(id); save();
+  toast(t('dust.done',{n,p:n*dustOf(id)})); showCard(id); renderApp(true);
+}
+function allExtras(){ return CARD_IDS.filter(id=>extraOf(id)>0).map(id=>({id,n:extraOf(id),p:extraOf(id)*dustOf(id)})); }
+function showDustAll(){
+  const ex=allExtras(), total=ex.reduce((s,x)=>s+x.p,0);
+  showModal(`<h2>${t('dust.allTitle')}</h2><p class="meta">${t('dust.desc')}</p>
+    ${ex.length?`<div class="dlist">${ex.map(x=>`<div class="drow"><span class="dot el-${CARDS[x.id].el}"></span><span class="dmain"><span class="dname">${esc(cardName(x.id))} <span class="meta">${RARITY[CARDS[x.id].rarity].mark}</span></span></span><b class="num">×${x.n}</b><b class="num gold">+${x.p}</b></div>`).join('')}</div>
+    <p class="gain">${t('dust.total',{p:total})}</p>
+    <p class="row"><button class="btn" data-act="dustAllGo">${t('dust.go')}</button><button class="ghost-btn" data-act="closeModal">${t('close')}</button></p>`
+    :`<p>${t('dust.none')}</p><p class="row"><button class="ghost-btn" data-act="closeModal">${t('close')}</button></p>`}`);
+}
+function dustAll(){
+  let p=0; for(const x of allExtras()){ SV.collection[x.id]-=x.n; p+=x.p; }
+  SV.points+=p; save(); closeModal(); toast(t('dust.doneAll',{p})); renderApp(true);
+}
+
+// ショップ：強さに関係しない見た目と、チャレンジ力の回復だけを売る
+const SHOP=[
+  {id:'gc1', kind:'item', cost:20},
+  {id:'frame_flame', kind:'frame', cost:40}, {id:'frame_ice', kind:'frame', cost:40}, {id:'frame_forest', kind:'frame', cost:40},
+  {id:'frame_gold', kind:'frame', cost:80}, {id:'frame_rainbow', kind:'frame', cost:150},
+  {id:'title_collector', kind:'title', cost:30}, {id:'title_dragon', kind:'title', cost:30}, {id:'title_night', kind:'title', cost:30},
+  {id:'title_gambler', kind:'title', cost:30}, {id:'title_legend', kind:'title', cost:120},
+  {id:'back_night', kind:'back', cost:40}, {id:'back_ember', kind:'back', cost:40}, {id:'back_aurora', kind:'back', cost:100},
+];
+const SHOP_KINDS=['item','frame','title','back'];
+function shopOwned(id){ return SV.shop.owned.includes(id); }
+function equipped(kind){ return SV.shop[kind]||''; }
+function frameCls(){ return equipped('frame') ? 'f-'+equipped('frame').slice(6) : ''; }
+function backCls(){ return equipped('back') ? 'b-'+equipped('back').slice(5) : ''; }
+function shownTitle(lv){ const tt=equipped('title'); return tt ? t('shop.'+tt) : titleOf(lv); }
+function shopPreview(it){
+  if(it.kind==='frame') return `<span class="avatar f-${it.id.slice(6)}" style="--ac:${favGlyph().c}">${favGlyph().g}</span>`;
+  if(it.kind==='back') return `<span class="mini-back b-${it.id.slice(5)}"><span>GATE</span></span>`;
+  if(it.kind==='title') return `<span class="title-chip">${esc(t('shop.'+it.id))}</span>`;
+  return `<span class="gcst big">●+1</span>`;
+}
+function showShop(kind){
+  kind=kind||APP.shopKind||'item'; APP.shopKind=kind;
+  const items=SHOP.filter(x=>x.kind===kind);
+  showModal(`<div class="row between"><h2>${t('shop.title')}</h2><span class="pts"><span class="lbl">${t('home.points')}</span><b class="num">${SV.points}</b></span></div>
+    <p class="meta">${t('shop.desc')}</p>
+    <div class="seg wrap">${SHOP_KINDS.map(k=>`<button class="${k===kind?'on':''}" data-act="shopTab" data-k="${k}">${t('shop.k_'+k)}</button>`).join('')}</div>
+    <div class="shopgrid">${items.map(it=>{
+      const own=it.kind!=='item' && shopOwned(it.id), on=own && equipped(it.kind)===it.id;
+      const btn = it.kind==='item' ? `<button class="btn sm" data-act="shopBuy" data-id="${it.id}" ${SV.points>=it.cost?'':'disabled'}>${it.cost}pt</button>`
+        : own ? `<button class="${on?'btn':'ghost-btn'} sm" data-act="shopEquip" data-id="${it.id}">${on?t('shop.using'):t('shop.use')}</button>`
+        : `<button class="btn sm" data-act="shopBuy" data-id="${it.id}" ${SV.points>=it.cost?'':'disabled'}>${it.cost}pt</button>`;
+      return `<div class="shopitem ${on?'on':''}">${shopPreview(it)}<b>${esc(t('shop.'+it.id))}</b>${it.kind==='item'?`<span class="meta">${t('shop.gc1d',{n:SV.gc.stock})}</span>`:''}${btn}</div>`; }).join('')}</div>
+    ${kind!=='item'?`<p class="row"><button class="ghost-btn" data-act="shopUnequip" data-k="${kind}">${t('shop.default')}</button></p>`:''}
+    <p class="row"><button class="ghost-btn" data-act="closeModal">${t('close')}</button></p>`,'shop-modal');
+}
+function shopBuy(id){
+  const it=SHOP.find(x=>x.id===id); if(!it) return;
+  if(SV.points<it.cost){ toast(t('craftNo')); return; }
+  if(it.kind!=='item' && shopOwned(id)) return;
+  SV.points-=it.cost;
+  if(it.id==='gc1') SV.gc.stock++;
+  else { SV.shop.owned.push(id); SV.shop[it.kind]=id; }
+  save(); toast(t('shop.bought',{x:t('shop.'+id)})); showShop(it.kind); renderApp(true);
 }
 
 /* ----- 属性（テンプレデッキ・カード詳細で使う） ----- */
@@ -2194,7 +2332,8 @@ function showCard(id){
     ${cardText(id)?`<div class="cv-desc">${esc(cardText(id))}</div>`:`<div class="cv-desc meta">${t('cv.vanilla')}</div>`}
     ${evo?`<h3>${t('cv.evo')}</h3><div class="evo">${evo.map((e,i)=>`${i?'<span class="evo-arrow">→</span>':''}<button class="evo-card ${e===id?'on':''}" data-act="cardNav" data-id="${e}" style="--cw:64px">${cardHTML(e)}</button>`).join('')}</div>`:''}
     ${deckCtl(id)}
-    <div class="row">${d.token?'':`<button class="${APP.editing!=null&&APP.tab==='cards'?'ghost-btn':'btn'}" data-act="craft" data-id="${id}" ${SV.points>=cost?'':'disabled'}>${t('craft',{p:cost})}</button>`}<button class="ghost-btn" data-act="closeModal">${t('close')}</button></div>
+    ${d.token?'':`<div class="craftbox"><span class="lbl">${t('home.points')} <b class="num gold">${SV.points}</b></span><div class="row">${canCraft(id)?`<button class="${APP.editing!=null&&APP.tab==='cards'?'ghost-btn':'btn'}" data-act="craft" data-id="${id}" ${SV.points>=cost?'':'disabled'}>${t('craft',{p:cost})}</button>`:`<span class="meta">${t('craft.max')}</span>`}${extraOf(id)?`<button class="ghost-btn" data-act="dust" data-id="${id}">${t('dust.btn',{n:extraOf(id),p:extraOf(id)*dustOf(id)})}</button>`:''}</div></div>`}
+    <div class="row"><button class="ghost-btn" data-act="closeModal">${t('close')}</button></div>
   </div>`,'cv-modal');
   bindTilt();
 }
@@ -2223,7 +2362,9 @@ function collectionHTML(){
   const chips=filterChips('filter',f);
   const ids=CARD_IDS.filter(id=>matchFilter(id,f));
   const ownedCount=CARD_IDS.filter(id=>SV.collection[id]).length;
+  const ex=allExtras();
   return `<div class="row between"><div class="chips">${chips}</div><span class="meta">${t('home.dex')} ${ownedCount}/${CARD_IDS.length}</span></div>
+    <div class="row between"><span class="meta">${t('dust.hint')}</span>${ex.length?`<button class="ghost-btn sm" data-act="dustAll">${t('dust.allBtn',{p:ex.reduce((s,x)=>s+x.p,0)})}</button>`:''}</div>
     <div class="grid">${ids.map(id=>{ const n=owned(id); return `<button class="cell ${n?'':'unowned'}" data-act="card" data-id="${id}">${cardHTML(id)}<span class="cnt">×${n}</span><span class="rar">${RARITY[CARDS[id].rarity].mark}</span></button>`; }).join('')}</div>`;
 }
 function decksHTML(){
@@ -2519,7 +2660,15 @@ function appAct(act,d,el){
     case 'deckAddM': deckAdd(d.id); showCard(d.id); return;
     case 'deckRemoveM': { const c=SV.decks[APP.editing].cards; if(c[d.id]>1) c[d.id]--; else delete c[d.id]; save(); renderApp(true); showCard(d.id); return; }
     case 'card': showCard(d.id); return;
-    case 'craft': { const c=RARITY[CARDS[d.id].rarity].craft; if(SV.points<c){ toast(t('craftNo')); return; } SV.points-=c; SV.collection[d.id]=(SV.collection[d.id]||0)+1; save(); toast(t('crafted')); showCard(d.id); renderApp(true); return; }
+    case 'craft': craftCard(d.id); return;
+    case 'dust': dismantle(d.id); return;
+    case 'dustAll': showDustAll(); return;
+    case 'dustAllGo': dustAll(); return;
+    case 'shop': showShop(); return;
+    case 'shopTab': showShop(d.k); return;
+    case 'shopBuy': shopBuy(d.id); return;
+    case 'shopEquip': { const it=SHOP.find(x=>x.id===d.id); SV.shop[it.kind]=d.id; save(); showShop(it.kind); renderApp(true); return; }
+    case 'shopUnequip': SV.shop[d.k]=''; save(); showShop(d.k); renderApp(true); return;
     case 'closeModal': closeModal(); return;
     case 'openPack': openPack(1); return;
     case 'flip': flipCard(+d.i,el); return;
