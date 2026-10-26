@@ -276,6 +276,115 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 #toast.show{animation:toast 2.4s ease forwards}
 @keyframes toast{0%{opacity:0;transform:translate(-50%,8px)}10%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
 #modal{z-index:50}
+/* --- Ver.2.5 ホーム --- */
+.pstrip{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;color:var(--fg);cursor:pointer;text-align:left;width:100%}
+.pstrip-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.pstrip-main b{font-family:var(--f-display);font-weight:400;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avatar{--ac:#d9b45f;flex:0 0 auto;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-size:22px;color:var(--ac);background:radial-gradient(circle at 35% 30%,color-mix(in oklab,var(--ac) 35%,#0c1416),#0c1416 70%);border:2px solid var(--ac);box-shadow:0 0 14px color-mix(in oklab,var(--ac) 45%,transparent)}
+.avatar.lg{width:76px;height:76px;font-size:38px}
+.xpbar,.mbar,.dexbar{display:block;height:6px;border-radius:999px;background:#0c1416;border:1px solid var(--line);overflow:hidden}
+.xpbar i,.mbar i,.dexbar i{display:block;height:100%;background:linear-gradient(90deg,#b8923f,#ffe08a);border-radius:inherit;transition:width .6s ease}
+.news{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.newscard{flex:0 0 min(78%,300px);scroll-snap-align:start;display:flex;flex-direction:column;gap:4px;align-items:flex-start;text-align:left;background:linear-gradient(135deg,color-mix(in oklab,var(--tc) 30%,var(--panel-solid)),var(--panel-solid) 70%);border:1px solid color-mix(in oklab,var(--tc) 55%,var(--line));border-radius:14px;padding:12px 14px;color:var(--fg);cursor:pointer;min-height:96px}
+.newscard b{font-size:15px;line-height:1.35}
+.tag-update{--tc:#d9b45f} .tag-event{--tc:#ff6a55} .tag-info{--tc:#45b0ad}
+.tag{display:inline-block;font-size:11px;font-weight:700;color:#111;background:var(--tc);border-radius:999px;padding:1px 9px}
+.packhead{width:min(100%,320px)}
+.pips3{display:flex;align-items:center;gap:6px}
+.ppip{width:16px;height:22px;border-radius:4px;border:1.5px solid var(--gate);background:transparent}
+.ppip.on{background:linear-gradient(160deg,#e5583c,#2a1d33);box-shadow:0 0 8px rgba(229,88,60,.6)}
+.bonusb{font-size:12px;font-weight:700;color:#111;background:var(--gate);border-radius:999px;padding:0 7px}
+.packcount{position:absolute;right:8px;bottom:8px;font-family:var(--f-num);font-weight:700;color:#fff3d4;background:rgba(0,0,0,.45);border-radius:999px;padding:0 8px;font-size:14px}
+.btn.big{padding:13px 34px;font-size:16px;box-shadow:0 0 22px rgba(217,180,95,.45);animation:breathe 2.2s ease-in-out infinite}
+@keyframes breathe{50%{box-shadow:0 0 34px rgba(255,214,120,.8)}}
+.gcrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.gcitem{display:flex;flex-direction:column;gap:6px;align-items:flex-start;background:#0c1416;border:1px solid var(--line);border-radius:12px;padding:10px;color:var(--fg);cursor:pointer;text-align:left}
+.gcitem:hover{border-color:var(--gate)}
+.gcmini{display:flex;gap:4px}
+.mini-card{--el:var(--fire);width:24px;height:33px;border-radius:4px;display:grid;place-items:center;font-family:var(--f-display);font-size:12px;color:var(--el);background:linear-gradient(160deg,color-mix(in oklab,var(--el) 35%,#14211f),#14211f);border:1px solid color-mix(in oklab,var(--el) 60%,transparent)}
+.mini-card.r-R{box-shadow:0 0 6px rgba(255,210,100,.8)} .mini-card.r-L{box-shadow:0 0 9px rgba(255,236,170,1);border-color:#ffe08a}
+.gccost{font-size:11px;color:var(--gate)}
+.gcst{color:var(--gate);letter-spacing:2px}
+.missions{display:flex;flex-direction:column;gap:8px}
+.mrow{display:flex;align-items:center;gap:10px;background:#0c1416;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.mrow.got{opacity:.55}
+.mtxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.eventcard{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;background:linear-gradient(120deg,rgba(255,106,85,.22),var(--panel) 60%);border:1px solid rgba(255,106,85,.5);border-radius:14px;padding:12px 14px;color:var(--fg);cursor:pointer}
+.eventcard b{font-family:var(--f-display);font-weight:400;font-size:17px}
+.eventcard .meta{grid-column:2/4}
+.eventcard .badge{grid-row:1;grid-column:3}
+button.stat{color:var(--fg);cursor:pointer;text-align:left}
+.newslist{display:flex;flex-direction:column;gap:12px}
+.newsitem{border-bottom:1px solid var(--line);padding-bottom:10px}
+.newsitem h3{margin:6px 0 4px;color:var(--fg);font-size:16px}
+.newsitem p{margin:0;color:var(--muted);max-width:65ch}
+.stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin:12px 0}
+.stamp{position:relative;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;background:#0c1416;border:1px solid var(--line);border-radius:10px;padding:10px 6px;min-height:78px;overflow:hidden}
+.stamp b{font-size:12px}
+.stamp.today{border-color:var(--gate);box-shadow:0 0 14px rgba(217,180,95,.5)}
+.seal-mark{position:absolute;inset:auto 0 0;margin:auto;font-family:var(--f-display);font-size:13px;color:#e5583c;border:2px solid #e5583c;border-radius:50%;width:46px;height:46px;display:grid;place-items:center;transform:rotate(-14deg);top:0;opacity:.85}
+.stamp.today .seal-mark{animation:stampIn .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes stampIn{from{transform:scale(2.2) rotate(-14deg);opacity:0}}
+.gain{color:var(--gate);font-weight:700}
+.pcard{display:flex;gap:14px;align-items:center}
+.pcard-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.pcard-main h2{margin:0;font-family:var(--f-display);font-weight:400;color:var(--fg)}
+.bio{margin:0;padding:10px 12px;background:#0c1416;border-radius:10px;border:1px solid var(--line);white-space:pre-wrap;max-width:65ch}
+.pstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.pstats div{background:#0c1416;border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:2px}
+.lvup{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:10px}
+.lvnum{font-family:var(--f-display);font-size:64px;color:#ffe08a;text-shadow:0 0 30px rgba(255,214,120,.9);animation:lvpop .7s cubic-bezier(.2,1.6,.4,1)}
+@keyframes lvpop{from{transform:scale(.3);opacity:0}}
+.sheet.lvup-modal,.sheet.login-modal{max-width:520px}
+textarea{font:inherit;color:var(--fg);background:#0c1416;border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:70px;resize:vertical;width:100%}
+
+/* ゲットチャレンジ */
+.gc-head{font-weight:700;color:var(--gate);min-height:1.5em}
+.gc-board.shuffle .flip{animation:gcshuffle 1s ease-in-out}
+@keyframes gcshuffle{25%{transform:translateX(calc((var(--d,0) - 1.5) * -40px)) rotate(-6deg)}50%{transform:translateX(calc((var(--d,0) - 1.5) * 40px)) rotate(6deg)}75%{transform:translateY(-14px)}}
+.gc-board.pick .gc-slot{cursor:pointer;animation:gcwait 1.4s ease-in-out infinite;animation-delay:calc(var(--d) * .12s)}
+@keyframes gcwait{50%{transform:translateY(-6px)}}
+.gc-slot.other{opacity:.5}
+.gc-slot.mine .face.front{box-shadow:0 0 0 3px var(--gate),0 0 26px rgba(255,214,120,.9)}
+.gc-board .flip:disabled{cursor:default}
+.flip.legend .face.front{box-shadow:0 0 0 3px #ffe08a,0 0 40px rgba(255,236,170,1);animation:legend 1.2s ease-in-out infinite}
+@keyframes legend{50%{box-shadow:0 0 0 3px #fff,0 0 60px rgba(255,236,170,1)}}
+
+/* カード詳細ビュー */
+.sheet.cv-modal{max-width:560px}
+.cv{display:flex;flex-direction:column;gap:12px}
+.cv-head{text-align:center;display:flex;flex-direction:column;gap:2px;padding:10px;border-radius:12px;background:linear-gradient(180deg,color-mix(in oklab,var(--el) 35%,transparent),transparent)}
+.cv-head h2{margin:0;font-family:var(--f-display);font-weight:400;font-size:26px;color:var(--fg);letter-spacing:.04em}
+.cv-rar{font-size:12px;font-weight:700;color:var(--gate);letter-spacing:.1em}
+.rar-L .cv-rar{color:#ffe08a;text-shadow:0 0 10px rgba(255,214,120,.8)}
+.cv-stage{display:flex;align-items:center;justify-content:center;gap:10px;perspective:900px}
+.cv-nav{flex:0 0 auto;width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#0c1416;color:var(--fg);font-size:24px;cursor:pointer;line-height:1}
+.cv-nav:disabled{opacity:.25;cursor:default}
+.cv-card{--rx:0deg;--ry:0deg;--sx:50%;position:relative;width:min(58vw,230px);aspect-ratio:256/358;border-radius:14px;transform:rotateX(var(--rx)) rotateY(var(--ry));transition:transform .12s ease;box-shadow:0 18px 40px rgba(0,0,0,.6),0 0 30px color-mix(in oklab,var(--el) 45%,transparent);touch-action:pan-y;overflow:hidden}
+.cv-card img{display:block;width:100%;height:100%;user-select:none;-webkit-user-select:none}
+.cv-card .card.big{--cw:100%}
+.cv-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent calc(var(--sx) - 20%),rgba(255,255,255,.18) var(--sx),transparent calc(var(--sx) + 20%))}
+.rar-R .cv-sheen{background:linear-gradient(110deg,transparent calc(var(--sx) - 22%),rgba(255,230,160,.35) var(--sx),transparent calc(var(--sx) + 22%))}
+.rar-L .cv-sheen{background:linear-gradient(110deg,rgba(255,80,80,.0) calc(var(--sx) - 30%),rgba(255,120,200,.28) calc(var(--sx) - 12%),rgba(120,220,255,.32) var(--sx),rgba(255,236,150,.3) calc(var(--sx) + 12%),transparent calc(var(--sx) + 30%));mix-blend-mode:screen}
+.rar-L .cv-card{box-shadow:0 18px 40px rgba(0,0,0,.6),0 0 46px rgba(255,214,120,.75)}
+.cv-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cvt{background:#0c1416;border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.cvt b{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cvt.gold b{color:var(--gate)} .cvt.atk b{color:#ffd36b} .cvt.hp b{color:#ff8a75}
+.cv-desc{background:#0c1416;border:1px solid color-mix(in oklab,var(--el) 50%,var(--line));border-radius:10px;padding:10px 12px;line-height:1.6}
+.evo{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.evo-card{background:none;border:0;padding:0;cursor:pointer;width:var(--cw);opacity:.6}
+.evo-card.on{opacity:1}
+.evo-card .card{cursor:pointer}
+.evo-arrow{color:var(--gate);font-weight:700}
+
+/* テンプレ */
+.attrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin:10px 0}
+.attrbtn{--ac:#d9b45f;display:flex;flex-direction:column;align-items:center;gap:2px;background:#0c1416;border:1.5px solid color-mix(in oklab,var(--ac) 50%,var(--line));border-radius:12px;padding:10px 6px;color:var(--fg);cursor:pointer}
+.attrbtn.on{background:color-mix(in oklab,var(--ac) 22%,#0c1416);border-color:var(--ac);box-shadow:0 0 14px color-mix(in oklab,var(--ac) 50%,transparent)}
+.attrg{font-family:var(--f-display);font-size:26px;color:var(--ac)}
+@media (max-width:560px){ .cv-tiles{grid-template-columns:repeat(2,1fr)} .pstats{grid-template-columns:repeat(2,1fr)} }
+
 #devBanner{position:fixed;top:env(safe-area-inset-top,0px);left:50%;transform:translateX(-50%);z-index:70;background:var(--danger);color:#fff;font-size:11px;font-weight:700;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .ver{background:none;border:0;color:var(--muted);font-size:12px;padding:4px 0;cursor:pointer;align-self:flex-start}
 .rates{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
@@ -337,7 +446,7 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== 調整用の設定 =====
-const APP_VERSION = '2.4.2';
+const APP_VERSION = '2.5.0';
 // 'dev'：開発用（設定にユーザー／開発者の切り替えが出る）。'release'：一般公開用（ユーザー画面のみ）
 // 一般公開用は tools/build_release.py が自動で 'release' に書き換えて index.html を作る
 const BUILD = 'dev';
@@ -357,11 +466,15 @@ const CONFIG = {
   animSpeed: 1,          // 演出の速さ（設定画面から変更。2で2倍速）
   deckSize: 20,          // デッキ枚数（固定）
   maxCopies: 3,          // 同名カードの上限
-  packSize: 5,           // 1パックの枚数
+  packSize: 4,           // 1パックの枚数
+  packStockMax: 3,       // パックをためておける最大数
+  packRegenMin: 480,     // パックが1つ回復するまでの時間（分）。480分＝8時間で、1日最大3回
+  gcMax: 3,              // ゲットチャレンジのチャレンジ力の最大
+  gcRegenMin: 240,       // チャレンジ力が1回復するまでの時間（分）
   godPackRate: 0.01,     // 神パック（全部◆◆◆）の確率
-  packPoints: 5,         // 1パック開けるともらえるパックポイント
+  packPoints: 3,         // 1パック開けるともらえるパックポイント
   winPoints: 2,          // 勝利でもらえるパックポイント
-  dailyResetHour: 4,     // 1日1パックが復活する時刻（端末の現地時間）
+  dailyResetHour: 4,     // デイリーミッション・ログインボーナスが切り替わる時刻（端末の現地時間）
 };
 
 // ===== レア度と提供割合（合計1.0） =====
@@ -628,7 +741,7 @@ const STR = {
   'dev.saved':['反映しました','Applied'],
   'dev.nextPack':['次のパックの中身を指定','Set the next pack'],
   'dev.setPack':['この中身にする','Set pack'],
-  'dev.refill':['今日のパックを復活','Refill today\'s pack'],
+  'dev.refill':['パックとチャレンジ力を満タンにする','Refill packs and Challenge'],
   'dev.random':['ランダム','Random'],
   'dev.hand':['対戦の初期手札を指定（あなた）','Set your opening hand'],
   'dev.none':['指定なし','None'],
@@ -704,13 +817,103 @@ const STR = {
   'deck.infoBtn':['効果を見る','Show effect','查看效果','Ver efecto','효과 보기','Ver efeito'],
   'deck.noneHere':['この種類の所持カードはありません','You don\'t own any cards of this type','没有此类卡牌','No tienes cartas de este tipo','이 종류의 보유 카드가 없습니다','Você não tem cartas deste tipo'],
   'deck.inThis':['このデッキに','In this deck','此卡组中','En este mazo','이 덱에','Neste deck'],
+  'home.full':['満タン（これ以上はたまりません）','Full (no more will stack)','已满（无法再积攒）','Lleno (no se acumulan más)','가득 참 (더 쌓이지 않음)','Cheio (não acumula mais)'],
+  'home.claim':['受け取る','Claim','领取','Reclamar','받기','Resgatar'],
+  'home.claimed':['受取済み','Claimed','已领取','Reclamado','수령 완료','Resgatado'],
+  'home.claimedT':['EXP+{x}・パックポイント+{p}','EXP +{x} · Pack Points +{p}','EXP+{x}・卡包点数+{p}','EXP +{x} · Puntos +{p}','EXP+{x}・팩 포인트+{p}','EXP +{x} · Pontos +{p}'],
+  'home.missions':['デイリーミッション','Daily missions','每日任务','Misiones diarias','데일리 미션','Missões diárias'],
+  'home.missionsReset':['毎日4:00に更新','Resets daily at 4:00','每天4:00刷新','Se renuevan a las 4:00','매일 4:00 갱신','Renova às 4:00'],
+  'home.allBonus':['すべて達成でボーナスパック+1','Complete all for a bonus pack','全部完成可获得奖励卡包+1','Completa todas: sobre extra','모두 달성 시 보너스 팩 +1','Complete todas: pacote bônus'],
+  'home.allDone':['ミッション全達成！ボーナスパック+1','All missions done! Bonus pack +1','任务全部完成！奖励卡包+1','¡Misiones completas! Sobre extra +1','미션 전부 달성! 보너스 팩 +1','Missões completas! Pacote bônus +1'],
+  'home.allDoneShort':['今日のミッションはすべて達成しました','All of today\'s missions are done','今日任务已全部完成','Completaste las misiones de hoy','오늘의 미션을 모두 달성했습니다','Missões de hoje concluídas'],
+  'home.login':['ログインボーナス','Login bonus','登录奖励','Bono diario','로그인 보너스','Bônus diário'],
+  'home.newsAll':['すべて見る','See all','查看全部','Ver todo','모두 보기','Ver tudo'],
+  'rw.pts':['パックポイント+{n}','Pack Points +{n}','卡包点数+{n}','Puntos +{n}','팩 포인트+{n}','Pontos +{n}'],
+  'rw.pack':['パック+{n}','Pack +{n}','卡包+{n}','Sobre +{n}','팩+{n}','Pacote +{n}'],
+  'rw.gc':['チャレンジ力+{n}','Challenge +{n}','挑战力+{n}','Reto +{n}','챌린지 +{n}','Desafio +{n}'],
+  'login.title':['ログインボーナス','Login bonus','登录奖励','Bono diario','로그인 보너스','Bônus diário'],
+  'login.day':['{n}日目','Day {n}','第{n}天','Día {n}','{n}일째','Dia {n}'],
+  'login.got':['今日のボーナス','Today\'s bonus','今日奖励','Bono de hoy','오늘의 보너스','Bônus de hoje'],
+  'login.note':['連続でなくても、ログインした日数で進みます','Progress counts days you log in, not streaks','不需要连续，按登录天数累计','Cuenta los días que entras, no rachas','연속이 아니어도 로그인한 날 수로 진행됩니다','Conta os dias em que você entra, não sequências'],
+  'gc.title':['ゲットチャレンジ','Get Challenge','获取挑战','Reto de captura','겟 챌린지','Desafio de captura'],
+  'gc.desc':['フレンドが開けたパックから、1枚もらえるチャンス','A chance to take one card from a pack a friend opened','有机会从好友开过的卡包中拿走1张','Llévate una carta de un sobre que abrió un amigo','친구가 연 팩에서 1장을 얻을 기회','Pegue uma carta de um pacote que um amigo abriu'],
+  'gc.stamina':['チャレンジ力','Challenge','挑战力','Reto','챌린지','Desafio'],
+  'gc.next':['回復まで {time}','Next in {time}','{time}后恢复','Siguiente en {time}','회복까지 {time}','Próximo em {time}'],
+  'gc.cost':['消費{n}','Cost {n}','消耗{n}','Coste {n}','소비 {n}','Custo {n}'],
+  'gc.none':['チャレンジはまだありません。パックを開けると増えます','No challenges yet. Open packs to get more','还没有挑战。开卡包就会增加','Aún no hay retos. Abre sobres para conseguir más','아직 챌린지가 없습니다. 팩을 열면 늘어납니다','Nenhum desafio ainda. Abra pacotes para ganhar mais'],
+  'gc.keeper':['ゲートの番人','Gatekeeper','守门人','Guardián','문지기','Guardião'],
+  'gc.from':['{p}のパック','{p}\'s pack','{p}的卡包','Sobre de {p}','{p}의 팩','Pacote de {p}'],
+  'gc.memorize':['カードの位置を覚えて…','Remember the cards…','记住卡牌的位置…','Memoriza las cartas…','카드 위치를 기억하세요…','Memorize as cartas…'],
+  'gc.pick':['1枚選んでください','Pick one card','请选择1张','Elige una carta','1장을 고르세요','Escolha uma carta'],
+  'gc.got':['「{c}」をゲット！','You got {c}!','获得了「{c}」！','¡Conseguiste {c}!','「{c}」 획득!','Você pegou {c}!'],
+  'gc.noStamina':['チャレンジ力が足りません','Not enough Challenge','挑战力不足','No tienes suficiente Reto','챌린지가 부족합니다','Desafio insuficiente'],
+  'gc.note':['オンライン対応までは、ゲーム内で作られたパックです。4枚のどれを選んでも当たる確率は同じです。◆◆◆以上を含むパックは消費2','Until online play arrives, these packs are generated in-game. Each of the 4 cards is equally likely. Packs with ◆◆◆ or better cost 2'],
+  'news.title':['ニュース','News','新闻','Noticias','뉴스','Notícias'],
+  'news.update':['アップデート','Update','更新','Actualización','업데이트','Atualização'],
+  'news.event':['イベント','Event','活动','Evento','이벤트','Evento'],
+  'news.info':['お知らせ','Notice','公告','Aviso','공지','Aviso'],
+  'ev.life10':['ライフ10バトル','Life 10 Battle','生命10对战','Batalla de 10 vidas','라이프 10 배틀','Batalha de 10 vidas'],
+  'ev.life10d':['ライフ10の耐久戦。挑発や回復が主役に','A long battle with 10 life. Taunt and healing shine'],
+  'ev.soon':['準備中','Soon','准备中','Pronto','준비 중','Em breve'],
+  'title.1':['見習いゲーター','Novice Gater','见习守门者','Aprendiz','견습 게이터','Aprendiz'],
+  'title.5':['ゲートの探索者','Gate Explorer','门之探索者','Explorador','게이트 탐험가','Explorador'],
+  'title.10':['召喚術師','Summoner','召唤师','Invocador','소환술사','Invocador'],
+  'title.15':['竜使い','Dragon Tamer','驭龙者','Domador de dragones','용 조련사','Domador de dragões'],
+  'title.20':['ゲートマスター','Gate Master','门之大师','Maestro del Portal','게이트 마스터','Mestre do Portal'],
+  'title.30':['伝説のゲーター','Legendary Gater','传说守门者','Leyenda','전설의 게이터','Lenda'],
+  'lv.up':['レベルアップ！','LEVEL UP!','升级！','¡SUBES DE NIVEL!','레벨 업!','SUBIU DE NÍVEL!'],
+  'lv.reward':['パックポイント+{n}','Pack Points +{n}','卡包点数+{n}','Puntos +{n}','팩 포인트+{n}','Pontos +{n}'],
+  'lv.next':['次のレベルまで {n} EXP','{n} EXP to next level','距离下一级 {n} EXP','{n} EXP para subir','다음 레벨까지 {n} EXP','{n} EXP para o próximo nível'],
+  'pf.title':['プロフィール','Profile','个人资料','Perfil','프로필','Perfil'],
+  'pf.bio':['自己紹介','About me','自我介绍','Sobre mí','자기소개','Sobre mim'],
+  'pf.bioEmpty':['まだ自己紹介がありません','No introduction yet','还没有自我介绍','Aún sin presentación','아직 자기소개가 없습니다','Ainda sem apresentação'],
+  'pf.bioPh':['例：エンブリル推しです。よろしく！','e.g. Embrill fan. Nice to meet you!'],
+  'pf.battles':['バトル数','Battles','对战数','Batallas','배틀 수','Batalhas'],
+  'pf.winrate':['勝率','Win rate','胜率','% victorias','승률','Vitórias'],
+  'pf.streak':['最高連勝','Best streak','最高连胜','Mejor racha','최고 연승','Melhor sequência'],
+  'pf.packs':['開けたパック','Packs opened','开过的卡包','Sobres abiertos','연 팩','Pacotes abertos'],
+  'pf.fav':['お気に入りカード','Favorite card','最爱卡牌','Carta favorita','최애 카드','Carta favorita'],
+  'pf.edit':['編集する','Edit','编辑','Editar','편집','Editar'],
+  'm.pack':['パックを{n}回開ける','Open {n} packs','开启{n}次卡包','Abre {n} sobres','팩을 {n}번 열기','Abra {n} pacotes'],
+  'm.battle':['バトルを{n}回する','Play {n} battle','进行{n}次对战','Juega {n} batalla','배틀 {n}번 하기','Jogue {n} batalha'],
+  'm.win':['バトルで{n}回勝つ','Win {n} battle','对战获胜{n}次','Gana {n} batalla','배틀에서 {n}번 이기기','Vença {n} batalha'],
+  'm.gc':['ゲットチャレンジを{n}回する','Do {n} Get Challenge','进行{n}次获取挑战','Haz {n} reto de captura','겟 챌린지 {n}번 하기','Faça {n} desafio'],
+  'attr.fire':['火','Fire','火','Fuego','불','Fogo'],
+  'attr.earth':['地','Earth','地','Tierra','땅','Terra'],
+  'attr.sky':['天','Sky','天','Cielo','하늘','Céu'],
+  'attr.water':['水','Water','水','Agua','물','Água'],
+  'attr.forest':['森','Forest','森','Bosque','숲','Floresta'],
+  'attr.light':['光','Light','光','Luz','빛','Luz'],
+  'attr.shadow':['影','Shadow','影','Sombra','그림자','Sombra'],
+  'tmpl.btn':['テンプレ','Template','模板','Plantilla','템플릿','Modelo'],
+  'tmpl.title':['テンプレデッキ','Template deck','模板卡组','Mazo plantilla','템플릿 덱','Deck modelo'],
+  'tmpl.desc':['属性を1つ選ぶと、今持っているカードでデッキを自動で組みます。足りない分は他の属性の強いカードで補います','Pick one attribute to auto-build a deck from the cards you own. Gaps are filled with strong cards from other attributes'],
+  'tmpl.owned':['所持 {n}/{m}種','Own {n}/{m}','持有 {n}/{m}种','Tienes {n}/{m}','보유 {n}/{m}종','Possui {n}/{m}'],
+  'tmpl.preview':['できあがるデッキ','Resulting deck','生成的卡组','Mazo resultante','완성될 덱','Deck resultante'],
+  'tmpl.mix':['{a}のカード{x}枚＋補助カード{y}枚','{x} {a} cards + {y} support cards','{a}卡{x}张＋辅助卡{y}张','{x} cartas de {a} + {y} de apoyo','{a} 카드 {x}장 + 보조 카드 {y}장','{x} cartas de {a} + {y} de apoio'],
+  'tmpl.short':['カードが足りず{n}枚になりました','Not enough cards: only {n}','卡牌不足，只有{n}张','Faltan cartas: solo {n}','카드가 부족해 {n}장이 되었습니다','Cartas insuficientes: só {n}'],
+  'tmpl.make':['このデッキにする（今の中身は置き換え）','Use this deck (replaces current cards)','使用此卡组（替换当前内容）','Usar este mazo (reemplaza el actual)','이 덱으로 하기 (현재 구성 교체)','Usar este deck (substitui o atual)'],
+  'tmpl.done':['{a}のテンプレを作りました（{n}/{m}枚）','Built a {a} template ({n}/{m})','已生成{a}模板（{n}/{m}张）','Plantilla de {a} creada ({n}/{m})','{a} 템플릿을 만들었습니다 ({n}/{m}장)','Modelo de {a} criado ({n}/{m})'],
+  'tmpl.name':['{a}テンプレ','{a} Template','{a}模板','Plantilla {a}','{a} 템플릿','Modelo {a}'],
+  'cv.prev':['前のカード','Previous','上一张','Anterior','이전','Anterior'],
+  'cv.next':['次のカード','Next','下一张','Siguiente','다음','Próxima'],
+  'cv.type':['種類','Type','种类','Tipo','종류','Tipo'],
+  'cv.attr':['属性','Attribute','属性','Atributo','속성','Atributo'],
+  'cv.limit':['デッキ上限','Deck limit','卡组上限','Límite','덱 상한','Limite'],
+  'cv.owned':['所持','Owned','持有','Tienes','보유','Possui'],
+  'cv.vanilla':['特別な効果はありません','No special ability','没有特殊效果','Sin habilidad especial','특수 효과 없음','Sem habilidade especial'],
+  'cv.evo':['進化の系統','Evolution line','进化路线','Línea evolutiva','진화 계통','Linha evolutiva'],
+  'rar.C':['コモン','Common','普通','Común','커먼','Comum'],
+  'rar.U':['アンコモン','Uncommon','稀少','Poco común','언커먼','Incomum'],
+  'rar.R':['レア','Rare','稀有','Rara','레어','Rara'],
+  'rar.L':['レジェンド','Legend','传说','Legendaria','레전드','Lendária'],
   'tab.home':['ホーム','Home','主页','Inicio','홈','Início'],
   'tab.cards':['マイカード','My Cards','我的卡牌','Mis cartas','내 카드','Minhas cartas'],
   'tab.friends':['フレンド','Friends','好友','Amigos','친구','Amigos'],
   'tab.battle':['バトル','Battle','对战','Batalla','배틀','Batalha'],
   'tab.settings':['設定','Settings','设置','Ajustes','설정','Configurações'],
 
-  'home.pack':['今日のパック','Today\'s Pack','今日卡包','Sobre de hoy','오늘의 팩','Pacote de hoje'],
+  'home.pack':['パック','Packs','卡包','Sobres','팩','Pacotes'],
   'home.swipe':['パックの上を横になぞって開封','Swipe across the pack to open','横向划过卡包即可开启','Desliza sobre el sobre para abrirlo','팩 위를 옆으로 밀어서 개봉','Deslize sobre o pacote para abrir'],
   'home.open':['開封する','Open','开启','Abrir','개봉','Abrir'],
   'home.next':['次のパックまで {time}','Next pack in {time}','距离下个卡包 {time}','Próximo sobre en {time}','다음 팩까지 {time}','Próximo pacote em {time}'],
@@ -933,17 +1136,19 @@ function randId(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for(let
 function guessLang(){ const n=(navigator.language||'ja').slice(0,2).toLowerCase(); return LANGS.some(l=>l[0]===n)?n:'en'; }
 function defSave(){
   return { v:1, lang:guessLang(), collection:{...STARTER},
-    decks:[{name:'',cards:{...STARTER}},{name:'',cards:{}},{name:'',cards:{}}], active:0,
-    points:0, lastPack:'', pending:null,
-    profile:{name:'Player', id:randId()}, friends:[],
+    decks:[{name:'',cards:{...STARTER}},{name:'',cards:{}},{name:'',cards:{}},{name:'',cards:{}},{name:'',cards:{}}], active:0,
+    points:0, pending:null,
+    pk:{stock:CONFIG.packStockMax, t:Date.now(), bonus:0}, gc:{stock:CONFIG.gcMax, t:Date.now(), list:[]},
+    ms:{day:'',prog:{},claimed:{},all:false}, login:{day:'',count:0}, xp:0,
+    profile:{name:'Player', id:randId(), bio:'', fav:''}, friends:[],
     settings:{speed:1, view:0, hideLast:true, tableHeight:0.78, test:false},
-    stats:{w:0,l:0}, gifts:[], usedGifts:[],
+    stats:{w:0,l:0,packs:0,streak:0,best:0}, gifts:[], usedGifts:[],
     dev:{unlocked:false, enabled:false, allCards:false, rates:null, god:null, hand:[], cpu:'starter'} };
 }
 function loadSave(){
   try{
     const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
-    if(s && s.v===1){ const d=defSave(); return {...d, ...s, settings:{...d.settings,...(s.settings||{})}, profile:{...d.profile,...(s.profile||{})}, dev:{...d.dev,...(s.dev||{})}, stats:{...d.stats,...(s.stats||{})}}; }
+    if(s && s.v===1){ const d=defSave(); const o={...d, ...s, settings:{...d.settings,...(s.settings||{})}, profile:{...d.profile,...(s.profile||{})}, dev:{...d.dev,...(s.dev||{})}, stats:{...d.stats,...(s.stats||{})}, pk:{...d.pk,...(s.pk||{})}, gc:{...d.gc,...(s.gc||{})}, login:{...d.login,...(s.login||{})}}; while(o.decks.length<5) o.decks.push({name:'',cards:{}}); return o; }
   }catch(e){}
   return defSave();
 }
@@ -1083,8 +1288,11 @@ function damagePlayer(pi,n){
 }
 function finishMatch(){
   if(S.sim) return;
-  if(S.winner===0){ SV.stats.w++; SV.points+=CONFIG.winPoints; } else SV.stats.l++;
-  save();
+  const win=S.winner===0;
+  if(win){ SV.stats.w++; SV.points+=CONFIG.winPoints; SV.stats.streak=(SV.stats.streak||0)+1; SV.stats.best=Math.max(SV.stats.best||0,SV.stats.streak); }
+  else { SV.stats.l++; SV.stats.streak=0; }
+  mProgress('battle'); if(win) mProgress('win');
+  addXP(win?25:15);
 }
 function damageMonster(owner,m,n){ m.hp-=n; fx(slotKey(owner,m),`-${n}`,'dmg'); killCheck(owner); }
 // 場に出たときの共通処理（テラヴェル級の常時効果、ガイアルート）
@@ -1568,7 +1776,7 @@ function render(){
     setTimeout(()=>{
       if(!alive(gid)) return;
       const ov=$('#overlay'), win=S.winner===0;
-      ov.innerHTML=`<div class="ov"><p>${t('over.turns',{n:S.turnNo})}</p><h2>${t(win?'over.win':'over.lose')}</h2>${win?`<p class="gain">${t('pack.gotPoints',{n:CONFIG.winPoints})}</p>`:''}<div class="row"><button class="endbtn" data-act="again">${t('over.again')}</button><button class="ghost-btn" data-act="menu">${t('over.menu')}</button></div></div>`;
+      ov.innerHTML=`<div class="ov"><p>${t('over.turns',{n:S.turnNo})}</p><h2>${t(win?'over.win':'over.lose')}</h2>${win?`<p class="gain">${t('pack.gotPoints',{n:CONFIG.winPoints})}</p>`:''}<p class="meta">EXP+${win?25:15}</p><div class="row"><button class="endbtn" data-act="again">${t('over.again')}</button><button class="ghost-btn" data-act="menu">${t('over.menu')}</button></div></div>`;
       ov.hidden=false;
     }, 1300);
   }
@@ -1639,13 +1847,24 @@ function renderApp(keepScroll){
   updateDevBanner();
   if(APP.tab==='home') bindPackDrag();
   wrap.scrollTop = keepScroll ? y : 0;
+  if(APP.levelUp && $('#modal').hidden){ const u=APP.levelUp; setTimeout(()=>{ if(APP.levelUp===u && $('#modal').hidden) showLevelUp(); },300); }
 }
 
-/* ----- 1日1パック ----- */
+/* ----- パック（回復制：8時間で1つ回復、最大3つまでためられる） ----- */
 function dayKey(d=new Date()){ const x=new Date(d.getTime()-CONFIG.dailyResetHour*3600e3); return `${x.getFullYear()}-${x.getMonth()+1}-${x.getDate()}`; }
-function canOpenPack(){ return SV.settings.test || SV.lastPack!==dayKey(); }
-function nextReset(){ const now=new Date(), r=new Date(now); r.setHours(CONFIG.dailyResetHour,0,0,0); if(r<=now) r.setDate(r.getDate()+1); return r; }
-function fmtLeft(ms){ const h=Math.floor(ms/3600e3), m=Math.floor(ms%3600e3/60e3); return `${h}:${String(m).padStart(2,'0')}`; }
+function regen(o,max,min){
+  const now=Date.now(), R=min*60e3;
+  if(o.stock>=max){ o.t=now; return false; }
+  const k=Math.floor((now-o.t)/R); if(k<=0) return false;
+  o.stock=Math.min(max,o.stock+k); o.t = o.stock>=max ? now : o.t+k*R; return true;
+}
+function syncPacks(){ const c=regen(SV.pk,CONFIG.packStockMax,CONFIG.packRegenMin); if(c) save(); return c; }
+function syncGC(){ const c=regen(SV.gc,CONFIG.gcMax,CONFIG.gcRegenMin); if(c) save(); return c; }
+function canOpenPack(){ return SV.settings.test || SV.pk.stock+SV.pk.bonus>0; }
+function msLeft(o,max,min){ return o.stock>=max ? 0 : Math.max(0,o.t+min*60e3-Date.now()); }
+function fmtLeft(ms){ const s=Math.ceil(ms/1000), h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60; return `${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`; }
+function packTimerText(){ if(SV.settings.test) return t('home.test'); return SV.pk.stock>=CONFIG.packStockMax ? t('home.full') : t('home.next',{time:fmtLeft(msLeft(SV.pk,CONFIG.packStockMax,CONFIG.packRegenMin))}); }
+function gcTimerText(){ return SV.gc.stock>=CONFIG.gcMax ? t('home.full') : t('gc.next',{time:fmtLeft(msLeft(SV.gc,CONFIG.gcMax,CONFIG.gcRegenMin))}); }
 function rollRarity(){ const r=Math.random(), rates=effRates(); let acc=0; for(const k of Object.keys(RARITY)){ acc+=rates[k]||0; if(r<acc) return k; } return 'C'; }
 function rollPack(){
   const god=Math.random()<effGod(), cards=[];
@@ -1653,38 +1872,183 @@ function rollPack(){
   return {god,cards};
 }
 // 中身は開ける前に決めて保存する（再読み込みで引き直せないように）
-function ensurePending(){ if(!SV.pending){ SV.pending={...rollPack(), seed:Math.floor(Math.random()*1e9)}; save(); } return SV.pending; }
+function ensurePending(){ if(!SV.pending || SV.pending.cards.length!==CONFIG.packSize){ SV.pending={...rollPack(), seed:Math.floor(Math.random()*1e9)}; save(); } return SV.pending; }
 function rng(seed){ let a=seed>>>0; return ()=>{ a=a+0x6D2B79F5|0; let x=Math.imul(a^a>>>15,1|a); x=x+Math.imul(x^x>>>7,61|x)^x; return ((x^x>>>14)>>>0)/4294967296; }; }
 function todName(){ const h=new Date().getHours(); return h<5?'night':h<10?'morning':h<16?'day':h<19?'evening':'night'; }
 // 謎の仕掛け1〜4は見た目だけ。5（神パックの予兆）だけが中身と結びついている
 function packLook(){ const p=ensurePending(), r=rng(p.seed); return { corner:Math.floor(r()*5), seal:((r()-.5)*16).toFixed(1), shine:Math.round(10+r()*80), tod:todName(), omen:p.god }; }
 
+/* ----- レベル・称号 ----- */
+function xpNeed(lv){ return 60+lv*20; }
+function levelInfo(){ let lv=1, x=SV.xp||0; while(x>=xpNeed(lv)){ x-=xpNeed(lv); lv++; } return {lv, cur:x, need:xpNeed(lv)}; }
+const TITLES=[1,5,10,15,20,30];
+function titleOf(lv){ let k=1; for(const n of TITLES) if(lv>=n) k=n; return t('title.'+k); }
+function addXP(n){
+  const before=levelInfo().lv; SV.xp=(SV.xp||0)+n; const after=levelInfo().lv;
+  if(after>before){ let pts=0; for(let l=before+1;l<=after;l++) pts+=10*l; SV.points+=pts; APP.levelUp={lv:after,pts}; }
+  save();
+}
+
+/* ----- デイリーミッション ----- */
+const MISSIONS=[{k:'pack',n:2,xp:30,pts:5},{k:'battle',n:1,xp:30,pts:5},{k:'win',n:1,xp:40,pts:10},{k:'gc',n:1,xp:20,pts:5}];
+function syncMissions(){ const d=dayKey(); if(SV.ms.day!==d){ SV.ms={day:d,prog:{},claimed:{},all:false}; save(); } }
+function mProgress(k,n=1){ syncMissions(); SV.ms.prog[k]=(SV.ms.prog[k]||0)+n; save(); }
+function claimMission(k){
+  syncMissions(); const m=MISSIONS.find(x=>x.k===k); if(!m || SV.ms.claimed[k] || (SV.ms.prog[k]||0)<m.n) return;
+  SV.ms.claimed[k]=true; SV.points+=m.pts; toast(t('home.claimedT',{x:m.xp,p:m.pts}));
+  if(!SV.ms.all && MISSIONS.every(x=>SV.ms.claimed[x.k])){ SV.ms.all=true; SV.pk.bonus++; setTimeout(()=>toast(t('home.allDone')),1300); }
+  addXP(m.xp); renderApp(true);
+}
+
+/* ----- ログインボーナス（連続でなくても、ログインした日数で進む） ----- */
+const LOGIN_REWARDS=[{pts:5},{pts:5},{pack:1},{pts:10},{gc:1},{pts:10},{pack:2}];
+function rewardText(r){ return r.pack ? t('rw.pack',{n:r.pack}) : r.gc ? t('rw.gc',{n:r.gc}) : t('rw.pts',{n:r.pts}); }
+function checkLogin(){
+  const d=dayKey(); if(SV.login.day===d) return -1;
+  SV.login.day=d; SV.login.count++;
+  const idx=(SV.login.count-1)%LOGIN_REWARDS.length, r=LOGIN_REWARDS[idx];
+  if(r.pts) SV.points+=r.pts; if(r.pack) SV.pk.bonus+=r.pack; if(r.gc) SV.gc.stock+=r.gc;
+  addChallenge(); addChallenge(); save(); return idx;
+}
+function showLogin(idx){
+  showModal(`<h2 class="center">${t('login.title')}</h2><p class="meta center">${t('login.note')}</p>
+    <div class="stamps">${LOGIN_REWARDS.map((r,i)=>`<div class="stamp ${i<idx?'done':''} ${i===idx?'today':''}"><span class="lbl">${t('login.day',{n:i+1})}</span><b>${rewardText(r)}</b>${i<=idx?'<span class="seal-mark">GATE</span>':''}</div>`).join('')}</div>
+    <p class="center gain">${t('login.got')}：${rewardText(LOGIN_REWARDS[idx])}</p>
+    <p class="center"><button class="btn" data-act="closeModal">OK</button></p>`,'login-modal');
+}
+
+/* ----- ゲットチャレンジ ----- */
+function addChallenge(){
+  const f=SV.friends.length ? SV.friends[Math.floor(Math.random()*SV.friends.length)].name : null;
+  SV.gc.list.unshift({id:randId(), who:f, cards:rollPack().cards, at:Date.now()});
+  SV.gc.list=SV.gc.list.filter(c=>Date.now()-c.at<24*3600e3).slice(0,6);
+}
+function gcCost(ch){ return ch.cards.some(id=>CARDS[id].rarity==='R'||CARDS[id].rarity==='L') ? 2 : 1; }
+let GC=null;
+function startGC(id){
+  syncGC(); const ch=SV.gc.list.find(c=>c.id===id); if(!ch) return;
+  const cost=gcCost(ch); if(SV.gc.stock<cost && !SV.settings.test){ toast(t('gc.noStamina')); return; }
+  if(!SV.settings.test){ if(SV.gc.stock>=CONFIG.gcMax) SV.gc.t=Date.now(); SV.gc.stock-=cost; }
+  SV.gc.list=SV.gc.list.filter(c=>c.id!==id);
+  const order=shuffle(ch.cards.map((_,i)=>i));
+  GC={ch,order,phase:'show',picked:-1}; save(); renderGC(); renderApp(true);
+  setTimeout(()=>{ if(GC && GC.phase==='show'){ GC.phase='shuffle'; renderGC(); setTimeout(()=>{ if(GC && GC.phase==='shuffle'){ GC.phase='pick'; renderGC(); } },1100); } },1800);
+}
+function pickGC(i){
+  if(!GC || GC.phase!=='pick') return;
+  GC.phase='done'; GC.picked=i;
+  const id=GC.ch.cards[GC.order[i]], isNew=!SV.collection[id];
+  SV.collection[id]=(SV.collection[id]||0)+1;
+  mProgress('gc'); addXP(5); save();
+  renderGC(isNew);
+  if(CARDS[id].rarity==='R'||CARDS[id].rarity==='L') flash();
+}
+function renderGC(isNew){
+  const G=GC, who=G.ch.who || t('gc.keeper');
+  const head = G.phase==='show' ? t('gc.memorize') : G.phase==='done' ? t('gc.got',{c:'@'+G.ch.cards[G.order[G.picked]]}) : t('gc.pick');
+  const cells = G.phase==='show'
+    ? G.ch.cards.map(id=>`<div class="flip on r-${CARDS[id].rarity}"><span class="flip-in"><span class="face back"><span>GATE</span></span><span class="face front">${cardHTML(id)}</span></span></div>`).join('')
+    : G.order.map((k,i)=>{ const id=G.ch.cards[k], open=G.phase==='done'; const mine=i===G.picked;
+        return `<button class="flip gc-slot ${open?'on':''} ${mine?'mine':''} ${G.phase==='done'&&!mine?'other':''} r-${CARDS[id].rarity}" data-act="gcPick" data-i="${i}" style="--d:${i}" ${G.phase!=='pick'?'disabled':''}><span class="flip-in"><span class="face back"><span>GATE</span></span><span class="face front">${cardHTML(id)}${mine&&isNew?'<span class="newb">NEW</span>':''}</span></span></button>`; }).join('');
+  showModal(`<p class="eyebrow center">${t('gc.title')}</p><h2 class="center">${esc(t('gc.from',{p:who}))}</h2>
+    <p class="center gc-head">${head}</p>
+    <div class="reveal gc-board ${G.phase}">${cells}</div>
+    ${G.phase==='done'?`<p class="center"><button class="btn" data-act="gcDone">${t('pack.done')}</button></p>`:''}
+    <p class="note">${t('gc.note')}</p>`,'pack-modal');
+}
+
+/* ----- ニュース ----- */
+const NEWS=[
+  {date:'2026-10-26', tag:'update', title:['Ver.2.5 パックが最大1日3回に！','Ver.2.5: up to 3 packs a day!'], body:['パックは8時間ごとに1つ回復し、3つまでためられます（1パック4枚）。ゲットチャレンジ、デイリーミッション、ログインボーナス、レベルも登場。','Packs now recharge every 8 hours and stack up to 3 (4 cards each). Get Challenge, daily missions, login bonuses and levels have arrived.']},
+  {date:'2026-10-26', tag:'info', title:['テンプレデッキ登場','Template decks are here'], body:['マイカード → デッキ → 編集 の「テンプレ」から属性を1つ選ぶと、持っているカードで自動的にデッキを組みます。デッキは5つまで作れるようになりました。','In My Cards → Decks → Edit, tap “Template” and pick one attribute to auto-build a deck from your cards. You can now keep up to 5 decks.']},
+  {date:'2026-10-30', tag:'event', title:['予告：ライフ10バトル','Coming soon: Life 10 Battle'], body:['ライフ10で戦う耐久戦イベントを準備中です。挑発や回復のカードが主役になります。','A long-haul event where both players start with 10 life is in the works. Taunt and healing cards will shine.']},
+  {date:'2026-10-23', tag:'info', title:['第1弾 ORIGIN 全50種そろいました','Set 1 ORIGIN: all 50 cards'], body:['★レジェンドを含む50種のカードが登場。コレクションでカードを押すと、能力や進化の系統を確認できます。','50 cards including ★ Legends. Tap a card in your Collection to see its stats and evolution line.']},
+];
+function newsTitle(n){ return n.title[LI===0?0:1]; }
+function newsBody(n){ return n.body[LI===0?0:1]; }
+function showNews(i){
+  const list = i==null ? NEWS : [NEWS[i]];
+  showModal(`<h2>${t('news.title')}</h2><div class="newslist">${list.map(n=>`<article class="newsitem"><span class="tag tag-${n.tag}">${t('news.'+n.tag)}</span> <span class="meta">${n.date}</span><h3>${esc(newsTitle(n))}</h3><p>${esc(newsBody(n))}</p></article>`).join('')}</div>
+    <p class="row"><button class="ghost-btn" data-act="newsAll">${t('home.newsAll')}</button><button class="btn" data-act="closeModal">${t('close')}</button></p>`);
+}
+
+/* ----- プロフィール ----- */
+function favGlyph(){ const f=SV.profile.fav; return f&&CARDS[f] ? {g:CARDS[f].glyph, c:EL[CARDS[f].el]} : {g:'G', c:'#d9b45f'}; }
+function avatarHTML(size=''){ const a=favGlyph(); return `<span class="avatar ${size}" style="--ac:${a.c}">${a.g}</span>`; }
+function showProfile(){
+  const L=levelInfo(), st=SV.stats, games=st.w+st.l, dex=CARD_IDS.filter(id=>SV.collection[id]).length, fav=SV.profile.fav;
+  showModal(`<div class="pcard">${avatarHTML('lg')}<div class="pcard-main"><span class="lbl">${esc(titleOf(L.lv))}</span><h2>${esc(SV.profile.name)}</h2><span class="meta">ID ${SV.profile.id}　Lv.${L.lv}</span>
+      <div class="xpbar"><i style="width:${Math.round(L.cur/L.need*100)}%"></i></div><span class="meta">${t('lv.next',{n:L.need-L.cur})}</span></div></div>
+    <h3>${t('pf.bio')}</h3><p class="bio">${esc(SV.profile.bio||t('pf.bioEmpty'))}</p>
+    <div class="pstats">
+      <div><span class="lbl">${t('pf.battles')}</span><b class="num">${games}</b></div>
+      <div><span class="lbl">${t('pf.winrate')}</span><b class="num">${games?Math.round(st.w/games*100):0}%</b></div>
+      <div><span class="lbl">${t('pf.streak')}</span><b class="num">${st.best||0}</b></div>
+      <div><span class="lbl">${t('pf.packs')}</span><b class="num">${st.packs||0}</b></div>
+      <div><span class="lbl">${t('home.dex')}</span><b class="num">${dex}/${CARD_IDS.length}</b></div>
+      <div><span class="lbl">${t('home.login')}</span><b class="num">${t('login.day',{n:SV.login.count})}</b></div>
+    </div>
+    ${fav?`<h3>${t('pf.fav')}</h3><div class="row"><button class="cell" data-act="card" data-id="${fav}" style="--cw:90px">${cardHTML(fav)}</button></div>`:''}
+    <p class="row"><button class="ghost-btn" data-act="profEdit">${t('pf.edit')}</button><button class="btn" data-act="closeModal">${t('close')}</button></p>`);
+}
+function showLevelUp(){
+  const u=APP.levelUp; APP.levelUp=null;
+  showModal(`<div class="lvup"><p class="eyebrow">${t('lv.up')}</p><b class="lvnum">Lv.${u.lv}</b><p>${esc(titleOf(u.lv))}</p><p class="gain">${t('lv.reward',{n:u.pts})}</p><button class="btn" data-act="closeModal">OK</button></div>`,'lvup-modal');
+  flash();
+}
+
+/* ----- ホーム ----- */
 function homeHTML(){
-  const can=canOpenPack(), L=packLook(), owned=CARD_IDS.filter(id=>SV.collection[id]).length;
-  const status = SV.settings.test ? t('home.test') : can ? t('home.ready') : t('home.next',{time:fmtLeft(nextReset()-new Date())});
+  syncPacks(); syncGC(); syncMissions();
+  const can=canOpenPack(), L=packLook(), lv=levelInfo(), dex=CARD_IDS.filter(id=>SV.collection[id]).length;
+  const stock=SV.pk.stock, max=CONFIG.packStockMax;
+  const pips=Array.from({length:max},(_,i)=>`<span class="ppip ${i<stock?'on':''}"></span>`).join('');
+  const gcs=SV.gc.list.slice(0,4);
+  const mrows=MISSIONS.map(m=>{ const p=Math.min(m.n,SV.ms.prog[m.k]||0), done=p>=m.n, got=SV.ms.claimed[m.k];
+    return `<div class="mrow ${got?'got':''}"><div class="mtxt"><b>${t('m.'+m.k,{n:m.n})}</b><div class="mbar"><i style="width:${p/m.n*100}%"></i></div><span class="meta">${p}/${m.n}　EXP+${m.xp}・${t('rw.pts',{n:m.pts})}</span></div>${got?`<span class="meta">${t('home.claimed')}</span>`:`<button class="btn sm" data-act="claim" data-k="${m.k}" ${done?'':'disabled'}>${t('home.claim')}</button>`}</div>`; }).join('');
   return `<section class="home">
-    <div class="hello"><b>${esc(SV.profile.name)}</b><span class="meta">ID ${SV.profile.id}</span></div>
+    <button class="pstrip" data-act="profile">${avatarHTML()}<span class="pstrip-main"><b>${esc(SV.profile.name)}</b><span class="meta">Lv.${lv.lv}・${esc(titleOf(lv.lv))}</span><span class="xpbar"><i style="width:${Math.round(lv.cur/lv.need*100)}%"></i></span></span><span class="lbl">${t('pf.title')} ›</span></button>
+
+    <div class="news" aria-label="${t('news.title')}">${NEWS.slice(0,3).map((n,i)=>`<button class="newscard tag-${n.tag}" data-act="news" data-i="${i}"><span class="tag tag-${n.tag}">${t('news.'+n.tag)}</span><b>${esc(newsTitle(n))}</b><span class="meta">${n.date}</span></button>`).join('')}</div>
+
     <div class="packzone">
-      <p class="eyebrow">${t('home.pack')}</p>
+      <div class="row between packhead"><p class="eyebrow">${t('home.pack')}</p><span class="pips3">${pips}${SV.pk.bonus?`<span class="bonusb">+${SV.pk.bonus}</span>`:''}</span></div>
       <div class="pack tod-${L.tod} corner-${L.corner} ${can&&L.omen?'omen':''} ${can?'':'locked'}" id="pack" style="--seal:${L.seal}deg;--shine:${L.shine}%">
         <div class="pack-foil"></div>
         <div class="pack-top"><span class="seal"></span></div>
         <div class="pack-art"><span class="pack-logo">GATE</span><span class="pack-set">${t('set.origin')}</span><span class="pack-glyphs" aria-hidden="true">炎 岩 雷 風</span></div>
         <div class="tearline"></div>
+        ${can && !SV.settings.test?`<span class="packcount">×${stock+SV.pk.bonus}</span>`:''}
       </div>
-      <p class="pack-status ${can?'ok':''}">${status}</p>
-      ${can?`<p class="meta">${t('home.swipe')}</p><button class="btn" data-act="openPack">${t('home.open')}</button>`:''}
+      <p class="pack-status ${can?'ok':''} num" id="packTimer">${packTimerText()}</p>
+      ${can?`<p class="meta">${t('home.swipe')}</p><button class="btn big" data-act="openPack">${t('home.open')}</button>`:''}
     </div>
+
+    <section class="panel gcpanel">
+      <div class="row between"><h3>${t('gc.title')}</h3><span class="meta">${t('gc.stamina')} <b class="num gcst">${'●'.repeat(Math.min(SV.gc.stock,9))}${'○'.repeat(Math.max(0,CONFIG.gcMax-SV.gc.stock))}</b></span></div>
+      <p class="meta">${t('gc.desc')}</p>
+      ${gcs.length?`<div class="gcrow">${gcs.map(c=>`<button class="gcitem" data-act="gc" data-id="${c.id}"><span class="gcmini">${c.cards.map(id=>`<span class="mini-card el-${CARDS[id].el} r-${CARDS[id].rarity}">${CARDS[id].glyph}</span>`).join('')}</span><span class="meta">${esc(t('gc.from',{p:c.who||t('gc.keeper')}))}</span><span class="gccost">${t('gc.cost',{n:gcCost(c)})}</span></button>`).join('')}</div>`:`<p class="meta">${t('gc.none')}</p>`}
+      <p class="meta num" id="gcTimer">${gcTimerText()}</p>
+    </section>
+
+    <section class="panel">
+      <div class="row between"><h3>${t('home.missions')}</h3><span class="meta">${t('home.missionsReset')}</span></div>
+      <div class="missions">${mrows}</div>
+      <p class="meta">${SV.ms.all?t('home.allDoneShort'):t('home.allBonus')}</p>
+    </section>
+
+    <button class="eventcard" data-act="news" data-i="2"><span class="tag tag-event">${t('news.event')}</span><b>${t('ev.life10')}</b><span class="meta">${t('ev.life10d')}</span><span class="badge">${t('ev.soon')}</span></button>
+
     <div class="stats3">
+      <button class="stat" data-act="tab" data-tab="cards"><span class="lbl">${t('home.dex')}</span><b class="num">${dex}/${CARD_IDS.length}</b><span class="dexbar"><i style="width:${Math.round(dex/CARD_IDS.length*100)}%"></i></span></button>
       <div class="stat"><span class="lbl">${t('home.points')}</span><b class="num">${SV.points}</b></div>
-      <div class="stat"><span class="lbl">${t('home.dex')}</span><b class="num">${owned}/${CARD_IDS.length}</b></div>
       <div class="stat"><span class="lbl">${t('home.recordL')}</span><b class="num">${t('home.record',{w:SV.stats.w,l:SV.stats.l})}</b></div>
     </div>
-    <div class="row center"><button class="ghost-btn" data-act="odds">${t('odds.title')}</button><button class="btn" data-act="tab" data-tab="battle">${t('home.toBattle')}</button></div>
+    <div class="row center"><button class="ghost-btn" data-act="login">${t('home.login')}</button><button class="ghost-btn" data-act="odds">${t('odds.title')}</button><button class="btn" data-act="tab" data-tab="battle">${t('home.toBattle')}</button></div>
   </section>`;
 }
 function bindPackDrag(){
-  const el=$('#pack'); if(!el || el.classList.contains('locked')) return;
+  const el=$('#pack'); if(!el || !el.classList || el.classList.contains('locked')) return;
   let st=null;
   el.addEventListener('pointerdown',e=>{ st={x:e.clientX,t:performance.now(),w:el.offsetWidth}; try{ el.setPointerCapture(e.pointerId); }catch(_){} });
   el.addEventListener('pointermove',e=>{
@@ -1697,17 +2061,19 @@ function bindPackDrag(){
   el.addEventListener('pointerup',stop); el.addEventListener('pointercancel',stop);
 }
 function openPack(speed){
+  syncPacks();
   if(!canOpenPack()) return;
   const pk=ensurePending(), before={...SV.collection};
   pk.cards.forEach(id=>{ SV.collection[id]=(SV.collection[id]||0)+1; });
   SV.points+=CONFIG.packPoints;
-  if(!SV.settings.test) SV.lastPack=dayKey();
-  SV.pending=null; save();
+  if(!SV.settings.test){ if(SV.pk.bonus>0) SV.pk.bonus--; else { if(SV.pk.stock>=CONFIG.packStockMax) SV.pk.t=Date.now(); SV.pk.stock--; } }
+  SV.stats.packs=(SV.stats.packs||0)+1;
+  SV.pending=null; addChallenge(); mProgress('pack'); addXP(10); save();
   const seen={};
   PACK={ cards:pk.cards, god:pk.god, flipped:pk.cards.map(()=>false), fast:speed>1.2,
          isNew:pk.cards.map(id=>{ const n=!before[id] && !seen[id]; seen[id]=true; return n; }) };
   renderPackModal();
-  renderApp();
+  renderApp(true);
 }
 function renderPackModal(){
   const P=PACK, hide=SV.settings.hideLast;
@@ -1716,20 +2082,129 @@ function renderPackModal(){
       const last=hide && i===P.cards.length-1;
       return `<button class="flip r-${CARDS[id].rarity} ${last?'last':''}" data-act="flip" data-i="${i}" aria-label="${t('pack.tap')}"><span class="flip-in"><span class="face back"><span>GATE</span>${last?'<em>?</em>':''}</span><span class="face front">${cardHTML(id)}${P.isNew[i]?'<span class="newb">NEW</span>':''}<span class="rar">${RARITY[CARDS[id].rarity].mark}</span></span></span></button>`;
     }).join('')}</div>
-    <p class="meta center">${t('pack.gotPoints',{n:CONFIG.packPoints})}</p>
+    <p class="meta center">${t('pack.gotPoints',{n:CONFIG.packPoints})}・EXP+10</p>
     <div class="row center" id="packActions"><button class="ghost-btn" data-act="flipAll">${t('pack.flipAll')}</button></div>`,'pack-modal');
 }
 function flipCard(i,el){
   if(!PACK || PACK.flipped[i]) return;
   PACK.flipped[i]=true;
-  (el||document.querySelector(`.flip[data-i="${i}"]`))?.classList.add('on');
-  if(CARDS[PACK.cards[i]].rarity==='R') flash();
+  const node=el||document.querySelector(`.flip[data-i="${i}"]`); node?.classList.add('on');
+  const r=CARDS[PACK.cards[i]].rarity;
+  if(r==='R') flash();
+  if(r==='L'){ flash(); node?.classList.add('legend'); setTimeout(flash,220); }
   if(PACK.flipped.every(Boolean)) $('#packActions').innerHTML=`<button class="btn" data-act="collect">${t('pack.done')}</button>`;
 }
 function flipAll(){
   if(!PACK) return;
   const hide=SV.settings.hideLast, last=PACK.cards.length-1;
   PACK.cards.forEach((_,i)=>{ if(hide && i===last) return; setTimeout(()=>flipCard(i),i*160); });
+}
+
+/* ----- 属性（テンプレデッキ・カード詳細で使う） ----- */
+const ATTR={ fire:['fire','blood'], earth:['earth','iron','field'], sky:['bolt','wind'], water:['water','ice'], forest:['nature'], light:['heal','ward','lore'], shadow:['shade','dream','seal'] };
+const ATTR_GLYPH={ fire:'火', earth:'地', sky:'天', water:'水', forest:'森', light:'光', shadow:'影' };
+const ATTR_COLOR={ fire:'#e5583c', earth:'#b08f5e', sky:'#ecc943', water:'#4aa3df', forest:'#6cbf4a', light:'#f2e2a8', shadow:'#7d8fd6' };
+function attrOf(id){ const el=CARDS[id].el; return Object.keys(ATTR).find(a=>ATTR[a].includes(el)); }
+// テンプレの評価点（大量対戦の勝率と役割から決めた目安。高いほど優先して入れる）
+const TSCORE={ drake:6, dragon:9, golem:6, knight:7, scout:6, fireball:8, heal:4, chain:5, book:5, guard:4, altar:6, sanctuary:5,
+  aoe:6, fog:4, pierce:4, phantom:6, wall:6, titan:8, revive:5, egg:5, storm:3,
+  kolopom:1, garakutan:2, nemurin:6, fizzlet:2, namerion:3, echoling:4, lastember:4, stackle:3, dongrim:4, sacrivel:3, hollowshell:4,
+  tidecall:3, undertow:6, gloomcap:5, lullabam:5, riddlewisp:4, kindlefox:5, quillmouse:5, brambleback:6, ironhorn:8, tundrak:7,
+  galeslash:3, lumend:6, ignavault:9, aurelion:9, nyxhollow:8, gaiaroot:6, gamblet:6, mimiq:6 };
+function buildTemplate(attr){
+  const cards={}; let n=0, mons=0, mags=0, flds=0, inAttr=0;
+  const sc=id=>TSCORE[id]||3, avail=id=>Math.min(owned(id),cardLimit(id))-(cards[id]||0);
+  const want=(id,core)=>{ const s=sc(id), lim=cardLimit(id); return core ? (s>=6?lim:s>=4?Math.min(2,lim):1) : (s>=6?Math.min(2,lim):1); };
+  const ok=id=>{ const d=CARDS[id]; if(n>=CONFIG.deckSize || avail(id)<=0) return false; if(d.type==='field'&&flds>=2) return false; if(d.type==='magic'&&mags>=8) return false; return true; };
+  const add1=(id,core)=>{ cards[id]=(cards[id]||0)+1; n++; if(core) inAttr++; const tp=CARDS[id].type; if(tp==='monster') mons++; else if(tp==='magic') mags++; else flds++; };
+  const put=(id,k,core)=>{
+    const base=CARDS[id].evolveFrom;
+    if(base && !cards[base]){ if(!owned(base)) return; put(base,want(base,core),attrOf(base)===attr); if(!cards[base]) return; }
+    for(let i=0;i<k && ok(id);i++) add1(id,core);
+  };
+  const byScore=list=>list.filter(id=>owned(id)).sort((a,b)=>sc(b)-sc(a));
+  const mine=byScore(CARD_IDS.filter(id=>attrOf(id)===attr));
+  const others=byScore(CARD_IDS.filter(id=>attrOf(id)!==attr));
+  const isMon=id=>CARDS[id].type==='monster';
+  for(const id of mine.filter(id=>sc(id)>=3 && isMon(id))) put(id,want(id,true),true);           // 1) 選んだ属性のモンスター
+  for(const id of mine.filter(id=>sc(id)>=3 && !isMon(id))){ if(mags>=6 && CARDS[id].type==='magic') continue; put(id,want(id,true),true); } // 2) 選んだ属性のマジック（6枚まで）・フィールド
+  for(const id of others.filter(id=>isMon(id) && sc(id)>=5)){ if(mons>=12) break; put(id,want(id,false),false); } // 3) モンスターが12体に満たなければ他の属性から補う
+  for(const id of others){ if(n>=CONFIG.deckSize) break; put(id,want(id,false),false); }         // 4) 強い補助カード
+  for(const id of [...mine,...others]) put(id,cardLimit(id),attrOf(id)===attr);                  // 5) それでも足りなければ何でも
+  return {cards,n,inAttr};
+}
+function showTemplate(sel){
+  const counts=Object.fromEntries(Object.keys(ATTR).map(a=>[a,CARD_IDS.filter(id=>attrOf(id)===a && owned(id)).length]));
+  const total=Object.fromEntries(Object.keys(ATTR).map(a=>[a,CARD_IDS.filter(id=>attrOf(id)===a).length]));
+  let preview='';
+  if(sel){
+    const r=buildTemplate(sel);
+    const rows=CARD_IDS.filter(id=>r.cards[id]).sort((a,b)=>CARDS[a].cost-CARDS[b].cost).map(id=>`<div class="drow"><span class="dot el-${CARDS[id].el}"></span><span class="dmain"><span class="dname">${esc(cardName(id))} <span class="meta">${t('cost')}${CARDS[id].cost}</span></span><span class="dtext">${esc(effectLine(id))}</span></span><b class="num">×${r.cards[id]}</b></div>`).join('');
+    preview=`<h3>${t('tmpl.preview')}</h3><p class="meta">${t('tmpl.mix',{a:t('attr.'+sel),x:r.inAttr,y:r.n-r.inAttr})}${r.n<CONFIG.deckSize?`　<span class="warnc">${t('tmpl.short',{n:r.n})}</span>`:''}</p><div class="dlist">${rows}</div>
+      <p class="row"><button class="btn" data-act="tmplBuild" data-a="${sel}">${t('tmpl.make')}</button></p>`;
+  }
+  showModal(`<h2>${t('tmpl.title')}</h2><p class="meta">${t('tmpl.desc')}</p>
+    <div class="attrgrid">${Object.keys(ATTR).map(a=>`<button class="attrbtn ${a===sel?'on':''}" data-act="tmplPick" data-a="${a}" style="--ac:${ATTR_COLOR[a]}"><span class="attrg">${ATTR_GLYPH[a]}</span><b>${t('attr.'+a)}</b><span class="meta">${t('tmpl.owned',{n:counts[a],m:total[a]})}</span></button>`).join('')}</div>
+    ${preview}<p class="row"><button class="ghost-btn" data-act="closeModal">${t('close')}</button></p>`);
+}
+function applyTemplate(attr){
+  const r=buildTemplate(attr), d=SV.decks[APP.editing];
+  d.cards=r.cards; if(!d.name) d.name=t('tmpl.name',{a:t('attr.'+attr)});
+  save(); closeModal(); renderApp(true);
+  toast(r.n<CONFIG.deckSize ? t('tmpl.short',{n:r.n}) : t('tmpl.done',{a:t('attr.'+attr),n:r.n,m:CONFIG.deckSize}));
+}
+
+/* ----- カード詳細ビュー（大きなカード＋能力値） ----- */
+const cardImgCache={};
+function cardImg(id){ const k=id+'|'+LANG; if(!cardImgCache[k]){ try{ cardImgCache[k]=drawCardCanvas(id,2).toDataURL('image/png'); }catch(e){ cardImgCache[k]=''; } } return cardImgCache[k]; }
+function navList(){
+  if(APP.tab==='cards' && APP.cardsSub==='collection') return CARD_IDS.filter(id=>matchFilter(id,APP.filter));
+  if(APP.tab==='cards' && APP.editing!=null) return CARD_IDS.filter(id=>owned(id) && matchFilter(id,APP.deckFilter||'all'));
+  return [];
+}
+function evoLine(id){
+  let root=id; while(CARDS[root].evolveFrom) root=CARDS[root].evolveFrom;
+  if(root==='elderoak') root='dongrim';
+  const line=[root]; let cur=root;
+  for(let g=0; g<5; g++){ const nx=CARD_IDS.find(c=>CARDS[c].evolveFrom===cur) || (CARDS[cur].ref && CARDS[CARDS[cur].ref] ? CARDS[cur].ref : null); if(!nx || line.includes(nx)) break; line.push(nx); cur=nx; }
+  return line.length>1 ? line : null;
+}
+const RAR_KEY={C:'rar.C',U:'rar.U',R:'rar.R',L:'rar.L'};
+function showCard(id){
+  const d=CARDS[id], n=owned(id), cost=RARITY[d.rarity].craft, list=navList(), at=list.indexOf(id), a=attrOf(id);
+  const prev=at>0?list[at-1]:null, next=at>=0&&at<list.length-1?list[at+1]:null;
+  const img=cardImg(id), evo=evoLine(id);
+  const tile=(k,v,cls='')=>`<div class="cvt ${cls}"><span class="lbl">${k}</span><b class="num">${v}</b></div>`;
+  showModal(`<div class="cv rar-${d.rarity}" style="--el:${EL[d.el]}">
+    <div class="cv-head"><span class="cv-rar">${RARITY[d.rarity].mark} ${t(RAR_KEY[d.rarity])}</span><h2>${esc(cardName(id))}</h2><span class="meta">${esc(cardMotif(id))}</span></div>
+    <div class="cv-stage">
+      <button class="cv-nav" data-act="cardNav" data-id="${prev||''}" ${prev?'':'disabled'} aria-label="${t('cv.prev')}">‹</button>
+      <div class="cv-card" id="cvCard">${img?`<img src="${img}" alt="${esc(cardName(id))}" draggable="false">`:cardHTML(id,'big')}<span class="cv-sheen"></span></div>
+      <button class="cv-nav" data-act="cardNav" data-id="${next||''}" ${next?'':'disabled'} aria-label="${t('cv.next')}">›</button>
+    </div>
+    ${at>=0?`<p class="meta center">${at+1} / ${list.length}</p>`:''}
+    <div class="cv-tiles">
+      ${tile(t('cost'),d.cost,'gold')}
+      ${d.type==='monster'?tile('ATK',d.atk,'atk')+tile('HP',d.hp,'hp'):''}
+      ${tile(t('cv.type'),d.tag?t('tag.'+d.tag):t('kind.'+d.type))}
+      ${a?tile(t('cv.attr'),`<span style="color:${ATTR_COLOR[a]}">${ATTR_GLYPH[a]}</span> ${t('attr.'+a)}`):''}
+      ${tile(t('cv.limit'),d.token?'—':cardLimit(id))}
+      ${tile(t('cv.owned'),d.token?'—':n)}
+    </div>
+    ${cardText(id)?`<div class="cv-desc">${esc(cardText(id))}</div>`:`<div class="cv-desc meta">${t('cv.vanilla')}</div>`}
+    ${evo?`<h3>${t('cv.evo')}</h3><div class="evo">${evo.map((e,i)=>`${i?'<span class="evo-arrow">→</span>':''}<button class="evo-card ${e===id?'on':''}" data-act="cardNav" data-id="${e}" style="--cw:64px">${cardHTML(e)}</button>`).join('')}</div>`:''}
+    ${deckCtl(id)}
+    <div class="row">${d.token?'':`<button class="${APP.editing!=null&&APP.tab==='cards'?'ghost-btn':'btn'}" data-act="craft" data-id="${id}" ${SV.points>=cost?'':'disabled'}>${t('craft',{p:cost})}</button>`}<button class="ghost-btn" data-act="closeModal">${t('close')}</button></div>
+  </div>`,'cv-modal');
+  bindTilt();
+}
+function bindTilt(){
+  const el=$('#cvCard'); if(!el || !el.addEventListener) return;
+  const move=e=>{ const r=el.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5; el.style.setProperty('--rx',(-y*16).toFixed(1)+'deg'); el.style.setProperty('--ry',(x*18).toFixed(1)+'deg'); el.style.setProperty('--sx',((x+.5)*100).toFixed(0)+'%'); };
+  el.addEventListener('pointermove',move);
+  el.addEventListener('pointerleave',()=>{ el.style.setProperty('--rx','0deg'); el.style.setProperty('--ry','0deg'); });
+  let sx=null; el.addEventListener('pointerdown',e=>{ sx=e.clientX; });
+  el.addEventListener('pointerup',e=>{ if(sx==null) return; const dx=e.clientX-sx; sx=null; if(Math.abs(dx)>50){ const b=document.querySelectorAll('.cv-nav')[dx<0?1:0]; if(b && !b.disabled) showCard(b.dataset.id); } });
 }
 
 /* ----- マイカード ----- */
@@ -1762,7 +2237,7 @@ function deckEditHTML(i){
   const pool=poolIds.map(id=>{ const inD=d.cards[id]||0, lim=Math.min(owned(id),cardLimit(id)); return `<div class="cell ${inD>=lim||n>=CONFIG.deckSize?'maxed':''} ${inD?'indeck':''}"><button class="cell-card" data-act="deckAdd" data-id="${id}" aria-label="${esc(cardName(id))} +1">${cardHTML(id)}</button><span class="cnt">${inD}/${lim}</span><button class="info" data-act="cardInfo" data-id="${id}" aria-label="${t('deck.infoBtn')}">i</button></div>`; }).join('') || `<p class="meta">${t('deck.noneHere')}</p>`;
   return `<div class="row between"><button class="ghost-btn" data-act="deckBack">← ${t('deck.back')}</button><span class="num ${ok?'okc':'warnc'}">${t('deck.count',{n,m:CONFIG.deckSize})}</span></div>
     <label class="field"><span class="lbl">${t('deck.name')}</span><input id="deckName" data-i="${i}" value="${esc(deckName(i))}" maxlength="20"></label>
-    <div class="row">${i===SV.active?`<span class="badge">${t('deck.active')}</span>`:`<button class="btn sm" data-act="deckUse" data-i="${i}" ${ok?'':'disabled'}>${t('deck.use')}</button>`}<button class="ghost-btn" data-act="deckClear">${t('deck.clear')}</button></div>
+    <div class="row">${i===SV.active?`<span class="badge">${t('deck.active')}</span>`:`<button class="btn sm" data-act="deckUse" data-i="${i}" ${ok?'':'disabled'}>${t('deck.use')}</button>`}<button class="ghost-btn" data-act="deckClear">${t('deck.clear')}</button><button class="ghost-btn tmplbtn" data-act="tmplOpen">${t('tmpl.btn')}</button></div>
     <h3>${t('deck.contents')}</h3><div class="dlist">${inDeck}</div>
     <h3>${t('deck.addCards')}</h3>
     <div class="chips">${filterChips('deckFilter',f)}</div>
@@ -1786,15 +2261,6 @@ function deckImport(){
   CARD_IDS.forEach((id,i)=>{ const n=Math.min(+dg[i],cardLimit(id),owned(id)); if(n) cards[id]=n; });
   SV.decks[APP.editing].cards=cards; save(); toast(t('deck.imported')); renderApp(true);
 }
-function showCard(id){
-  const d=CARDS[id], n=owned(id), cost=RARITY[d.rarity].craft;
-  showModal(`<div class="detail">${cardHTML(id,'big')}<div class="detail-body"><h2>${esc(cardName(id))}</h2>
-    <p class="meta">${esc(cardMotif(id))} · ${t('kind.'+d.type)} · ${RARITY[d.rarity].mark}</p>
-    ${cardText(id)?`<p>${esc(cardText(id))}</p>`:''}${d.type==='monster'?`<p class="num">ATK ${d.atk} / HP ${d.hp}</p>`:''}
-    <p class="meta">${t('cost')} ${d.cost} · ${t('owned',{n})}</p>
-    ${deckCtl(id)}
-    <div class="row"><button class="${APP.editing!=null&&APP.tab==='cards'?'ghost-btn':'btn'}" data-act="craft" data-id="${id}" ${SV.points>=cost?'':'disabled'}>${t('craft',{p:cost})}</button><button class="ghost-btn" data-act="closeModal">${t('close')}</button></div></div></div>`);
-}
 // デッキ編集中にカード詳細を開いたときの「デッキに入れる／外す」
 function deckCtl(id){
   if(APP.tab!=='cards' || APP.editing==null) return '';
@@ -1807,6 +2273,9 @@ function friendsHTML(){
   const my=SV.decks[SV.active], ok=deckCount(my.cards)===CONFIG.deckSize;
   return `<section class="panel"><h3>${t('fr.profile')}</h3>
       <label class="field"><span class="lbl">${t('fr.name')}</span><input id="profName" value="${esc(SV.profile.name)}" maxlength="16"></label>
+      <label class="field"><span class="lbl">${t('pf.bio')}</span><textarea id="profBio" maxlength="80" placeholder="${esc(t('pf.bioPh'))}">${esc(SV.profile.bio||'')}</textarea></label>
+      <label class="field"><span class="lbl">${t('pf.fav')}</span><select id="profFav"><option value="">—</option>${CARD_IDS.filter(id=>SV.collection[id]).map(id=>`<option value="${id}" ${SV.profile.fav===id?'selected':''}>${esc(cardName(id))}</option>`).join('')}</select></label>
+      <button class="ghost-btn" data-act="profile">${t('pf.title')}</button>
       <p class="meta">${t('fr.id')}：<b class="num">${SV.profile.id}</b></p>
       <span class="lbl">${t('fr.myCode')}</span>
       <div class="row"><input id="myCode" readonly value="${ok?deckCode(my.cards):''}"><button class="ghost-btn" data-act="copy" data-src="myCode" ${ok?'':'disabled'}>${t('deck.copy')}</button></div></section>
@@ -1871,7 +2340,7 @@ function settingsHTML(){
 
 /* ----- モーダル ----- */
 function showModal(html,cls=''){ const m=$('#modal'); m.innerHTML=`<div class="sheet ${cls}" role="dialog" aria-modal="true">${html}</div>`; m.hidden=false; }
-function closeModal(){ const m=$('#modal'); m.hidden=true; m.innerHTML=''; PACK=null; }
+function closeModal(){ const m=$('#modal'); m.hidden=true; m.innerHTML=''; PACK=null; GC=null; }
 function showRules(){
   const rows=CARD_IDS.map(id=>{ const d=CARDS[id]; return `<tr><td><b>${esc(cardName(id))}</b><br><span class="meta">${esc(cardMotif(id))}</span></td><td class="num">${d.cost}</td><td>${d.type==='monster'?`ATK ${d.atk} / HP ${d.hp}${d.tag?'<br>'+esc(cardText(id)):''}`:esc(cardText(id))}</td></tr>`; }).join('');
   showModal(`<h2>${t('st.rules')}</h2><ul>${[1,2,3,4,5,6,7,8,9,10,11].map(i=>`<li>${t('r'+i,{h:CONFIG.handStart,l:CONFIG.startLife,e:CONFIG.energyStart,m:CONFIG.energyMax})}</li>`).join('')}</ul>
@@ -2009,7 +2478,7 @@ function devAct(act,d){
       const cards=Array.from({length:CONFIG.packSize},(_,i)=>{ const v=$('#devPack'+i).value; if(v) return v; const rar=rollRarity(); const pool=CARD_IDS.filter(id=>CARDS[id].rarity===rar); return pool[Math.floor(Math.random()*pool.length)]; });
       SV.pending={god:cards.every(id=>CARDS[id].rarity==='R'), cards, seed:Math.floor(Math.random()*1e9)};
       save(); toast(t('dev.saved')); renderApp(true); return true; }
-    case 'devRefill': SV.lastPack=''; save(); toast(t('dev.saved')); return true;
+    case 'devRefill': SV.pk.stock=CONFIG.packStockMax; SV.gc.stock=CONFIG.gcMax; addChallenge(); save(); toast(t('dev.saved')); renderApp(true); return true;
     case 'devCpu': D.cpu=d.v; save(); renderApp(true); return true;
     case 'devGive': { const id=$('#devGiveCard').value, n=Math.min(99,Math.max(1,+$('#devGiveN').value||1)); SV.collection[id]=(SV.collection[id]||0)+n; save(); toast(t('dev.added')); renderApp(true); return true; }
     case 'devPoints': { const n=Math.min(9999,Math.max(1,+$('#devPts').value||0)); SV.points+=n; save(); toast(t('dev.added')); renderApp(true); return true; }
@@ -2034,6 +2503,19 @@ function appAct(act,d,el){
     case 'filter': APP.filter=d.f; renderApp(true); return;
     case 'deckFilter': APP.deckFilter=d.f; renderApp(true); return;
     case 'cardInfo': showCard(d.id); return;
+    case 'cardNav': if(d.id) showCard(d.id); return;
+    case 'claim': claimMission(d.k); return;
+    case 'profile': showProfile(); return;
+    case 'profEdit': closeModal(); APP.tab='friends'; renderApp(); return;
+    case 'news': showNews(+d.i); return;
+    case 'newsAll': showNews(); return;
+    case 'login': { const idx=(SV.login.count-1)%LOGIN_REWARDS.length; if(idx>=0) showLogin(idx); return; }
+    case 'gc': startGC(d.id); return;
+    case 'gcPick': pickGC(+d.i); return;
+    case 'gcDone': closeModal(); renderApp(true); return;
+    case 'tmplOpen': showTemplate(); return;
+    case 'tmplPick': showTemplate(d.a); return;
+    case 'tmplBuild': applyTemplate(d.a); return;
     case 'deckAddM': deckAdd(d.id); showCard(d.id); return;
     case 'deckRemoveM': { const c=SV.decks[APP.editing].cards; if(c[d.id]>1) c[d.id]--; else delete c[d.id]; save(); renderApp(true); showCard(d.id); return; }
     case 'card': showCard(d.id); return;
@@ -2074,7 +2556,7 @@ function appAct(act,d,el){
 
 document.addEventListener('click',e=>{
   const m=$('#modal');
-  if(e.target===m && !m.hidden){ closeModal(); renderApp(true); return; }
+  if(e.target===m && !m.hidden){ if(GC && GC.phase!=='done') return; closeModal(); renderApp(true); return; }
   const b=e.target.closest('[data-act]'); if(!b || b.disabled) return;
   appAct(b.dataset.act,b.dataset,b);
 });
@@ -2083,12 +2565,22 @@ document.addEventListener('change',e=>{
   if(/^devHand\d$/.test(el.id)){ SV.dev.hand[+el.id.slice(7)]=el.value||''; save(); }
   if(el.id==='deckName'){ SV.decks[+el.dataset.i].name=el.value.trim().slice(0,20); save(); }
   if(el.id==='profName'){ SV.profile.name=el.value.trim().slice(0,16)||'Player'; save(); }
+  if(el.id==='profBio'){ SV.profile.bio=el.value.slice(0,80); save(); }
+  if(el.id==='profFav'){ SV.profile.fav=el.value; save(); }
 });
 document.addEventListener('input',e=>{
   if(e.target.id==='tableH'){ SV.settings.tableHeight=+e.target.value/100; $('#tableHv').textContent=e.target.value+' cm'; save(); }
 });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#modal').hidden){ closeModal(); renderApp(true); } });
-setInterval(()=>{ if(SV && !$('#app').hidden && APP.tab==='home' && $('#modal').hidden && !canOpenPack()) renderApp(true); },30000);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#modal').hidden){ if(GC && GC.phase!=='done') return; closeModal(); renderApp(true); } });
+// 1秒ごとにタイマーを更新（パックやチャレンジ力が回復したらホームを描き直す）
+setInterval(()=>{
+  if(!SV || $('#app').hidden) return;
+  const changed=syncPacks() | syncGC();
+  if(APP.tab!=='home') return;
+  if(changed && $('#modal').hidden){ renderApp(true); return; }
+  const pt=$('#packTimer'); if(pt) pt.textContent=packTimerText();
+  const gt=$('#gcTimer'); if(gt) gt.textContent=gcTimerText();
+},1000);
 
 /* =====================================================================
    3D表示（Three.js）
@@ -2131,10 +2623,9 @@ function wrapText(g,text,maxW,maxLines){
   return out;
 }
 function fitFont(g,text,maxW,size,weight,family){ let s=size; do{ g.font=`${weight} ${s}px ${family}`; }while(g.measureText(text).width>maxW && --s>11); return s; }
-function cardTex(id){
-  const key=id+'|'+LANG; if(texCache[key]) return texCache[key];
-  const d=CARDS[id], c=document.createElement('canvas'); c.width=256; c.height=358;
-  const g=c.getContext('2d'), e=EL[d.el];
+function drawCardCanvas(id,scale=1){
+  const d=CARDS[id], c=document.createElement('canvas'); c.width=256*scale; c.height=358*scale;
+  const g=c.getContext('2d'), e=EL[d.el]; g.scale(scale,scale);
   rr(g,0,0,256,358,18); g.fillStyle='#0d1517'; g.fill();
   const gr=g.createLinearGradient(0,0,180,358); gr.addColorStop(0,e); gr.addColorStop(.65,'#14211f');
   rr(g,8,8,240,342,14); g.fillStyle=gr; g.globalAlpha=.85; g.fill(); g.globalAlpha=1;
@@ -2154,7 +2645,11 @@ function cardTex(id){
     g.font=`15px ${UIFONT}`; g.fillStyle='#c9d6d1';
     wrapText(g,cardText(id),220,2).forEach((l,i)=>g.fillText(l,128,304+i*22));
   }
-  const tx=new THREE.CanvasTexture(c); tx.anisotropy=4; texCache[key]=tx; return tx;
+  return c;
+}
+function cardTex(id){
+  const key=id+'|'+LANG; if(texCache[key]) return texCache[key];
+  const tx=new THREE.CanvasTexture(drawCardCanvas(id)); tx.anisotropy=4; texCache[key]=tx; return tx;
 }
 function tableTex(){
   const W=1024, H=1195, c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d');
@@ -2831,6 +3326,10 @@ function float3D(pos,text,cls){
   init3D();
   $('#loading').remove();
   showApp(true);
+  const li=checkLogin();
+  if(!SV.gc.list.length){ addChallenge(); addChallenge(); save(); }
+  renderApp();
+  if(li>=0) setTimeout(()=>showLogin(li),700);
   if(gifted) setTimeout(()=>toast(t('g.new',{n:gifted})),600);
   try{ if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
 })();
