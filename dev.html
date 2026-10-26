@@ -235,8 +235,17 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 .cell .cnt{position:absolute;top:-6px;right:-6px;background:#0c1416;border:1px solid var(--line);border-radius:999px;font-size:11px;padding:0 6px;font-family:var(--f-num)}
 .cell.unowned .card{filter:grayscale(1) brightness(.4)}
 .cell.maxed .card{opacity:.4}
+.cell.indeck .card{box-shadow:0 0 0 2px var(--gate)}
+.cell-card{background:none;border:0;padding:0;cursor:pointer;display:block;width:100%}
+.cell-card .card{cursor:pointer}
+.cell .info{position:absolute;top:-8px;left:-8px;width:26px;height:26px;border-radius:50%;background:#0c1416;border:1px solid var(--gate);color:var(--gate);font-family:var(--f-num);font-weight:700;font-size:13px;cursor:pointer;display:grid;place-items:center;padding:0}
+.cell .info:hover{background:var(--gate);color:#111}
+.dmain{display:flex;flex-direction:column;gap:2px;min-width:0;background:none;border:0;padding:0;color:inherit;text-align:left;cursor:pointer}
+.dtext{font-size:12px;color:var(--muted);line-height:1.35}
+.deckctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#0c1416;border:1px solid var(--gate);border-radius:10px;padding:8px 10px}
+.deckctl .mini:disabled{opacity:.35;cursor:not-allowed}
 .dlist{display:flex;flex-direction:column;gap:4px}
-.drow{display:grid;grid-template-columns:auto 1fr auto auto auto;align-items:center;gap:8px;background:#0c1416;border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+.drow{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:8px;background:#0c1416;border:1px solid var(--line);border-radius:8px;padding:6px 8px}
 .drow .meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:34vw}
 .dname{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--el)}
@@ -328,7 +337,7 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== 調整用の設定 =====
-const APP_VERSION = '2.4.1';
+const APP_VERSION = '2.4.2';
 // 'dev'：開発用（設定にユーザー／開発者の切り替えが出る）。'release'：一般公開用（ユーザー画面のみ）
 // 一般公開用は tools/build_release.py が自動で 'release' に書き換えて index.html を作る
 const BUILD = 'dev';
@@ -691,6 +700,10 @@ const STR = {
   'mode.dev':['開発者','Developer'],
   'mode.note':['この切り替えは開発用の版（dev.html）だけに出ます。一般公開用の版（index.html）はユーザー画面のみです','This switch exists only in the development build (dev.html). The public build (index.html) is user-only'],
   'mode.toUser':['ユーザー画面に戻る','Back to user mode'],
+  'deck.howTo':['カードを押すとデッキに1枚入る。右上の i で効果を全文表示。同じカードは{m}枚まで（★は1枚）','Tap a card to add one copy. Tap i to read its full effect. Max {m} copies per card (★ cards: 1)','点击卡牌加入1张。点右上的 i 查看完整效果。同名卡最多{m}张（★限1张）','Toca una carta para añadir una copia. Toca i para leer su efecto completo. Máximo {m} copias (★: 1)','카드를 누르면 덱에 1장 들어간다. 오른쪽 위 i로 효과 전체 보기. 같은 카드는 {m}장까지 (★는 1장)','Toque numa carta para adicionar uma cópia. Toque em i para ler o efeito completo. Máximo de {m} cópias (★: 1)'],
+  'deck.infoBtn':['効果を見る','Show effect','查看效果','Ver efecto','효과 보기','Ver efeito'],
+  'deck.noneHere':['この種類の所持カードはありません','You don\'t own any cards of this type','没有此类卡牌','No tienes cartas de este tipo','이 종류의 보유 카드가 없습니다','Você não tem cartas deste tipo'],
+  'deck.inThis':['このデッキに','In this deck','此卡组中','En este mazo','이 덱에','Neste deck'],
   'tab.home':['ホーム','Home','主页','Inicio','홈','Início'],
   'tab.cards':['マイカード','My Cards','我的卡牌','Mis cartas','내 카드','Minhas cartas'],
   'tab.friends':['フレンド','Friends','好友','Amigos','친구','Amigos'],
@@ -1602,7 +1615,7 @@ const ICON={
   battle:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 3H21v6.5L10 20.5 6.5 17z"/><path d="M4 14l6 6M3 21l3-3"/></svg>',
   settings:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
 };
-const APP={ tab:'home', cardsSub:'collection', filter:'all', editing:null, resetArm:false };
+const APP={ tab:'home', cardsSub:'collection', filter:'all', deckFilter:'all', editing:null, resetArm:false };
 let PACK=null;
 
 function applyI18n(){
@@ -1725,10 +1738,15 @@ function cardsHTML(){
   if(APP.cardsSub==='collection') return seg+collectionHTML();
   return seg+(APP.editing==null ? decksHTML() : deckEditHTML(APP.editing));
 }
+// 絞り込みチップ（コレクションとデッキ編集で共通）
+function filterChips(act,f){ return ['all','monster','magic','field'].map(k=>`<button class="chip ${f===k?'on':''}" data-act="${act}" data-f="${k}">${k==='all'?t('filter.all'):t('kind.'+k)}</button>`).join(''); }
+function matchFilter(id,f){ return f==='all' || CARDS[id].type===f; }
+// カードの能力を1行で（モンスターはATK/HPも付ける）
+function effectLine(id){ const d=CARDS[id], tx=cardText(id); return d.type==='monster' ? `ATK ${d.atk} / HP ${d.hp}${tx?'　'+tx:''}` : tx; }
 function collectionHTML(){
   const f=APP.filter;
-  const chips=['all','monster','magic','field'].map(k=>`<button class="chip ${f===k?'on':''}" data-act="filter" data-f="${k}">${k==='all'?t('filter.all'):t('kind.'+k)}</button>`).join('');
-  const ids=CARD_IDS.filter(id=>f==='all'||CARDS[id].type===f);
+  const chips=filterChips('filter',f);
+  const ids=CARD_IDS.filter(id=>matchFilter(id,f));
   const ownedCount=CARD_IDS.filter(id=>SV.collection[id]).length;
   return `<div class="row between"><div class="chips">${chips}</div><span class="meta">${t('home.dex')} ${ownedCount}/${CARD_IDS.length}</span></div>
     <div class="grid">${ids.map(id=>{ const n=owned(id); return `<button class="cell ${n?'':'unowned'}" data-act="card" data-id="${id}">${cardHTML(id)}<span class="cnt">×${n}</span><span class="rar">${RARITY[CARDS[id].rarity].mark}</span></button>`; }).join('')}</div>`;
@@ -1738,13 +1756,18 @@ function decksHTML(){
 }
 function deckEditHTML(i){
   const d=SV.decks[i], n=deckCount(d.cards), ok=n===CONFIG.deckSize;
-  const inDeck=CARD_IDS.filter(id=>d.cards[id]).map(id=>`<div class="drow"><span class="dot el-${CARDS[id].el}"></span><span class="dname">${esc(cardName(id))}</span><span class="meta">${esc(cardMotif(id))}</span><b class="num">×${d.cards[id]}</b><button class="mini" data-act="deckRemove" data-id="${id}" aria-label="−">−</button></div>`).join('') || `<p class="meta">${t('deck.empty')}</p>`;
-  const pool=CARD_IDS.filter(id=>owned(id)).map(id=>{ const inD=d.cards[id]||0, lim=Math.min(owned(id),cardLimit(id)); return `<button class="cell sm ${inD>=lim||n>=CONFIG.deckSize?'maxed':''}" data-act="deckAdd" data-id="${id}">${cardHTML(id)}<span class="cnt">${inD}/${lim}</span></button>`; }).join('');
+  const f=APP.deckFilter||'all';
+  const inDeck=CARD_IDS.filter(id=>d.cards[id]).map(id=>`<div class="drow"><span class="dot el-${CARDS[id].el}"></span><button class="dmain" data-act="cardInfo" data-id="${id}"><span class="dname">${esc(cardName(id))} <span class="meta">${t('cost')}${CARDS[id].cost}・${esc(cardMotif(id))}</span></span><span class="dtext">${esc(effectLine(id))}</span></button><b class="num">×${d.cards[id]}</b><button class="mini" data-act="deckRemove" data-id="${id}" aria-label="−">−</button></div>`).join('') || `<p class="meta">${t('deck.empty')}</p>`;
+  const poolIds=CARD_IDS.filter(id=>owned(id) && matchFilter(id,f));
+  const pool=poolIds.map(id=>{ const inD=d.cards[id]||0, lim=Math.min(owned(id),cardLimit(id)); return `<div class="cell ${inD>=lim||n>=CONFIG.deckSize?'maxed':''} ${inD?'indeck':''}"><button class="cell-card" data-act="deckAdd" data-id="${id}" aria-label="${esc(cardName(id))} +1">${cardHTML(id)}</button><span class="cnt">${inD}/${lim}</span><button class="info" data-act="cardInfo" data-id="${id}" aria-label="${t('deck.infoBtn')}">i</button></div>`; }).join('') || `<p class="meta">${t('deck.noneHere')}</p>`;
   return `<div class="row between"><button class="ghost-btn" data-act="deckBack">← ${t('deck.back')}</button><span class="num ${ok?'okc':'warnc'}">${t('deck.count',{n,m:CONFIG.deckSize})}</span></div>
     <label class="field"><span class="lbl">${t('deck.name')}</span><input id="deckName" data-i="${i}" value="${esc(deckName(i))}" maxlength="20"></label>
     <div class="row">${i===SV.active?`<span class="badge">${t('deck.active')}</span>`:`<button class="btn sm" data-act="deckUse" data-i="${i}" ${ok?'':'disabled'}>${t('deck.use')}</button>`}<button class="ghost-btn" data-act="deckClear">${t('deck.clear')}</button></div>
     <h3>${t('deck.contents')}</h3><div class="dlist">${inDeck}</div>
-    <h3>${t('deck.addCards')}</h3><p class="meta">${t('deck.maxCopies',{m:CONFIG.maxCopies})}</p><div class="grid sm">${pool}</div>
+    <h3>${t('deck.addCards')}</h3>
+    <div class="chips">${filterChips('deckFilter',f)}</div>
+    <p class="meta">${t('deck.howTo',{m:CONFIG.maxCopies})}</p>
+    <div class="grid">${pool}</div>
     <h3>${t('deck.code')}</h3>
     <div class="row"><input id="deckCodeOut" readonly value="${deckCode(d.cards)}"><button class="ghost-btn" data-act="copy" data-src="deckCodeOut">${t('deck.copy')}</button></div>
     <div class="row"><input id="deckCodeIn" placeholder="GATE1-…"><button class="ghost-btn" data-act="deckImport">${t('deck.import')}</button></div>`;
@@ -1769,7 +1792,14 @@ function showCard(id){
     <p class="meta">${esc(cardMotif(id))} · ${t('kind.'+d.type)} · ${RARITY[d.rarity].mark}</p>
     ${cardText(id)?`<p>${esc(cardText(id))}</p>`:''}${d.type==='monster'?`<p class="num">ATK ${d.atk} / HP ${d.hp}</p>`:''}
     <p class="meta">${t('cost')} ${d.cost} · ${t('owned',{n})}</p>
-    <div class="row"><button class="btn" data-act="craft" data-id="${id}" ${SV.points>=cost?'':'disabled'}>${t('craft',{p:cost})}</button><button class="ghost-btn" data-act="closeModal">${t('close')}</button></div></div></div>`);
+    ${deckCtl(id)}
+    <div class="row"><button class="${APP.editing!=null&&APP.tab==='cards'?'ghost-btn':'btn'}" data-act="craft" data-id="${id}" ${SV.points>=cost?'':'disabled'}>${t('craft',{p:cost})}</button><button class="ghost-btn" data-act="closeModal">${t('close')}</button></div></div></div>`);
+}
+// デッキ編集中にカード詳細を開いたときの「デッキに入れる／外す」
+function deckCtl(id){
+  if(APP.tab!=='cards' || APP.editing==null) return '';
+  const d=SV.decks[APP.editing], inD=d.cards[id]||0, lim=Math.min(owned(id),cardLimit(id)), n=deckCount(d.cards);
+  return `<div class="deckctl"><span class="lbl">${t('deck.inThis')}</span><button class="mini" data-act="deckRemoveM" data-id="${id}" ${inD?'':'disabled'} aria-label="−">−</button><b class="num">${inD} / ${lim}</b><button class="mini" data-act="deckAddM" data-id="${id}" ${inD<lim&&n<CONFIG.deckSize?'':'disabled'} aria-label="+">+</button><span class="meta">${t('deck.count',{n,m:CONFIG.deckSize})}</span></div>`;
 }
 
 /* ----- フレンド ----- */
@@ -2002,6 +2032,10 @@ function appAct(act,d,el){
     case 'goDecks': APP.tab='cards'; APP.cardsSub='decks'; APP.editing=null; renderApp(); return;
     case 'sub': APP.cardsSub=d.sub; APP.editing=null; renderApp(); return;
     case 'filter': APP.filter=d.f; renderApp(true); return;
+    case 'deckFilter': APP.deckFilter=d.f; renderApp(true); return;
+    case 'cardInfo': showCard(d.id); return;
+    case 'deckAddM': deckAdd(d.id); showCard(d.id); return;
+    case 'deckRemoveM': { const c=SV.decks[APP.editing].cards; if(c[d.id]>1) c[d.id]--; else delete c[d.id]; save(); renderApp(true); showCard(d.id); return; }
     case 'card': showCard(d.id); return;
     case 'craft': { const c=RARITY[CARDS[d.id].rarity].craft; if(SV.points<c){ toast(t('craftNo')); return; } SV.points-=c; SV.collection[d.id]=(SV.collection[d.id]||0)+1; save(); toast(t('crafted')); showCard(d.id); renderApp(true); return; }
     case 'closeModal': closeModal(); return;
