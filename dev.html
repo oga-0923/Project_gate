@@ -276,6 +276,24 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 #toast.show{animation:toast 2.4s ease forwards}
 @keyframes toast{0%{opacity:0;transform:translate(-50%,8px)}10%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
 #modal{z-index:50}
+/* ペイント */
+.sheet.paint-modal{max-width:560px}
+.paint h2{margin:0;font-family:var(--f-display);font-weight:400;color:var(--fg)}
+.paint-stage{position:relative;display:grid;place-items:center;margin:8px 0;border-radius:16px;background:radial-gradient(circle at 50% 60%,color-mix(in oklab,var(--el) 25%,#0c1416),#070b10 75%);border:1px solid var(--line)}
+#paintCanvas{width:min(80vw,320px);height:min(80vw,320px);touch-action:none;cursor:grab}
+.paint-hint{position:absolute;bottom:6px;right:10px}
+#paintCtl{display:flex;flex-direction:column;gap:10px}
+.prow{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:8px 10px}
+.prow .pal{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+.pswatch{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.15);cursor:pointer;padding:0;position:relative;display:grid;place-items:center;color:#fff;font-weight:700}
+.pswatch.big{width:26px;height:26px;cursor:default;border-color:var(--gate)}
+.pswatch.on{border-color:#fff;box-shadow:0 0 0 2px var(--gate)}
+.pswatch.custom{background:conic-gradient(#ff6a55,#ffd36b,#6cbf4a,#4aa3df,#a88be0,#ff6a55);overflow:hidden}
+.pswatch.custom input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.paintbox{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.paintbtn{background:linear-gradient(90deg,#e5583c,#ffd36b,#6cbf4a,#4aa3df,#a88be0);color:#111}
+.paintb{position:absolute;top:-6px;left:-6px;background:linear-gradient(135deg,#ff6a55,#a88be0);color:#fff;font-size:10px;font-weight:700;border-radius:6px;padding:1px 5px}
+
 /* ショップ・分解 */
 button.pts{color:var(--fg);cursor:pointer;font:inherit}
 .gold{color:var(--gate)}
@@ -469,7 +487,7 @@ textarea{font:inherit;color:var(--fg);background:#0c1416;border:1px solid var(--
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== 調整用の設定 =====
-const APP_VERSION = '2.5.1';
+const APP_VERSION = '2.6.0';
 // 'dev'：開発用（設定にユーザー／開発者の切り替えが出る）。'release'：一般公開用（ユーザー画面のみ）
 // 一般公開用は tools/build_release.py が自動で 'release' に書き換えて index.html を作る
 const BUILD = 'dev';
@@ -966,6 +984,24 @@ const STR = {
   'shop.back_night':['夜空の裏面','Night sky back','夜空卡背','Reverso nocturno','밤하늘 뒷면','Verso noturno'],
   'shop.back_ember':['残り火の裏面','Ember back','余烬卡背','Reverso de brasas','불씨 뒷면','Verso de brasas'],
   'shop.back_aurora':['オーロラの裏面','Aurora back','极光卡背','Reverso aurora','오로라 뒷면','Verso aurora'],
+  'paint.title':['ペイント','Paint','涂装','Pintar','페인트','Pintar'],
+  'paint.open':['ペイントする','Paint','涂装','Pintar','페인트하기','Pintar'],
+  'paint.unlockShort':['ペイントを解放（{p}pt）','Unlock paint ({p} pts)','解锁涂装（{p}点）','Desbloquear pintura ({p})','페인트 해금 ({p}pt)','Liberar pintura ({p})'],
+  'paint.unlock':['{p}ptで解放する','Unlock for {p} pts','用{p}点解锁','Desbloquear por {p}','{p}pt로 해금','Liberar por {p}'],
+  'paint.unlocked':['ペイントを解放しました！','Paint unlocked!','涂装已解锁！','¡Pintura desbloqueada!','페인트 해금!','Pintura liberada!'],
+  'paint.lockedDesc':['一度解放すると、このモンスターの色を何度でも自由に塗り直せます','Unlock once to recolor this monster as often as you like'],
+  'paint.needOwn':['このカードを1枚以上持っていると解放できます','You need at least one copy of this card'],
+  'paint.main':['メイン','Main','主色','Principal','메인','Principal'],
+  'paint.sub':['サブ','Sub','副色','Secundario','서브','Secundária'],
+  'paint.accent':['アクセント','Accent','点缀','Acento','포인트','Destaque'],
+  'paint.custom':['好きな色','Any color','自选颜色','Cualquier color','원하는 색','Qualquer cor'],
+  'paint.save':['この色で保存','Save colors','保存颜色','Guardar','이 색으로 저장','Salvar'],
+  'paint.reset':['元の色に戻す','Original colors','恢复原色','Colores originales','원래 색으로','Cores originais'],
+  'paint.saved':['色を保存しました。対戦でこの色になります','Saved. Your monster will use these colors in battle'],
+  'paint.drag':['ドラッグで回転','Drag to rotate','拖动旋转','Arrastra para girar','드래그로 회전','Arraste para girar'],
+  'paint.note':['塗った色は自分の対戦（VR・MRを含む）に反映されます。カードの枠の色は、属性が見分けられるようにそのままです','Your colors appear in your battles (including VR/MR). Card frames keep their attribute color so attributes stay easy to tell apart'],
+  'paint.painted':['ペイント済み','Painted','已涂装','Pintado','페인트 완료','Pintado'],
+  'paint.mark':['塗','✓','涂','✓','칠','✓'],
   'tab.home':['ホーム','Home','主页','Inicio','홈','Início'],
   'tab.cards':['マイカード','My Cards','我的卡牌','Mis cartas','내 카드','Minhas cartas'],
   'tab.friends':['フレンド','Friends','好友','Amigos','친구','Amigos'],
@@ -1198,7 +1234,7 @@ function defSave(){
     decks:[{name:'',cards:{...STARTER}},{name:'',cards:{}},{name:'',cards:{}},{name:'',cards:{}},{name:'',cards:{}}], active:0,
     points:0, pending:null,
     pk:{stock:CONFIG.packStockMax, t:Date.now(), bonus:0}, gc:{stock:CONFIG.gcMax, t:Date.now(), list:[]},
-    ms:{day:'',prog:{},claimed:{},all:false}, login:{day:'',count:0}, xp:0, shop:{owned:[],frame:'',title:'',back:''},
+    ms:{day:'',prog:{},claimed:{},all:false}, login:{day:'',count:0}, xp:0, shop:{owned:[],frame:'',title:'',back:''}, paint:{}, paintUnlocked:[],
     profile:{name:'Player', id:randId(), bio:'', fav:''}, friends:[],
     settings:{speed:1, view:0, hideLast:true, tableHeight:0.78, test:false},
     stats:{w:0,l:0,packs:0,streak:0,best:0}, gifts:[], usedGifts:[],
@@ -2331,6 +2367,7 @@ function showCard(id){
     </div>
     ${cardText(id)?`<div class="cv-desc">${esc(cardText(id))}</div>`:`<div class="cv-desc meta">${t('cv.vanilla')}</div>`}
     ${evo?`<h3>${t('cv.evo')}</h3><div class="evo">${evo.map((e,i)=>`${i?'<span class="evo-arrow">→</span>':''}<button class="evo-card ${e===id?'on':''}" data-act="cardNav" data-id="${e}" style="--cw:64px">${cardHTML(e)}</button>`).join('')}</div>`:''}
+    ${canPaint(id)?`<div class="paintbox"><button class="btn paintbtn" data-act="paint" data-id="${id}">${paintUnlocked(id)?t('paint.open'):t('paint.unlockShort',{p:PAINT_COST[d.rarity]})}</button>${painted(id)?`<span class="badge">${t('paint.painted')}</span>`:''}</div>`:''}
     ${deckCtl(id)}
     ${d.token?'':`<div class="craftbox"><span class="lbl">${t('home.points')} <b class="num gold">${SV.points}</b></span><div class="row">${canCraft(id)?`<button class="${APP.editing!=null&&APP.tab==='cards'?'ghost-btn':'btn'}" data-act="craft" data-id="${id}" ${SV.points>=cost?'':'disabled'}>${t('craft',{p:cost})}</button>`:`<span class="meta">${t('craft.max')}</span>`}${extraOf(id)?`<button class="ghost-btn" data-act="dust" data-id="${id}">${t('dust.btn',{n:extraOf(id),p:extraOf(id)*dustOf(id)})}</button>`:''}</div></div>`}
     <div class="row"><button class="ghost-btn" data-act="closeModal">${t('close')}</button></div>
@@ -2365,7 +2402,7 @@ function collectionHTML(){
   const ex=allExtras();
   return `<div class="row between"><div class="chips">${chips}</div><span class="meta">${t('home.dex')} ${ownedCount}/${CARD_IDS.length}</span></div>
     <div class="row between"><span class="meta">${t('dust.hint')}</span>${ex.length?`<button class="ghost-btn sm" data-act="dustAll">${t('dust.allBtn',{p:ex.reduce((s,x)=>s+x.p,0)})}</button>`:''}</div>
-    <div class="grid">${ids.map(id=>{ const n=owned(id); return `<button class="cell ${n?'':'unowned'}" data-act="card" data-id="${id}">${cardHTML(id)}<span class="cnt">×${n}</span><span class="rar">${RARITY[CARDS[id].rarity].mark}</span></button>`; }).join('')}</div>`;
+    <div class="grid">${ids.map(id=>{ const n=owned(id); return `<button class="cell ${n?'':'unowned'}" data-act="card" data-id="${id}">${cardHTML(id)}${painted(id)?`<span class="paintb">${t('paint.mark')}</span>`:''}<span class="cnt">×${n}</span><span class="rar">${RARITY[CARDS[id].rarity].mark}</span></button>`; }).join('')}</div>`;
 }
 function decksHTML(){
   return `<div class="list">${SV.decks.map((d,i)=>{ const n=deckCount(d.cards); return `<div class="item"><div><b>${esc(deckName(i))}</b> ${i===SV.active?`<span class="badge">${t('deck.active')}</span>`:''}<div class="meta">${t('deck.count',{n,m:CONFIG.deckSize})}</div></div><div class="row"><button class="ghost-btn" data-act="deckEdit" data-i="${i}">${t('deck.edit')}</button>${i!==SV.active?`<button class="btn sm" data-act="deckUse" data-i="${i}" ${n===CONFIG.deckSize?'':'disabled'}>${t('deck.use')}</button>`:''}</div></div>`; }).join('')}</div>`;
@@ -2481,7 +2518,7 @@ function settingsHTML(){
 
 /* ----- モーダル ----- */
 function showModal(html,cls=''){ const m=$('#modal'); m.innerHTML=`<div class="sheet ${cls}" role="dialog" aria-modal="true">${html}</div>`; m.hidden=false; }
-function closeModal(){ const m=$('#modal'); m.hidden=true; m.innerHTML=''; PACK=null; GC=null; }
+function closeModal(){ stopPreview(); PV=null; const m=$('#modal'); m.hidden=true; m.innerHTML=''; PACK=null; GC=null; }
 function showRules(){
   const rows=CARD_IDS.map(id=>{ const d=CARDS[id]; return `<tr><td><b>${esc(cardName(id))}</b><br><span class="meta">${esc(cardMotif(id))}</span></td><td class="num">${d.cost}</td><td>${d.type==='monster'?`ATK ${d.atk} / HP ${d.hp}${d.tag?'<br>'+esc(cardText(id)):''}`:esc(cardText(id))}</td></tr>`; }).join('');
   showModal(`<h2>${t('st.rules')}</h2><ul>${[1,2,3,4,5,6,7,8,9,10,11].map(i=>`<li>${t('r'+i,{h:CONFIG.handStart,l:CONFIG.startLife,e:CONFIG.energyStart,m:CONFIG.energyMax})}</li>`).join('')}</ul>
@@ -2661,6 +2698,12 @@ function appAct(act,d,el){
     case 'deckRemoveM': { const c=SV.decks[APP.editing].cards; if(c[d.id]>1) c[d.id]--; else delete c[d.id]; save(); renderApp(true); showCard(d.id); return; }
     case 'card': showCard(d.id); return;
     case 'craft': craftCard(d.id); return;
+    case 'paint': openPaint(d.id); return;
+    case 'paintPick': paintPick(d.r,d.c); return;
+    case 'paintUnlock': paintUnlock(); return;
+    case 'paintSave': paintSave(); return;
+    case 'paintReset': paintReset(); return;
+    case 'paintClose': { const id=PV&&PV.id; closeModal(); if(id) showCard(id); return; }
     case 'dust': dismantle(d.id); return;
     case 'dustAll': showDustAll(); return;
     case 'dustAllGo': dustAll(); return;
@@ -2718,6 +2761,7 @@ document.addEventListener('change',e=>{
   if(el.id==='profFav'){ SV.profile.fav=el.value; save(); }
 });
 document.addEventListener('input',e=>{
+  if(e.target.dataset && e.target.dataset.paintRole){ paintPick(e.target.dataset.paintRole,e.target.value); return; }
   if(e.target.id==='tableH'){ SV.settings.tableHeight=+e.target.value/100; $('#tableHv').textContent=e.target.value+' cm'; save(); }
 });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#modal').hidden){ if(GC && GC.phase!=='done') return; closeModal(); renderApp(true); } });
@@ -3035,6 +3079,7 @@ function createEnt(m,pi,i){
   ring.rotation.x=-Math.PI/2; ring.position.y=.04; ring.visible=false;
   const holder=new THREE.Group();
   const model=buildMonster(m.id); model.rotation.y=pi?Math.PI:0;
+  if(pi===0 && SV.paint && SV.paint[m.id]) applyPaint(model,SV.paint[m.id]);
   const pivot=new THREE.Group(); pivot.add(model); holder.add(pivot);
   const label=makeLabel(); label.position.y=LABEL_Y[m.id]||SHAPE_LABEL_Y[m.id]||2; holder.add(label);
   root.add(card,ring,holder); world.add(root);
@@ -3465,6 +3510,143 @@ function float3D(pos,text,cls){
   s.scale.set(2.4,1.2,1); s.renderOrder=30; s.position.copy(pos); world.add(s);
   const y0=pos.y;
   tween(1.0,k=>{ s.position.y=y0+k*1.2; s.material.opacity=1-k*k; }).then(()=>{ world.remove(s); s.material.map.dispose(); s.material.dispose(); });
+}
+
+
+/* =====================================================================
+   ペイント：自分のモンスターの色を塗る（モンスターごとに初回だけ解放）
+   ===================================================================== */
+const PAINT_COST={C:100,U:150,R:200,L:300};
+const PAINT_ROLES=['main','sub','accent'];
+const PALETTE=['#e5583c','#ff9a50','#ffd36b','#6cbf4a','#2f8f5a','#4aa3df','#3a5fd0','#a88be0','#e08fd0','#f3f0e6','#8a8f96','#2a2a33'];
+function canPaint(id){ return CARDS[id] && CARDS[id].type==='monster' && !CARDS[id].token; }
+function paintUnlocked(id){ return (SV.paintUnlocked||[]).includes(id); }
+function painted(id){ const p=SV.paint&&SV.paint[id]; return !!(p && Object.keys(p).length); }
+const hex6=n=>'#'+n.toString(16).padStart(6,'0');
+
+// モデルの色を「見た目の面積が大きい順」にメイン・サブ・アクセントへ振り分ける
+// 目や光る部分は除く。ただし光る部分しかないモンスターは、光る部分も塗れるようにする
+function partArea(o){
+  const p=(o.geometry&&o.geometry.parameters)||{}, sc=((o.scale.x+o.scale.y+o.scale.z)/3)**2;
+  let a=.4;
+  if(p.tube!=null) a=p.radius*p.tube*20;
+  else if(p.radiusTop!=null) a=(p.radiusTop+p.radiusBottom)*p.height*1.5;
+  else if(p.width!=null && p.depth!=null) a=2*(p.width*p.height+p.height*p.depth+p.width*p.depth);
+  else if(p.radius!=null && p.height!=null) a=p.radius*p.height*2;
+  else if(p.radius!=null) a=p.radius*p.radius*4;
+  return a*sc;
+}
+function paintRoles(model){
+  if(model.userData.roles) return model.userData.roles;
+  const normal=new Map(), glow=new Map();
+  model.traverse(o=>{
+    if(!o.isMesh) return;
+    for(const mt of (Array.isArray(o.material)?o.material:[o.material])){
+      if(!mt || !mt.color || !mt.isMeshStandardMaterial) continue;
+      const k=mt.color.getHex(); if(k===0x111111 || k===0x000000) continue;
+      const bucket=(mt.emissive && mt.emissive.getHex()!==0 && (mt.emissiveIntensity||0)>=0.9) ? glow : normal;
+      if(!bucket.has(k)) bucket.set(k,{w:0,mats:[]});
+      const g=bucket.get(k); g.w+=partArea(o); if(!g.mats.includes(mt)) g.mats.push(mt);
+    }
+  });
+  const by=m=>[...m.entries()].sort((a,b)=>b[1].w-a[1].w);
+  let list=by(normal);
+  if(list.length<2) list=list.concat(by(glow).filter(([k])=>k!==0xffffff));
+  const roles={}; PAINT_ROLES.forEach((r,i)=>{ if(list[i]) roles[r]={orig:list[i][0], mats:list[i][1].mats}; });
+  model.userData.roles=roles; return roles;
+}
+function applyPaint(model,colors){
+  const roles=paintRoles(model);
+  for(const r of PAINT_ROLES){
+    const R=roles[r]; if(!R) continue;
+    const c=new THREE.Color(colors && colors[r] ? colors[r] : R.orig);
+    R.mats.forEach(m=>{ m.color.copy(c); if(m.emissive && (m.emissiveIntensity||0)>0) m.emissive.copy(c); });
+  }
+}
+
+// ----- ペイント画面 -----
+let PV=null;
+function openPaint(id){
+  closeModal();
+  PV={id, draft:{...((SV.paint||{})[id]||{})}};
+  showModal(`<div class="paint" style="--el:${EL[CARDS[id].el]}">
+    <div class="row between"><div><p class="eyebrow">${t('paint.title')}</p><h2>${esc(cardName(id))}</h2></div><span class="pts"><span class="lbl">${t('home.points')}</span><b class="num" id="paintPts">${SV.points}</b></span></div>
+    <div class="paint-stage"><canvas id="paintCanvas" width="320" height="320" aria-label="${esc(cardName(id))}"></canvas><span class="meta paint-hint">${t('paint.drag')}</span></div>
+    <div id="paintCtl"></div></div>`,'paint-modal');
+  startPreview();
+  renderPaintCtl();
+}
+function renderPaintCtl(){
+  const box=$('#paintCtl'); if(!box || !PV) return;
+  const id=PV.id, cost=PAINT_COST[CARDS[id].rarity], have=(SV.collection[id]||0)>0;
+  const pts=$('#paintPts'); if(pts) pts.textContent=SV.points;
+  if(!paintUnlocked(id)){
+    box.innerHTML=`<p class="meta">${t('paint.lockedDesc')}</p>
+      ${have?'':`<p class="warnc">${t('paint.needOwn')}</p>`}
+      <div class="row"><button class="btn" data-act="paintUnlock" ${have&&SV.points>=cost?'':'disabled'}>${t('paint.unlock',{p:cost})}</button><button class="ghost-btn" data-act="paintClose">${t('close')}</button></div>`;
+    return;
+  }
+  if(!PV.model && !PV.model0) PV.model0=buildMonster(id);
+  const roles=paintRoles(PV.model||PV.model0);
+  box.innerHTML=PAINT_ROLES.filter(r=>roles[r]).map(r=>{
+    const cur=PV.draft[r] || hex6(roles[r].orig);
+    return `<div class="prow"><span class="pswatch big" style="background:${cur}"></span><b>${t('paint.'+r)}</b>
+      <div class="pal">${PALETTE.map(c=>`<button class="pswatch ${c===cur?'on':''}" style="background:${c}" data-act="paintPick" data-r="${r}" data-c="${c}" aria-label="${c}"></button>`).join('')}
+      <label class="pswatch custom" title="${t('paint.custom')}"><input type="color" data-paint-role="${r}" value="${cur}" aria-label="${t('paint.custom')}">＋</label></div></div>`;
+  }).join('')+`<div class="row"><button class="btn" data-act="paintSave">${t('paint.save')}</button><button class="ghost-btn" data-act="paintReset">${t('paint.reset')}</button><button class="ghost-btn" data-act="paintClose">${t('close')}</button></div>
+    <p class="meta">${t('paint.note')}</p>`;
+}
+function paintPick(r,c){ if(!PV) return; PV.draft[r]=c; if(PV.model) applyPaint(PV.model,PV.draft); renderPaintCtl(); }
+function paintUnlock(){
+  const id=PV.id, cost=PAINT_COST[CARDS[id].rarity];
+  if(!(SV.collection[id]>0) || SV.points<cost){ toast(t('craftNo')); return; }
+  SV.points-=cost; SV.paintUnlocked=SV.paintUnlocked||[]; SV.paintUnlocked.push(id); save();
+  toast(t('paint.unlocked')); flash(); renderPaintCtl(); renderApp(true);
+}
+function paintSave(){
+  const id=PV.id; SV.paint=SV.paint||{};
+  if(Object.keys(PV.draft).length) SV.paint[id]={...PV.draft}; else delete SV.paint[id];
+  save(); toast(t('paint.saved')); const back=id; closeModal(); showCard(back); renderApp(true);
+}
+function paintReset(){ PV.draft={}; if(PV.model) applyPaint(PV.model,{}); renderPaintCtl(); }
+
+// 回転する3Dプレビュー（ペイント画面だけで動く小さな描画）
+function startPreview(){
+  stopPreview();
+  const cv=$('#paintCanvas'); if(!cv || !cv.getContext || typeof THREE==='undefined' || !PV) return;
+  try{
+    const r=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+    r.setPixelRatio(Math.min(2,window.devicePixelRatio||1)); r.setSize(320,320,false);
+    const sc=new THREE.Scene();
+    sc.add(new THREE.HemisphereLight(0xdfe8ff,0x2a1d10,.85));
+    const dl=new THREE.DirectionalLight(0xffffff,.95); dl.position.set(3,5,4); sc.add(dl);
+    const rim=new THREE.DirectionalLight(0xffe0a0,.4); rim.position.set(-3,2,-4); sc.add(rim);
+    const model=buildMonster(PV.id), holder=new THREE.Group(); holder.add(model); sc.add(holder);
+    const box=new THREE.Box3().setFromObject(model), size=box.getSize(new THREE.Vector3()), ctr=box.getCenter(new THREE.Vector3());
+    model.position.set(-ctr.x,-box.min.y,-ctr.z);
+    const disk=new THREE.Mesh(new THREE.CircleGeometry(Math.max(size.x,size.z)*.85+.2,48), new THREE.MeshBasicMaterial({color:col(EL[CARDS[PV.id].el]),transparent:true,opacity:.28}));
+    disk.rotation.x=-Math.PI/2; disk.position.y=.005; sc.add(disk);
+    const cam=new THREE.PerspectiveCamera(32,1,.05,100), span=Math.max(size.x,size.y,size.z);
+    cam.position.set(0,size.y*.55+span*.55,span*2.6); cam.lookAt(0,size.y*.45,0);
+    applyPaint(model,PV.draft);
+    PV.model=model; PV.r=r;
+    let drag=null, rotY=-.5, last=performance.now();
+    cv.onpointerdown=e=>{ drag=e.clientX; try{ cv.setPointerCapture(e.pointerId); }catch(_){} };
+    cv.onpointermove=e=>{ if(drag==null) return; rotY+=(e.clientX-drag)*.012; drag=e.clientX; };
+    cv.onpointerup=cv.onpointercancel=()=>{ drag=null; };
+    const loop=()=>{
+      if(!PV || PV.r!==r) return;
+      const now=performance.now(), dt=Math.min(.05,(now-last)/1000), tm=now/1000; last=now;
+      if(drag==null) rotY+=dt*.55;
+      holder.rotation.y=rotY; holder.position.y=Math.sin(tm*2)*.03*span;
+      const ws=model.userData.wings; if(ws) for(const w of ws) w.rotation.z=w.userData.side*(.35+Math.sin(tm*(model.userData.flap||3))*.4);
+      r.render(sc,cam); PV.raf=requestAnimationFrame(loop);
+    };
+    loop();
+  }catch(e){ PV.model=null; }
+}
+function stopPreview(){
+  if(PV && PV.r){ cancelAnimationFrame(PV.raf); try{ PV.r.dispose(); PV.r.forceContextLoss && PV.r.forceContextLoss(); }catch(e){} PV.r=null; }
 }
 
 /* ===== 起動 ===== */
