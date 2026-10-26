@@ -276,6 +276,43 @@ input[type=range]{padding:0;flex:1;accent-color:var(--gate)}
 #toast.show{animation:toast 2.4s ease forwards}
 @keyframes toast{0%{opacity:0;transform:translate(-50%,8px)}10%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0}}
 #modal{z-index:50}
+/* ポルタ */
+.toppills{display:flex;gap:6px;align-items:center}
+.pts.porta{border-color:#5fd0ff}
+.crystal{color:#5fd0ff;text-shadow:0 0 8px rgba(95,208,255,.8)}
+.bundles{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:12px 0}
+.bundle{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;background:#0c1416;border:1px solid var(--line);border-radius:12px;padding:16px 8px 10px;text-align:center}
+.bundle .crystal{font-size:28px}
+.bundle b{font-size:20px}
+.bundle.best{border:2px solid #5fd0ff;box-shadow:0 0 18px rgba(95,208,255,.45);background:linear-gradient(180deg,rgba(95,208,255,.14),#0c1416 60%)}
+.bonus{font-size:12px;font-weight:700;color:#111;background:var(--gate);border-radius:999px;padding:0 8px}
+.bonus.dim{background:none;color:var(--muted)}
+.ribbon{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;color:#111;background:#5fd0ff;border-radius:999px;padding:1px 10px;white-space:nowrap}
+.dbl{position:absolute;top:6px;right:6px;font-size:10px;font-weight:700;color:#fff;background:var(--danger);border-radius:6px;padding:0 5px}
+.offers{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.offer{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;background:#0c1416;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.offer .meta{grid-column:1}
+.offer button{grid-row:1/3;grid-column:2}
+.offer.bestrow,.offer.starter{border:2px solid #5fd0ff;box-shadow:0 0 14px rgba(95,208,255,.35)}
+.offer.starter{margin:14px 0 4px;background:linear-gradient(120deg,rgba(255,214,120,.18),#0c1416 60%);border-color:var(--gate)}
+.offer .ribbon{left:16px;transform:none}
+.passcard{background:linear-gradient(150deg,rgba(212,175,55,.22),#0c1416 55%);border:1px solid var(--gate);border-radius:14px;padding:16px;margin:12px 0;display:flex;flex-direction:column;gap:8px}
+.passcard.on{box-shadow:0 0 22px rgba(212,175,55,.45)}
+.passprice{font-family:var(--f-display);font-size:30px;color:#ffe08a;font-weight:400}
+.passlist{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+.passbanner{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;text-align:left;background:linear-gradient(120deg,rgba(212,175,55,.28),var(--panel) 65%);border:1px solid var(--gate);border-radius:14px;padding:12px 14px;color:var(--fg);cursor:pointer}
+.passbanner b{font-family:var(--f-display);font-weight:400;font-size:16px;color:#ffe08a}
+.passbanner.on{animation:breathe 2.2s ease-in-out infinite}
+.agebtn{cursor:pointer;color:var(--fg);text-align:left}
+.avatar.f-portal{border:3px solid #5fd0ff;box-shadow:0 0 0 3px rgba(95,208,255,.3),0 0 24px rgba(95,208,255,.9)}
+.avatar.f-dawn{border:3px solid #ffb07a;box-shadow:0 0 0 3px rgba(255,176,122,.3),0 0 20px rgba(255,200,140,.8)}
+/* パラレル */
+.flip.foil .face.front::after,.cv-card.foil::after,.cell.hasfoil .card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,rgba(255,80,160,.0) 10%,rgba(255,120,200,.35) 30%,rgba(120,220,255,.4) 50%,rgba(255,236,150,.35) 70%,rgba(255,80,160,0) 90%);background-size:250% 250%;mix-blend-mode:screen;animation:holo 3s linear infinite}
+@keyframes holo{from{background-position:0% 50%}to{background-position:250% 50%}}
+.foilb{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;letter-spacing:.12em;color:#111;background:linear-gradient(90deg,#ff9ad6,#9fe3ff,#ffe08a);border-radius:6px;padding:0 6px;z-index:2}
+.foilmark{position:absolute;bottom:-8px;right:-4px;font-size:10px;font-weight:700;color:#111;background:linear-gradient(90deg,#ff9ad6,#9fe3ff,#ffe08a);border-radius:6px;padding:0 5px}
+.card{position:relative}
+
 /* ペイント */
 .sheet.paint-modal{max-width:560px}
 .paint h2{margin:0;font-family:var(--f-display);font-weight:400;color:var(--fg)}
@@ -445,7 +482,7 @@ textarea{font:inherit;color:var(--fg);background:#0c1416;border:1px solid var(--
 <div id="app" hidden>
   <header class="app-top">
     <span class="brand">PROJECT GATE</span>
-    <button class="pts" data-act="shop"><span class="lbl" data-i18n="home.points"></span><b class="num" id="topPoints">0</b><span class="lbl">›</span></button>
+    <span class="toppills"><button class="pts porta" data-act="porta"><span class="crystal">◆</span><b class="num" id="topPorta">0</b><span class="lbl">+</span></button><button class="pts" data-act="shop"><span class="lbl" data-i18n="home.points"></span><b class="num" id="topPoints">0</b><span class="lbl">›</span></button></span>
   </header>
   <main class="app-main" id="screenWrap"><div class="screen" id="screen"></div></main>
   <nav class="tabbar" id="tabbar" aria-label="menu"></nav>
@@ -487,7 +524,7 @@ textarea{font:inherit;color:var(--fg);background:#0c1416;border:1px solid var(--
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== 調整用の設定 =====
-const APP_VERSION = '2.6.0';
+const APP_VERSION = '2.7.0';
 // 'dev'：開発用（設定にユーザー／開発者の切り替えが出る）。'release'：一般公開用（ユーザー画面のみ）
 // 一般公開用は tools/build_release.py が自動で 'release' に書き換えて index.html を作る
 const BUILD = 'dev';
@@ -513,6 +550,7 @@ const CONFIG = {
   gcMax: 3,              // ゲットチャレンジのチャレンジ力の最大
   gcRegenMin: 240,       // チャレンジ力が1回復するまでの時間（分）
   godPackRate: 0.01,     // 神パック（全部◆◆◆）の確率
+  foilRate: 0.03,        // パラレル（キラ版。強さは同じ）が出る確率（1枚ごと）
   packPoints: 3,         // 1パック開けるともらえるパックポイント
   winPoints: 2,          // 勝利でもらえるパックポイント
   dailyResetHour: 4,     // デイリーミッション・ログインボーナスが切り替わる時刻（端末の現地時間）
@@ -520,10 +558,10 @@ const CONFIG = {
 
 // ===== レア度と提供割合（合計1.0） =====
 const RARITY = {
-  C: { rate: 0.63, craft: 15, mark: '◆' },
-  U: { rate: 0.27, craft: 30, mark: '◆◆' },
-  R: { rate: 0.08, craft: 60, mark: '◆◆◆' },
-  L: { rate: 0.02, craft: 120, mark: '★' },
+  C: { rate: 0.665, craft: 40, mark: '◆' },
+  U: { rate: 0.26, craft: 100, mark: '◆◆' },
+  R: { rate: 0.06, craft: 300, mark: '◆◆◆' },
+  L: { rate: 0.015, craft: 800, mark: '★' },
 };
 
 // ===== カード定義（名前と説明は下の多言語データ） =====
@@ -955,7 +993,7 @@ const STR = {
   'dust.hint':['デッキの上限を超えた分は分解してポイントにできます','Copies above the deck limit can be dismantled into points','超出卡组上限的卡可以分解成点数','Las copias sobre el límite se pueden desmontar','덱 상한을 넘은 카드는 분해해 포인트로 바꿀 수 있습니다','Cópias acima do limite viram pontos'],
   'dust.allBtn':['余りをまとめて分解（+{p}pt）','Dismantle all extras (+{p} pts)','批量分解（+{p}点）','Desmontar extras (+{p})','남는 카드 일괄 분해 (+{p}pt)','Desmontar extras (+{p})'],
   'dust.allTitle':['まとめて分解','Dismantle extras','批量分解','Desmontar extras','일괄 분해','Desmontar extras'],
-  'dust.desc':['デッキに入れられる上限を超えた分だけを分解します。作成コストの1/5がパックポイントに戻ります','Only copies above the deck limit are dismantled. You get back 1/5 of the crafting cost'],
+  'dust.desc':['デッキに入れられる上限を超えた分だけを分解します。作成コストの1/10がパックポイントに戻ります','Only copies above the deck limit are dismantled. You get back 1/10 of the crafting cost'],
   'dust.total':['合計 +{p}pt','Total +{p} pts','合计 +{p}点','Total +{p}','합계 +{p}pt','Total +{p}'],
   'dust.go':['分解する','Dismantle','分解','Desmontar','분해','Desmontar'],
   'dust.none':['上限を超えて持っているカードはありません','No copies above the deck limit','没有超出上限的卡','No hay copias de sobra','상한을 넘은 카드가 없습니다','Nenhuma cópia extra'],
@@ -1002,6 +1040,81 @@ const STR = {
   'paint.note':['塗った色は自分の対戦（VR・MRを含む）に反映されます。カードの枠の色は、属性が見分けられるようにそのままです','Your colors appear in your battles (including VR/MR). Card frames keep their attribute color so attributes stay easy to tell apart'],
   'paint.painted':['ペイント済み','Painted','已涂装','Pintado','페인트 완료','Pintado'],
   'paint.mark':['塗','✓','涂','✓','칠','✓'],
+  'porta':['ポルタ','Porta','波尔塔','Porta','포르타','Porta'],
+  'porta.unit':['ポルタ','Porta','波尔塔','Porta','포르타','Porta'],
+  'porta.shop':['ポルタショップ','Porta Shop','波尔塔商店','Tienda Porta','포르타 상점','Loja Porta'],
+  'porta.balance':['有償 {a}／無償 {b}（無償から先に使います）','Paid {a} / Free {b} (free Porta is used first)','付费 {a}／免费 {b}（优先使用免费）','De pago {a} / Gratis {b} (se usa primero la gratis)','유상 {a} / 무상 {b} (무상부터 사용)','Paga {a} / Grátis {b} (a grátis é usada primeiro)'],
+  'porta.tab_buy':['ポルタを買う','Buy Porta','购买波尔塔','Comprar Porta','포르타 구매','Comprar Porta'],
+  'porta.tab_packs':['パック・時短','Packs','卡包・缩短时间','Sobres','팩・시간 단축','Pacotes'],
+  'porta.tab_pass':['ゲートパス','Gate Pass','门之通行证','Pase Gate','게이트 패스','Passe Gate'],
+  'porta.once':['1回限り','One time only','仅限1次','Solo una vez','1회 한정','Só uma vez'],
+  'porta.starter':['はじまりのセット','Starter Set','新手礼包','Pack inicial','시작 세트','Pacote inicial'],
+  'porta.starterD':['パック{n}つ＋{p}ポルタ＋限定アイコン枠「夜明け」','{n} packs + {p} Porta + exclusive “Dawn” frame'],
+  'porta.best':['いちばん人気','Most popular','最受欢迎','Más popular','가장 인기','Mais popular'],
+  'porta.first2x':['初回2倍','First buy ×2','首充双倍','1.ª compra ×2','첫 구매 2배','1ª compra ×2'],
+  'porta.withFrame':['限定アイコン枠つき','+ exclusive frame','附赠限定头像框','+ marco exclusivo','한정 테두리 포함','+ moldura exclusiva'],
+  'porta.bonusNote':['＋%は160円の商品と比べた1円あたりの量の差です。初回2倍は各商品で1回ずつ','+% compares Porta per yen with the ¥160 bundle. The first-buy bonus applies once per bundle'],
+  'porta.refill':['パックを1つ回復','Refill 1 pack','恢复1个卡包','Recargar 1 sobre','팩 1개 회복','Recarregar 1 pacote'],
+  'porta.refillD':['待ち時間なしで、ためておけるパックを1つ増やす（いま {n}/{m}）','Adds one stored pack right away (now {n}/{m})'],
+  'porta.pack1':['パック1つ','1 pack','1个卡包','1 sobre','팩 1개','1 pacote'],
+  'porta.pack1D':['すぐ開ける。4枚目は◆◆以上確定','Open now. 4th card is ◆◆ or better'],
+  'porta.pack5':['パック5つ','5 packs','5个卡包','5 sobres','팩 5개','5 pacotes'],
+  'porta.pack5D':['すぐ開ける。各パックの4枚目は◆◆以上確定','Open now. Each 4th card is ◆◆ or better'],
+  'porta.pack11':['パック10＋1','10 + 1 packs','10＋1个卡包','10 + 1 sobres','팩 10＋1개','10 + 1 pacotes'],
+  'porta.pack11D':['11パック。最後の1パックは4枚目が◆◆◆以上確定','11 packs. The last pack’s 4th card is ◆◆◆ or better'],
+  'porta.short':['ポルタが足りません','Not enough Porta','波尔塔不足','No tienes suficientes Porta','포르타가 부족합니다','Porta insuficiente'],
+  'porta.refilled':['パックを1つ回復しました','1 pack refilled','已恢复1个卡包','Sobre recargado','팩 1개 회복','Pacote recarregado'],
+  'porta.got':['{n}ポルタを手に入れました','You got {n} Porta','获得了{n}波尔塔','Conseguiste {n} Porta','{n} 포르타를 얻었습니다','Você recebeu {n} Porta'],
+  'porta.starterGot':['はじまりのセットを受け取りました','Starter Set received','已领取新手礼包','Pack inicial recibido','시작 세트를 받았습니다','Pacote inicial recebido'],
+  'pay.soon':['購入はアプリストア対応後に始まります','Purchases will open once the app is on the stores','上架应用商店后开放购买','Las compras se abrirán cuando la app esté en las tiendas','구매는 앱스토어 출시 후 시작됩니다','As compras abrirão quando o app estiver nas lojas'],
+  'pay.soonNote':['購入はアプリストア対応後に始まります。ポルタはログインボーナスやレベルアップでも手に入ります','Purchases open once the app is on the stores. You can also earn Porta from login bonuses and level-ups'],
+  'pay.testNote':['開発者モード：テスト購入です。お金はかかりません','Developer mode: test purchases. No real money is charged'],
+  'pay.cap':['今月の上限（{n}円）を超えるため購入できません','This would exceed your monthly limit (¥{n})','超出本月上限（{n}日元），无法购买','Superarías tu límite mensual (¥{n})','이번 달 한도({n}엔)를 넘어 구매할 수 없습니다','Isso excede seu limite mensal (¥{n})'],
+  'pay.capNow':['今月の購入 {a}円／上限 {b}円','This month ¥{a} / limit ¥{b}','本月 {a}日元／上限 {b}日元','Este mes ¥{a} / límite ¥{b}','이번 달 {a}엔 / 한도 {b}엔','Este mês ¥{a} / limite ¥{b}'],
+  'pay.ageTitle':['年齢の確認','Age check','年龄确认','Verificación de edad','나이 확인','Verificação de idade'],
+  'pay.ageDesc':['はじめての購入の前に、年齢を選んでください。18歳未満の方は保護者の同意を得てから購入してください','Before your first purchase, choose your age group. If you are under 18, get a parent’s permission first'],
+  'pay.age_u16':['16歳未満','Under 16','未满16岁','Menor de 16','16세 미만','Menos de 16'],
+  'pay.age_u18':['16〜17歳','16–17','16〜17岁','16–17','16~17세','16–17'],
+  'pay.age_adult':['18歳以上','18 or older','18岁以上','18 o más','18세 이상','18 ou mais'],
+  'pay.capLine':['1か月の上限 {n}円','Monthly limit ¥{n}','每月上限 {n}日元','Límite mensual ¥{n}','월 한도 {n}엔','Limite mensal ¥{n}'],
+  'pay.noCap':['上限なし（使いすぎ注意の表示あり）','No limit','无上限','Sin límite','한도 없음','Sem limite'],
+  'pay.ageNote':['上限額は、モンスターストライク・パズル&ドラゴンズ・GREE・Mobageの基準（16歳未満5,000円、それ以上の未成年1万〜2万円）を参考に、成人年齢18歳に合わせて決めています','Limits follow common Japanese mobile-game practice, adjusted to the adult age of 18'],
+  'pay.ageSaved':['年齢を登録しました。もう一度購入ボタンを押してください','Age saved. Tap the purchase button again','已登记年龄，请再次点击购买','Edad guardada. Pulsa comprar otra vez','나이를 등록했습니다. 구매 버튼을 다시 눌러 주세요','Idade salva. Toque em comprar novamente'],
+  'pass.name':['ゲートパス','Gate Pass','门之通行证','Pase Gate','게이트 패스','Passe Gate'],
+  'pass.month':['月','month','月','mes','월','mês'],
+  'pass.b1':['毎日パック+{n}','+{n} pack every day','每天卡包+{n}','+{n} sobre al día','매일 팩 +{n}','+{n} pacote por dia'],
+  'pass.b2':['毎日{n}ポルタ','{n} Porta every day','每天{n}波尔塔','{n} Porta al día','매일 {n} 포르타','{n} Porta por dia'],
+  'pass.b3':['パス限定のペイント色（金・銀・ネオン）','Pass-only paint colors (gold, silver, neon)','通行证限定涂装色（金・银・霓虹）','Colores de pintura exclusivos (oro, plata, neón)','패스 한정 페인트 색 (금・은・네온)','Cores de pintura exclusivas (ouro, prata, neon)'],
+  'pass.b4':['忙しい日があっても大丈夫。{n}日分までためて、あとでまとめて受け取れる','Busy? Rewards stack for up to {n} days, so you can claim them later'],
+  'pass.value':['30日で、パック{n}つ＋{p}ポルタ','30 days: {n} packs + {p} Porta','30天：{n}个卡包＋{p}波尔塔','30 días: {n} sobres + {p} Porta','30일간 팩 {n}개 + {p} 포르타','30 dias: {n} pacotes + {p} Porta'],
+  'pass.active':['利用中・残り{n}日','Active · {n} days left','使用中・剩余{n}天','Activo · quedan {n} días','이용 중・남은 {n}일','Ativo · faltam {n} dias'],
+  'pass.claim':['{n}日分を受け取る','Claim {n} day(s)','领取{n}天份','Reclamar {n} día(s)','{n}일분 받기','Resgatar {n} dia(s)'],
+  'pass.claimedToday':['今日の分は受け取り済みです','Today’s reward is claimed','今天已领取','Recompensa de hoy reclamada','오늘 몫은 받았습니다','Recompensa de hoje resgatada'],
+  'pass.trial':['{n}日間無料で試す','Try free for {n} days','免费试用{n}天','Prueba gratis {n} días','{n}일 무료 체험','Teste grátis por {n} dias'],
+  'pass.buy':['{p}で始める','Start for {p}','{p}开始','Empezar por {p}','{p}로 시작','Começar por {p}'],
+  'pass.note':['自動更新です。解約はいつでもストアの設定からできます。無料期間中に解約すれば料金はかかりません','Auto-renews. Cancel anytime in your store settings. Cancel during the free trial and you won’t be charged'],
+  'pass.claimed':['{n}日分：パック+{n}・{p}ポルタ','{n} day(s): +{n} packs · {p} Porta','{n}天份：卡包+{n}・{p}波尔塔','{n} día(s): +{n} sobres · {p} Porta','{n}일분: 팩 +{n}・{p} 포르타','{n} dia(s): +{n} pacotes · {p} Porta'],
+  'pass.started':['ゲートパスが始まりました','Gate Pass started','门之通行证已开始','Pase Gate activado','게이트 패스 시작','Passe Gate ativado'],
+  'pass.home':['ゲートパス','Gate Pass','门之通行证','Pase Gate','게이트 패스','Passe Gate'],
+  'pass.homeD':['毎日パック+1・{p}/月','+1 pack a day · {p}/mo','每天卡包+1・{p}/月','+1 sobre al día · {p}/mes','매일 팩+1・{p}/월','+1 pacote por dia · {p}/mês'],
+  'pass.homeTrial':['{n}日間無料','{n}-day free trial','免费{n}天','{n} días gratis','{n}일 무료','{n} dias grátis'],
+  'pass.homeClaim':['ゲートパス：{n}日分を受け取る','Gate Pass: claim {n} day(s)','门之通行证：领取{n}天份','Pase Gate: reclamar {n} día(s)','게이트 패스: {n}일분 받기','Passe Gate: resgatar {n} dia(s)'],
+  'pack.count':['パック {i} / {n}','Pack {i} / {n}','卡包 {i} / {n}','Sobre {i} / {n}','팩 {i} / {n}','Pacote {i} / {n}'],
+  'pack.guarU':['4枚目は◆◆以上確定','4th card: ◆◆ or better','第4张◆◆以上','4.ª carta: ◆◆ o mejor','4번째 카드 ◆◆ 이상 확정','4ª carta: ◆◆ ou melhor'],
+  'pack.guarR':['4枚目は◆◆◆以上確定','4th card: ◆◆◆ or better','第4张◆◆◆以上','4.ª carta: ◆◆◆ o mejor','4번째 카드 ◆◆◆ 이상 확정','4ª carta: ◆◆◆ ou melhor'],
+  'pack.next':['次のパックへ（あと{n}）','Next pack ({n} left)','下一个卡包（剩{n}）','Siguiente sobre (quedan {n})','다음 팩으로 (남은 {n})','Próximo pacote (faltam {n})'],
+  'home.refillBtn':['すぐ回復（{n}ポルタ）','Refill now ({n} Porta)','立即恢复（{n}波尔塔）','Recargar ya ({n} Porta)','바로 회복 ({n} 포르타)','Recarregar já ({n} Porta)'],
+  'home.buyPack':['パックを買う','Buy packs','购买卡包','Comprar sobres','팩 구매','Comprar pacotes'],
+  'rw.porta':['ポルタ+{n}','Porta +{n}','波尔塔+{n}','Porta +{n}','포르타+{n}','Porta +{n}'],
+  'cv.foil':['パラレル','Parallel','平行卡','Paralela','패러렐','Paralela'],
+  'odds.foil':['パラレル（キラ版。強さは同じで見た目だけが違う）：1枚ごとに{p}','Parallel (shiny version, same strength): {p} per card'],
+  'odds.guarTitle':['購入パックの確定枠','Guaranteed slots in bought packs','购买卡包的保底','Ranuras garantizadas','구매 팩의 확정 슬롯','Espaços garantidos'],
+  'odds.guarU':['4枚目（◆◆以上確定）：{a}','4th card (◆◆ or better): {a}'],
+  'odds.guarR':['10+1の最後のパックの4枚目（◆◆◆以上確定）：{a}','Last pack of 10+1, 4th card (◆◆◆ or better): {a}'],
+  'shop.frame_portal':['ゲートの枠（ポルタ限定）','Gate frame (Porta exclusive)','门之框（波尔塔限定）','Marco Gate (exclusivo)','게이트 테두리 (포르타 한정)','Moldura Gate (exclusiva)'],
+  'shop.frame_dawn':['夜明けの枠（はじまりのセット限定）','Dawn frame (Starter Set)','黎明框（新手礼包限定）','Marco Amanecer (pack inicial)','새벽 테두리 (시작 세트 한정)','Moldura Aurora (pacote inicial)'],
+  'dev.porta':['ポルタ+500（無償）','Porta +500 (free)'],
+  'dev.payReset':['購入・年齢・パスの記録をリセット','Reset purchases, age and pass'],
   'tab.home':['ホーム','Home','主页','Inicio','홈','Início'],
   'tab.cards':['マイカード','My Cards','我的卡牌','Mis cartas','내 카드','Minhas cartas'],
   'tab.friends':['フレンド','Friends','好友','Amigos','친구','Amigos'],
@@ -1234,7 +1347,8 @@ function defSave(){
     decks:[{name:'',cards:{...STARTER}},{name:'',cards:{}},{name:'',cards:{}},{name:'',cards:{}},{name:'',cards:{}}], active:0,
     points:0, pending:null,
     pk:{stock:CONFIG.packStockMax, t:Date.now(), bonus:0}, gc:{stock:CONFIG.gcMax, t:Date.now(), list:[]},
-    ms:{day:'',prog:{},claimed:{},all:false}, login:{day:'',count:0}, xp:0, shop:{owned:[],frame:'',title:'',back:''}, paint:{}, paintUnlocked:[],
+    ms:{day:'',prog:{},claimed:{},all:false}, login:{day:'',count:0}, xp:0, shop:{owned:[],frame:'',title:'',back:''}, paint:{}, paintUnlocked:[], foil:{}, porta:{paid:0,free:0},
+    pay:{age:null,month:'',spent:0,history:[],first:{},bought:{}}, pass:{until:0,trialUsed:false,lastDay:null,bank:0},
     profile:{name:'Player', id:randId(), bio:'', fav:''}, friends:[],
     settings:{speed:1, view:0, hideLast:true, tableHeight:0.78, test:false},
     stats:{w:0,l:0,packs:0,streak:0,best:0}, gifts:[], usedGifts:[],
@@ -1243,7 +1357,7 @@ function defSave(){
 function loadSave(){
   try{
     const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
-    if(s && s.v===1){ const d=defSave(); const o={...d, ...s, settings:{...d.settings,...(s.settings||{})}, profile:{...d.profile,...(s.profile||{})}, dev:{...d.dev,...(s.dev||{})}, stats:{...d.stats,...(s.stats||{})}, pk:{...d.pk,...(s.pk||{})}, gc:{...d.gc,...(s.gc||{})}, login:{...d.login,...(s.login||{})}, shop:{...d.shop,...(s.shop||{})}}; while(o.decks.length<5) o.decks.push({name:'',cards:{}}); return o; }
+    if(s && s.v===1){ const d=defSave(); const o={...d, ...s, settings:{...d.settings,...(s.settings||{})}, profile:{...d.profile,...(s.profile||{})}, dev:{...d.dev,...(s.dev||{})}, stats:{...d.stats,...(s.stats||{})}, pk:{...d.pk,...(s.pk||{})}, gc:{...d.gc,...(s.gc||{})}, login:{...d.login,...(s.login||{})}, shop:{...d.shop,...(s.shop||{})}, porta:{...d.porta,...(s.porta||{})}, pay:{...d.pay,...(s.pay||{})}, pass:{...d.pass,...(s.pass||{})}}; while(o.decks.length<5) o.decks.push({name:'',cards:{}}); return o; }
   }catch(e){}
   return defSave();
 }
@@ -1938,6 +2052,7 @@ function renderApp(keepScroll){
   applyI18n();
   $('#tabbar').innerHTML=TABS.map(k=>`<button class="tab ${APP.tab===k?'on':''}" data-act="tab" data-tab="${k}" ${APP.tab===k?'aria-current="page"':''}>${ICON[k]}<span>${t('tab.'+k)}</span></button>`).join('');
   $('#topPoints').textContent=SV.points;
+  const tp=$('#topPorta'); if(tp) tp.textContent=portaTotal();
   $('#screen').innerHTML=({home:homeHTML,cards:cardsHTML,friends:friendsHTML,battle:battleHTML,settings:settingsHTML,dev:devHTML})[APP.tab==='dev'&&!devOn()?'settings':APP.tab]();
   updateDevBanner();
   if(APP.tab==='home') bindPackDrag();
@@ -1960,14 +2075,27 @@ function msLeft(o,max,min){ return o.stock>=max ? 0 : Math.max(0,o.t+min*60e3-Da
 function fmtLeft(ms){ const s=Math.ceil(ms/1000), h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60; return `${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`; }
 function packTimerText(){ if(SV.settings.test) return t('home.test'); return SV.pk.stock>=CONFIG.packStockMax ? t('home.full') : t('home.next',{time:fmtLeft(msLeft(SV.pk,CONFIG.packStockMax,CONFIG.packRegenMin))}); }
 function gcTimerText(){ return SV.gc.stock>=CONFIG.gcMax ? t('home.full') : t('gc.next',{time:fmtLeft(msLeft(SV.gc,CONFIG.gcMax,CONFIG.gcRegenMin))}); }
-function rollRarity(){ const r=Math.random(), rates=effRates(); let acc=0; for(const k of Object.keys(RARITY)){ acc+=rates[k]||0; if(r<acc) return k; } return 'C'; }
-function rollPack(){
-  const god=Math.random()<effGod(), cards=[];
-  for(let i=0;i<CONFIG.packSize;i++){ const rar=god?'R':rollRarity(); const pool=CARD_IDS.filter(id=>CARDS[id].rarity===rar); cards.push(pool[Math.floor(Math.random()*pool.length)]); }
-  return {god,cards};
+// レア度を抽選する。min を指定すると、そのレア度以上だけで確率を割り直す（確定枠）
+function pickRarity(min){
+  const rates=effRates(), order=['C','U','R','L'], allowed=min?order.slice(order.indexOf(min)):order;
+  const tot=allowed.reduce((s,k)=>s+(rates[k]||0),0); let x=Math.random()*tot;
+  for(const k of allowed){ x-=rates[k]||0; if(x<0) return k; } return allowed[allowed.length-1];
+}
+function rollRarity(){ return pickRarity(); }
+// kind：'normal'（無料のパック）／'premium'（購入：4枚目は◆◆以上確定）／'premiumR'（11パック目：4枚目は◆◆◆以上確定）
+function rollPack(kind='normal'){
+  const god=Math.random()<effGod(), cards=[], foil=[];
+  for(let i=0;i<CONFIG.packSize;i++){
+    const last=i===CONFIG.packSize-1;
+    const rar = god ? 'R' : pickRarity(last&&kind==='premium'?'U' : last&&kind==='premiumR'?'R' : null);
+    const pool=CARD_IDS.filter(id=>CARDS[id].rarity===rar);
+    cards.push(pool[Math.floor(Math.random()*pool.length)]);
+    foil.push(Math.random()<CONFIG.foilRate);
+  }
+  return {god,cards,foil,kind};
 }
 // 中身は開ける前に決めて保存する（再読み込みで引き直せないように）
-function ensurePending(){ if(!SV.pending || SV.pending.cards.length!==CONFIG.packSize){ SV.pending={...rollPack(), seed:Math.floor(Math.random()*1e9)}; save(); } return SV.pending; }
+function ensurePending(){ if(!SV.pending || SV.pending.cards.length!==CONFIG.packSize || !SV.pending.foil){ SV.pending={...rollPack('normal'), seed:Math.floor(Math.random()*1e9)}; save(); } return SV.pending; }
 function rng(seed){ let a=seed>>>0; return ()=>{ a=a+0x6D2B79F5|0; let x=Math.imul(a^a>>>15,1|a); x=x+Math.imul(x^x>>>7,61|x)^x; return ((x^x>>>14)>>>0)/4294967296; }; }
 function todName(){ const h=new Date().getHours(); return h<5?'night':h<10?'morning':h<16?'day':h<19?'evening':'night'; }
 // 謎の仕掛け1〜4は見た目だけ。5（神パックの予兆）だけが中身と結びついている
@@ -1980,7 +2108,7 @@ const TITLES=[1,5,10,15,20,30];
 function titleOf(lv){ let k=1; for(const n of TITLES) if(lv>=n) k=n; return t('title.'+k); }
 function addXP(n){
   const before=levelInfo().lv; SV.xp=(SV.xp||0)+n; const after=levelInfo().lv;
-  if(after>before){ let pts=0; for(let l=before+1;l<=after;l++) pts+=10*l; SV.points+=pts; APP.levelUp={lv:after,pts}; }
+  if(after>before){ let pts=0; for(let l=before+1;l<=after;l++) pts+=10*l; SV.points+=pts; const pr=10*(after-before); SV.porta.free+=pr; APP.levelUp={lv:after,pts,porta:pr}; }
   save();
 }
 
@@ -1991,18 +2119,18 @@ function mProgress(k,n=1){ syncMissions(); SV.ms.prog[k]=(SV.ms.prog[k]||0)+n; s
 function claimMission(k){
   syncMissions(); const m=MISSIONS.find(x=>x.k===k); if(!m || SV.ms.claimed[k] || (SV.ms.prog[k]||0)<m.n) return;
   SV.ms.claimed[k]=true; SV.points+=m.pts; toast(t('home.claimedT',{x:m.xp,p:m.pts}));
-  if(!SV.ms.all && MISSIONS.every(x=>SV.ms.claimed[x.k])){ SV.ms.all=true; SV.pk.bonus++; setTimeout(()=>toast(t('home.allDone')),1300); }
+  if(!SV.ms.all && MISSIONS.every(x=>SV.ms.claimed[x.k])){ SV.ms.all=true; SV.pk.bonus++; SV.porta.free+=10; setTimeout(()=>toast(t('home.allDone')),1300); }
   addXP(m.xp); renderApp(true);
 }
 
 /* ----- ログインボーナス（連続でなくても、ログインした日数で進む） ----- */
-const LOGIN_REWARDS=[{pts:5},{pts:5},{pack:1},{pts:10},{gc:1},{pts:10},{pack:2}];
-function rewardText(r){ return r.pack ? t('rw.pack',{n:r.pack}) : r.gc ? t('rw.gc',{n:r.gc}) : t('rw.pts',{n:r.pts}); }
+const LOGIN_REWARDS=[{pts:5},{pts:5},{pack:1},{pts:10},{gc:1},{pts:10},{pack:2,porta:30}];
+function rewardText(r){ const a=[]; if(r.pack) a.push(t('rw.pack',{n:r.pack})); if(r.gc) a.push(t('rw.gc',{n:r.gc})); if(r.pts) a.push(t('rw.pts',{n:r.pts})); if(r.porta) a.push(t('rw.porta',{n:r.porta})); return a.join('・'); }
 function checkLogin(){
   const d=dayKey(); if(SV.login.day===d) return -1;
   SV.login.day=d; SV.login.count++;
   const idx=(SV.login.count-1)%LOGIN_REWARDS.length, r=LOGIN_REWARDS[idx];
-  if(r.pts) SV.points+=r.pts; if(r.pack) SV.pk.bonus+=r.pack; if(r.gc) SV.gc.stock+=r.gc;
+  if(r.pts) SV.points+=r.pts; if(r.pack) SV.pk.bonus+=r.pack; if(r.gc) SV.gc.stock+=r.gc; if(r.porta) SV.porta.free+=r.porta;
   addChallenge(); addChallenge(); save(); return idx;
 }
 function showLogin(idx){
@@ -2088,13 +2216,13 @@ function showProfile(){
 }
 function showLevelUp(){
   const u=APP.levelUp; APP.levelUp=null;
-  showModal(`<div class="lvup"><p class="eyebrow">${t('lv.up')}</p><b class="lvnum">Lv.${u.lv}</b><p>${esc(titleOf(u.lv))}</p><p class="gain">${t('lv.reward',{n:u.pts})}</p><button class="btn" data-act="closeModal">OK</button></div>`,'lvup-modal');
+  showModal(`<div class="lvup"><p class="eyebrow">${t('lv.up')}</p><b class="lvnum">Lv.${u.lv}</b><p>${esc(titleOf(u.lv))}</p><p class="gain">${t('lv.reward',{n:u.pts})}・${t('rw.porta',{n:u.porta||0})}</p><button class="btn" data-act="closeModal">OK</button></div>`,'lvup-modal');
   flash();
 }
 
 /* ----- ホーム ----- */
 function homeHTML(){
-  syncPacks(); syncGC(); syncMissions();
+  syncPacks(); syncGC(); syncMissions(); syncPass();
   const can=canOpenPack(), L=packLook(), lv=levelInfo(), dex=CARD_IDS.filter(id=>SV.collection[id]).length;
   const stock=SV.pk.stock, max=CONFIG.packStockMax;
   const pips=Array.from({length:max},(_,i)=>`<span class="ppip ${i<stock?'on':''}"></span>`).join('');
@@ -2116,9 +2244,10 @@ function homeHTML(){
         ${can && !SV.settings.test?`<span class="packcount">×${stock+SV.pk.bonus}</span>`:''}
       </div>
       <p class="pack-status ${can?'ok':''} num" id="packTimer">${packTimerText()}</p>
-      ${can?`<p class="meta">${t('home.swipe')}</p><button class="btn big" data-act="openPack">${t('home.open')}</button>`:''}
+      ${can?`<p class="meta">${t('home.swipe')}</p><button class="btn big" data-act="openPack">${t('home.open')}</button>`:`<div class="row center"><button class="btn" data-act="portaRefill">${t('home.refillBtn',{n:PORTA_USE.refill})}</button><button class="ghost-btn" data-act="portaTab" data-k="packs">${t('home.buyPack')}</button></div>`}
     </div>
 
+    ${passActive() ? (SV.pass.bank?`<button class="passbanner on" data-act="passClaim"><b>${t('pass.homeClaim',{n:SV.pass.bank})}</b><span class="meta">${t('pass.active',{n:passDaysLeft()})}</span></button>`:'') : `<button class="passbanner" data-act="portaTab" data-k="pass"><b>${t('pass.home')}</b><span class="meta">${t('pass.homeD',{p:priceText(PASS)})}</span>${!SV.pass.trialUsed?`<span class="badge">${t('pass.homeTrial',{n:PASS.trial})}</span>`:''}</button>`}
     <section class="panel gcpanel">
       <div class="row between"><h3>${t('gc.title')}</h3><span class="meta">${t('gc.stamina')} <b class="num gcst">${'●'.repeat(Math.min(SV.gc.stock,9))}${'○'.repeat(Math.max(0,CONFIG.gcMax-SV.gc.stock))}</b></span></div>
       <p class="meta">${t('gc.desc')}</p>
@@ -2155,27 +2284,32 @@ function bindPackDrag(){
   const stop=()=>{ if(st){ st=null; el.style.setProperty('--tear',0); } };
   el.addEventListener('pointerup',stop); el.addEventListener('pointercancel',stop);
 }
+function grantPack(pk){
+  const before={...SV.collection}, seen={};
+  pk.cards.forEach((id,i)=>{ SV.collection[id]=(SV.collection[id]||0)+1; if(pk.foil&&pk.foil[i]) SV.foil[id]=(SV.foil[id]||0)+1; });
+  SV.points+=CONFIG.packPoints; SV.stats.packs=(SV.stats.packs||0)+1;
+  addChallenge(); mProgress('pack'); addXP(10); save();
+  return pk.cards.map(id=>{ const n=!before[id] && !seen[id]; seen[id]=true; return n; });
+}
+function showPack(pk,speed,queue){
+  const isNew=grantPack(pk);
+  PACK={ cards:pk.cards, foil:pk.foil||[], god:pk.god, kind:pk.kind||'normal', flipped:pk.cards.map(()=>false), fast:speed>1.2, isNew,
+         queue:queue||[], total:(PACK&&PACK.queue&&PACK.total)||((queue||[]).length+1) };
+  renderPackModal(); renderApp(true);
+}
 function openPack(speed){
   syncPacks();
   if(!canOpenPack()) return;
-  const pk=ensurePending(), before={...SV.collection};
-  pk.cards.forEach(id=>{ SV.collection[id]=(SV.collection[id]||0)+1; });
-  SV.points+=CONFIG.packPoints;
+  const pk=ensurePending(); SV.pending=null;
   if(!SV.settings.test){ if(SV.pk.bonus>0) SV.pk.bonus--; else { if(SV.pk.stock>=CONFIG.packStockMax) SV.pk.t=Date.now(); SV.pk.stock--; } }
-  SV.stats.packs=(SV.stats.packs||0)+1;
-  SV.pending=null; addChallenge(); mProgress('pack'); addXP(10); save();
-  const seen={};
-  PACK={ cards:pk.cards, god:pk.god, flipped:pk.cards.map(()=>false), fast:speed>1.2,
-         isNew:pk.cards.map(id=>{ const n=!before[id] && !seen[id]; seen[id]=true; return n; }) };
-  renderPackModal();
-  renderApp(true);
+  PACK=null; showPack(pk,speed);
 }
 function renderPackModal(){
-  const P=PACK, hide=SV.settings.hideLast;
-  showModal(`${P.god?`<p class="godline">${t('pack.god')}</p>`:''}
+  const P=PACK, hide=SV.settings.hideLast, idx=P.total-P.queue.length;
+  showModal(`${P.total>1?`<p class="eyebrow center">${t('pack.count',{i:idx,n:P.total})}</p>`:''}${P.kind!=='normal'?`<p class="meta center gold">${t(P.kind==='premiumR'?'pack.guarR':'pack.guarU')}</p>`:''}${P.god?`<p class="godline">${t('pack.god')}</p>`:''}
     <div class="reveal ${P.fast?'fast':'slow'}">${P.cards.map((id,i)=>{
-      const last=hide && i===P.cards.length-1;
-      return `<button class="flip r-${CARDS[id].rarity} ${last?'last':''}" data-act="flip" data-i="${i}" aria-label="${t('pack.tap')}"><span class="flip-in"><span class="face back ${backCls()}"><span>GATE</span>${last?'<em>?</em>':''}</span><span class="face front">${cardHTML(id)}${P.isNew[i]?'<span class="newb">NEW</span>':''}<span class="rar">${RARITY[CARDS[id].rarity].mark}</span></span></span></button>`;
+      const last=hide && i===P.cards.length-1, fo=P.foil[i];
+      return `<button class="flip r-${CARDS[id].rarity} ${last?'last':''} ${fo?'foil':''}" data-act="flip" data-i="${i}" aria-label="${t('pack.tap')}"><span class="flip-in"><span class="face back ${backCls()}"><span>GATE</span>${last?'<em>?</em>':''}</span><span class="face front">${cardHTML(id)}${P.isNew[i]?'<span class="newb">NEW</span>':''}${fo?'<span class="foilb">PARALLEL</span>':''}<span class="rar">${RARITY[CARDS[id].rarity].mark}</span></span></span></button>`;
     }).join('')}</div>
     <p class="meta center">${t('pack.gotPoints',{n:CONFIG.packPoints})}・EXP+10</p>
     <div class="row center" id="packActions"><button class="ghost-btn" data-act="flipAll">${t('pack.flipAll')}</button></div>`,'pack-modal');
@@ -2185,20 +2319,22 @@ function flipCard(i,el){
   PACK.flipped[i]=true;
   const node=el||document.querySelector(`.flip[data-i="${i}"]`); node?.classList.add('on');
   const r=CARDS[PACK.cards[i]].rarity;
-  if(r==='R') flash();
+  if(r==='R' || PACK.foil[i]) flash();
   if(r==='L'){ flash(); node?.classList.add('legend'); setTimeout(flash,220); }
-  if(PACK.flipped.every(Boolean)) $('#packActions').innerHTML=`<button class="btn" data-act="collect">${t('pack.done')}</button>`;
+  if(PACK.flipped.every(Boolean)) $('#packActions').innerHTML = PACK.queue.length
+    ? `<button class="btn" data-act="nextPack">${t('pack.next',{n:PACK.queue.length})}</button>`
+    : `<button class="btn" data-act="collect">${t('pack.done')}</button>`;
 }
 function flipAll(){
   if(!PACK) return;
   const hide=SV.settings.hideLast, last=PACK.cards.length-1;
   PACK.cards.forEach((_,i)=>{ if(hide && i===last) return; setTimeout(()=>flipCard(i),i*160); });
 }
-
+function nextPack(){ if(!PACK || !PACK.queue.length) return; const q=PACK.queue.slice(1), nx=PACK.queue[0]; PACK.queue=q; showPack(nx,1,q); }
 
 /* ----- パックポイントの使い道：作成・分解・ショップ ----- */
-// 分解：上限（同名3枚、★は1枚など）を超えて持っている分だけポイントに戻せる。戻る量は作成コストの1/5
-function dustOf(id){ return Math.round(RARITY[CARDS[id].rarity].craft/5); }
+// 分解：上限（同名3枚、★は1枚など）を超えて持っている分だけポイントに戻せる。戻る量は作成コストの1/10
+function dustOf(id){ return Math.round(RARITY[CARDS[id].rarity].craft/10); }
 function extraOf(id){ return Math.max(0,(SV.collection[id]||0)-cardLimit(id)); }
 function canCraft(id){ return !CARDS[id].token && (SV.collection[id]||0)<cardLimit(id); }
 function craftCard(id){
@@ -2236,6 +2372,7 @@ const SHOP=[
   {id:'title_collector', kind:'title', cost:30}, {id:'title_dragon', kind:'title', cost:30}, {id:'title_night', kind:'title', cost:30},
   {id:'title_gambler', kind:'title', cost:30}, {id:'title_legend', kind:'title', cost:120},
   {id:'back_night', kind:'back', cost:40}, {id:'back_ember', kind:'back', cost:40}, {id:'back_aurora', kind:'back', cost:100},
+  {id:'frame_portal', kind:'frame', cost:null, exclusive:true}, {id:'frame_dawn', kind:'frame', cost:null, exclusive:true},
 ];
 const SHOP_KINDS=['item','frame','title','back'];
 function shopOwned(id){ return SV.shop.owned.includes(id); }
@@ -2251,7 +2388,7 @@ function shopPreview(it){
 }
 function showShop(kind){
   kind=kind||APP.shopKind||'item'; APP.shopKind=kind;
-  const items=SHOP.filter(x=>x.kind===kind);
+  const items=SHOP.filter(x=>x.kind===kind && (!x.exclusive || shopOwned(x.id)));
   showModal(`<div class="row between"><h2>${t('shop.title')}</h2><span class="pts"><span class="lbl">${t('home.points')}</span><b class="num">${SV.points}</b></span></div>
     <p class="meta">${t('shop.desc')}</p>
     <div class="seg wrap">${SHOP_KINDS.map(k=>`<button class="${k===kind?'on':''}" data-act="shopTab" data-k="${k}">${t('shop.k_'+k)}</button>`).join('')}</div>
@@ -2265,13 +2402,147 @@ function showShop(kind){
     <p class="row"><button class="ghost-btn" data-act="closeModal">${t('close')}</button></p>`,'shop-modal');
 }
 function shopBuy(id){
-  const it=SHOP.find(x=>x.id===id); if(!it) return;
+  const it=SHOP.find(x=>x.id===id); if(!it || it.exclusive) return;
   if(SV.points<it.cost){ toast(t('craftNo')); return; }
   if(it.kind!=='item' && shopOwned(id)) return;
   SV.points-=it.cost;
   if(it.id==='gc1') SV.gc.stock++;
   else { SV.shop.owned.push(id); SV.shop[it.kind]=id; }
   save(); toast(t('shop.bought',{x:t('shop.'+id)})); showShop(it.kind); renderApp(true);
+}
+
+
+/* =====================================================================
+   ポルタ（課金通貨）・パック購入・時短・ゲートパス・未成年の上限
+   ※本物の決済はアプリストア対応後。今は開発用の版で「テスト購入」だけできる
+   ===================================================================== */
+const PORTA_PACKS=[
+  {id:'p160',   yen:160,   usd:0.99,  p:80},
+  {id:'p480',   yen:480,   usd:2.99,  p:250},
+  {id:'p980',   yen:980,   usd:5.99,  p:520},
+  {id:'p1500',  yen:1500,  usd:9.99,  p:760},                                   // おとり：980円とほぼ同じ割合にして、3,000円を引き立てる
+  {id:'p3000',  yen:3000,  usd:19.99, p:1700, item:'frame_portal', best:true},  // 本命：割合が良く、限定アイコン枠つき
+  {id:'p5000',  yen:5000,  usd:32.99, p:2900},
+  {id:'p10000', yen:10000, usd:64.99, p:6000},
+];
+const STARTER_SET={id:'starter', yen:480, usd:2.99, packs:3, p:100, item:'frame_dawn'};
+const PASS={id:'pass', yen:600, usd:3.99, days:30, trial:14, dailyPacks:1, dailyPorta:10, bankMax:7};
+const PORTA_USE={refill:60, pack1:100, pack5:500, pack11:1000, gc:15};
+const AGE_CAP={u16:5000, u18:10000, adult:Infinity};
+const PASS_COLORS=['#d4af37','#c0c8d0','#ff3d7f'];
+
+function portaTotal(){ return (SV.porta.paid||0)+(SV.porta.free||0); }
+// 無償分から先に使う
+function spendPorta(n){ if(portaTotal()<n) return false; const f=Math.min(SV.porta.free,n); SV.porta.free-=f; SV.porta.paid-=(n-f); save(); return true; }
+function priceText(x){ return LANG==='ja' ? `¥${x.yen.toLocaleString('ja-JP')}` : `$${x.usd.toFixed(2)}`; }
+function payEnabled(){ return BUILD==='dev' && devOn(); }
+function monthKey(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1); }
+function spentThisMonth(){ if(SV.pay.month!==monthKey()){ SV.pay.month=monthKey(); SV.pay.spent=0; } return SV.pay.spent; }
+function checkout(prod,onOk){
+  if(!payEnabled()){ toast(t('pay.soon')); return; }
+  if(!SV.pay.age){ showAgeGate(prod); APP.pendingBuy=onOk; return; }
+  const cap=AGE_CAP[SV.pay.age];
+  if(spentThisMonth()+prod.yen>cap){ toast(t('pay.cap',{n:cap.toLocaleString('ja-JP')})); return; }
+  SV.pay.spent+=prod.yen; SV.pay.history.push({id:prod.id, yen:prod.yen, at:Date.now()});
+  onOk(); save(); renderApp(true);
+}
+function showAgeGate(prod){
+  showModal(`<h2>${t('pay.ageTitle')}</h2><p>${t('pay.ageDesc')}</p>
+    <div class="list">${['u16','u18','adult'].map(a=>`<button class="item agebtn" data-act="ageSet" data-a="${a}"><b>${t('pay.age_'+a)}</b><span class="meta">${a==='adult'?t('pay.noCap'):t('pay.capLine',{n:AGE_CAP[a].toLocaleString('ja-JP')})}</span></button>`).join('')}</div>
+    <p class="note">${t('pay.ageNote')}</p><p class="row"><button class="ghost-btn" data-act="closeModal">${t('close')}</button></p>`);
+}
+
+// ----- ゲートパス（月額） -----
+function dayNum(ts=Date.now()){ return Math.floor((ts - new Date(ts).getTimezoneOffset()*60e3 - CONFIG.dailyResetHour*3600e3)/864e5); }
+function passActive(){ return (SV.pass.until||0)>Date.now(); }
+function passDaysLeft(){ return Math.max(0,Math.ceil(((SV.pass.until||0)-Date.now())/864e5)); }
+// ログインしなかった日の分も、最大7日分まで後からまとめて受け取れる
+function syncPass(){
+  const today=dayNum(); if(SV.pass.lastDay==null){ SV.pass.lastDay=today; return; }
+  if(today<=SV.pass.lastDay) return;
+  const upto=Math.min(today, dayNum(SV.pass.until||0)), add=Math.max(0, upto-SV.pass.lastDay);
+  SV.pass.bank=Math.min(PASS.bankMax,(SV.pass.bank||0)+add); SV.pass.lastDay=today; save();
+}
+function startPass(days){ const base=passActive()?SV.pass.until:Date.now(); SV.pass.until=base+days*864e5; if(!SV.pass.bank) SV.pass.bank=1; SV.pass.lastDay=dayNum(); save(); }
+function claimPass(){
+  syncPass(); const n=SV.pass.bank||0; if(!n) return;
+  SV.pk.bonus+=n*PASS.dailyPacks; SV.porta.free+=n*PASS.dailyPorta; SV.pass.bank=0; save();
+  toast(t('pass.claimed',{n,p:n*PASS.dailyPorta})); flash(); renderApp(true);
+}
+function paletteNow(){ return passActive() ? [...PALETTE,...PASS_COLORS] : PALETTE; }
+
+// ----- パックの直接購入と時短 -----
+function buyPacks(n){
+  const cost = n===1?PORTA_USE.pack1 : n===5?PORTA_USE.pack5 : PORTA_USE.pack11;
+  if(!spendPorta(cost)){ toast(t('porta.short')); showPortaShop('buy'); return; }
+  const count = n===11?11:n;
+  const packs=Array.from({length:count},(_,i)=>rollPack(n===11 && i===count-1 ? 'premiumR' : 'premium'));
+  closeModal(); showPack(packs[0],1,packs.slice(1));
+}
+function refillPack(){
+  syncPacks();
+  if(SV.pk.stock>=CONFIG.packStockMax){ toast(t('home.full')); return; }
+  if(!spendPorta(PORTA_USE.refill)){ toast(t('porta.short')); showPortaShop('buy'); return; }
+  SV.pk.stock++; save(); toast(t('porta.refilled')); closeModal(); renderApp(true);
+}
+
+// ----- ポルタショップ画面 -----
+function bonusPct(x){ const base=PORTA_PACKS[0].p/PORTA_PACKS[0].yen; return Math.round((x.p/x.yen/base-1)*100); }
+function showPortaShop(tab){
+  tab=tab||APP.portaTab||'buy'; APP.portaTab=tab; syncPass(); syncPacks();
+  const tabs=['buy','packs','pass'].map(k=>`<button class="${k===tab?'on':''}" data-act="portaTab" data-k="${k}">${t('porta.tab_'+k)}</button>`).join('');
+  const buyBtn=(act,id,label)=>payEnabled() ? `<button class="btn sm" data-act="${act}" data-id="${id}">${label}</button>` : `<button class="btn sm" disabled>${label}</button>`;
+  let body='';
+  if(tab==='buy'){
+    const starter = !SV.pay.bought.starter ? `<div class="offer starter"><span class="ribbon">${t('porta.once')}</span><b>${t('porta.starter')}</b><span class="meta">${t('porta.starterD',{n:STARTER_SET.packs,p:STARTER_SET.p})}</span>${buyBtn('buyStarter','starter',priceText(STARTER_SET))}</div>` : '';
+    body=starter+`<div class="bundles">${PORTA_PACKS.map(x=>{ const first=!SV.pay.first[x.id], b=bonusPct(x);
+      return `<div class="bundle ${x.best?'best':''}">${x.best?`<span class="ribbon">${t('porta.best')}</span>`:''}${first?`<span class="dbl">${t('porta.first2x')}</span>`:''}
+        <span class="crystal">◆</span><b class="num">${(first?x.p*2:x.p).toLocaleString('ja-JP')}</b><span class="meta">${t('porta')}</span>
+        ${b>0?`<span class="bonus">+${b}%</span>`:'<span class="bonus dim">—</span>'}${x.item?`<span class="meta gold">${t('porta.withFrame')}</span>`:''}
+        ${buyBtn('buyPorta',x.id,priceText(x))}</div>`; }).join('')}</div>
+      <p class="meta">${t('porta.bonusNote')}</p>`;
+  } else if(tab==='packs'){
+    const full=SV.pk.stock>=CONFIG.packStockMax;
+    const row=(act,cost,title,desc,best,dis)=>`<div class="offer ${best?'bestrow':''}">${best?`<span class="ribbon">${t('porta.best')}</span>`:''}<b>${title}</b><span class="meta">${desc}</span><button class="btn sm" data-act="${act}" ${dis||portaTotal()<cost?'disabled':''}>${cost}${t('porta.unit')}</button></div>`;
+    body=`<div class="offers">
+      ${row('portaRefill',PORTA_USE.refill,t('porta.refill'),t('porta.refillD',{n:SV.pk.stock,m:CONFIG.packStockMax}),false,full)}
+      ${row('portaPack1',PORTA_USE.pack1,t('porta.pack1'),t('porta.pack1D'))}
+      ${row('portaPack5',PORTA_USE.pack5,t('porta.pack5'),t('porta.pack5D'))}
+      ${row('portaPack11',PORTA_USE.pack11,t('porta.pack11'),t('porta.pack11D'),true)}
+      ${row('portaGc',PORTA_USE.gc,t('shop.gc1'),t('shop.gc1d',{n:SV.gc.stock}))}
+    </div><p class="row"><button class="ghost-btn" data-act="odds">${t('odds.title')}</button></p>`;
+  } else {
+    const act=passActive();
+    body=`<div class="passcard ${act?'on':''}"><p class="eyebrow">${t('pass.name')}</p><b class="passprice">${priceText(PASS)}<span class="meta"> / ${t('pass.month')}</span></b>
+      <ul class="passlist"><li>${t('pass.b1',{n:PASS.dailyPacks})}</li><li>${t('pass.b2',{n:PASS.dailyPorta})}</li><li>${t('pass.b3')}</li><li>${t('pass.b4',{n:PASS.bankMax})}</li></ul>
+      <p class="meta">${t('pass.value',{n:PASS.days*PASS.dailyPacks,p:PASS.days*PASS.dailyPorta})}</p>
+      ${act?`<p class="gain">${t('pass.active',{n:passDaysLeft()})}</p>${SV.pass.bank?`<button class="btn" data-act="passClaim">${t('pass.claim',{n:SV.pass.bank})}</button>`:`<p class="meta">${t('pass.claimedToday')}</p>`}`
+        :`${!SV.pass.trialUsed?buyBtn('passTrial','trial',t('pass.trial',{n:PASS.trial})):''}${buyBtn('passBuy','pass',t('pass.buy',{p:priceText(PASS)}))}`}
+      <p class="note">${t('pass.note')}</p></div>`;
+  }
+  showModal(`<div class="row between"><h2>${t('porta.shop')}</h2><span class="pts porta"><span class="crystal">◆</span><b class="num">${portaTotal()}</b></span></div>
+    <p class="meta">${t('porta.balance',{a:SV.porta.paid,b:SV.porta.free})}</p>
+    <div class="seg wrap">${tabs}</div>${body}
+    <p class="note">${payEnabled()?t('pay.testNote'):t('pay.soonNote')}${SV.pay.age&&SV.pay.age!=='adult'?'　'+t('pay.capNow',{a:spentThisMonth().toLocaleString('ja-JP'),b:AGE_CAP[SV.pay.age].toLocaleString('ja-JP')}):''}</p>
+    <p class="row"><button class="ghost-btn" data-act="closeModal">${t('close')}</button></p>`,'shop-modal');
+}
+function portaAct(act,d){
+  switch(act){
+    case 'porta': showPortaShop(); return true;
+    case 'portaTab': showPortaShop(d.k); return true;
+    case 'buyPorta': { const x=PORTA_PACKS.find(p=>p.id===d.id); checkout(x,()=>{ const first=!SV.pay.first[x.id]; SV.porta.paid+=first?x.p*2:x.p; SV.pay.first[x.id]=true; if(x.item && !SV.shop.owned.includes(x.item)) SV.shop.owned.push(x.item); toast(t('porta.got',{n:first?x.p*2:x.p})); flash(); showPortaShop('buy'); }); return true; }
+    case 'buyStarter': checkout(STARTER_SET,()=>{ SV.pay.bought.starter=true; SV.pk.bonus+=STARTER_SET.packs; SV.porta.paid+=STARTER_SET.p; if(!SV.shop.owned.includes(STARTER_SET.item)) SV.shop.owned.push(STARTER_SET.item); toast(t('porta.starterGot')); flash(); showPortaShop('buy'); }); return true;
+    case 'passTrial': if(!payEnabled()){ toast(t('pay.soon')); return true; } SV.pass.trialUsed=true; startPass(PASS.trial); toast(t('pass.started')); flash(); showPortaShop('pass'); renderApp(true); return true;
+    case 'passBuy': checkout(PASS,()=>{ startPass(PASS.days); toast(t('pass.started')); flash(); showPortaShop('pass'); }); return true;
+    case 'passClaim': claimPass(); if(!$('#modal').hidden) showPortaShop('pass'); return true;
+    case 'portaRefill': refillPack(); return true;
+    case 'portaPack1': buyPacks(1); return true;
+    case 'portaPack5': buyPacks(5); return true;
+    case 'portaPack11': buyPacks(11); return true;
+    case 'portaGc': if(!spendPorta(PORTA_USE.gc)){ toast(t('porta.short')); return true; } SV.gc.stock++; save(); toast(t('shop.bought',{x:t('shop.gc1')})); showPortaShop('packs'); renderApp(true); return true;
+    case 'ageSet': { SV.pay.age=d.a; save(); const f=APP.pendingBuy; APP.pendingBuy=null; closeModal(); toast(t('pay.ageSaved')); if(f) showPortaShop(); return true; }
+  }
+  return false;
 }
 
 /* ----- 属性（テンプレデッキ・カード詳細で使う） ----- */
@@ -2353,7 +2624,7 @@ function showCard(id){
     <div class="cv-head"><span class="cv-rar">${RARITY[d.rarity].mark} ${t(RAR_KEY[d.rarity])}</span><h2>${esc(cardName(id))}</h2><span class="meta">${esc(cardMotif(id))}</span></div>
     <div class="cv-stage">
       <button class="cv-nav" data-act="cardNav" data-id="${prev||''}" ${prev?'':'disabled'} aria-label="${t('cv.prev')}">‹</button>
-      <div class="cv-card" id="cvCard">${img?`<img src="${img}" alt="${esc(cardName(id))}" draggable="false">`:cardHTML(id,'big')}<span class="cv-sheen"></span></div>
+      <div class="cv-card ${SV.foil[id]?'foil':''}" id="cvCard">${img?`<img src="${img}" alt="${esc(cardName(id))}" draggable="false">`:cardHTML(id,'big')}<span class="cv-sheen"></span></div>
       <button class="cv-nav" data-act="cardNav" data-id="${next||''}" ${next?'':'disabled'} aria-label="${t('cv.next')}">›</button>
     </div>
     ${at>=0?`<p class="meta center">${at+1} / ${list.length}</p>`:''}
@@ -2364,6 +2635,7 @@ function showCard(id){
       ${a?tile(t('cv.attr'),`<span style="color:${ATTR_COLOR[a]}">${ATTR_GLYPH[a]}</span> ${t('attr.'+a)}`):''}
       ${tile(t('cv.limit'),d.token?'—':cardLimit(id))}
       ${tile(t('cv.owned'),d.token?'—':n)}
+      ${SV.foil[id]?tile(t('cv.foil'),'✦'+SV.foil[id],'gold'):''}
     </div>
     ${cardText(id)?`<div class="cv-desc">${esc(cardText(id))}</div>`:`<div class="cv-desc meta">${t('cv.vanilla')}</div>`}
     ${evo?`<h3>${t('cv.evo')}</h3><div class="evo">${evo.map((e,i)=>`${i?'<span class="evo-arrow">→</span>':''}<button class="evo-card ${e===id?'on':''}" data-act="cardNav" data-id="${e}" style="--cw:64px">${cardHTML(e)}</button>`).join('')}</div>`:''}
@@ -2402,7 +2674,7 @@ function collectionHTML(){
   const ex=allExtras();
   return `<div class="row between"><div class="chips">${chips}</div><span class="meta">${t('home.dex')} ${ownedCount}/${CARD_IDS.length}</span></div>
     <div class="row between"><span class="meta">${t('dust.hint')}</span>${ex.length?`<button class="ghost-btn sm" data-act="dustAll">${t('dust.allBtn',{p:ex.reduce((s,x)=>s+x.p,0)})}</button>`:''}</div>
-    <div class="grid">${ids.map(id=>{ const n=owned(id); return `<button class="cell ${n?'':'unowned'}" data-act="card" data-id="${id}">${cardHTML(id)}${painted(id)?`<span class="paintb">${t('paint.mark')}</span>`:''}<span class="cnt">×${n}</span><span class="rar">${RARITY[CARDS[id].rarity].mark}</span></button>`; }).join('')}</div>`;
+    <div class="grid">${ids.map(id=>{ const n=owned(id); return `<button class="cell ${n?'':'unowned'} ${SV.foil[id]?'hasfoil':''}" data-act="card" data-id="${id}">${cardHTML(id)}${SV.foil[id]?`<span class="foilmark">✦${SV.foil[id]}</span>`:''}${painted(id)?`<span class="paintb">${t('paint.mark')}</span>`:''}<span class="cnt">×${n}</span><span class="rar">${RARITY[CARDS[id].rarity].mark}</span></button>`; }).join('')}</div>`;
 }
 function decksHTML(){
   return `<div class="list">${SV.decks.map((d,i)=>{ const n=deckCount(d.cards); return `<div class="item"><div><b>${esc(deckName(i))}</b> ${i===SV.active?`<span class="badge">${t('deck.active')}</span>`:''}<div class="meta">${t('deck.count',{n,m:CONFIG.deckSize})}</div></div><div class="row"><button class="ghost-btn" data-act="deckEdit" data-i="${i}">${t('deck.edit')}</button>${i!==SV.active?`<button class="btn sm" data-act="deckUse" data-i="${i}" ${n===CONFIG.deckSize?'':'disabled'}>${t('deck.use')}</button>`:''}</div></div>`; }).join('')}</div>`;
@@ -2530,7 +2802,11 @@ function showOdds(){
   const rows=Object.entries(RARITY).map(([k,v])=>`<tr><td class="rarc">${v.mark}</td><td class="num">${pct(effRates()[k])}</td><td>${CARD_IDS.filter(id=>CARDS[id].rarity===k).map(id=>esc(cardName(id))).join('、')}</td></tr>`).join('');
   showModal(`<h2>${t('odds.title')}</h2><p class="meta">${t('set.origin')}</p>
     <h3>${t('odds.perCard')}</h3><div class="cardtable"><table>${rows}</table></div>
-    <p>${t('odds.god')}：<b class="num">${pct(effGod())}</b></p>${devOn()?`<p class="warnc">${t('dev.bannerTxt')}</p>`:''}
+    <p>${t('odds.god')}：<b class="num">${pct(effGod())}</b></p>
+    <p>${t('odds.foil',{p:pct(CONFIG.foilRate)})}</p>
+    <h3>${t('odds.guarTitle')}</h3><ul>
+      <li>${t('odds.guarU',{a:['U','R','L'].map(k=>RARITY[k].mark+' '+pct(effRates()[k]/(effRates().U+effRates().R+effRates().L))).join('、')})}</li>
+      <li>${t('odds.guarR',{a:['R','L'].map(k=>RARITY[k].mark+' '+pct(effRates()[k]/(effRates().R+effRates().L))).join('、')})}</li></ul>${devOn()?`<p class="warnc">${t('dev.bannerTxt')}</p>`:''}
     <ul><li>${t('odds.same')}</li><li>${t('odds.note')}</li><li>${t('odds.pity',{p:CONFIG.packPoints})}</li></ul>
     <p><button class="endbtn" data-act="closeModal">${t('close')}</button></p>`);
 }
@@ -2619,6 +2895,7 @@ function devHTML(){
     <div class="row"><select id="devGiveCard">${cardOptions('drake')}</select><input type="number" id="devGiveN" min="1" max="99" value="3" style="max-width:80px"><button class="btn sm" data-act="devGive">${t('dev.add')}</button></div>
     <h3>${t('dev.points')}</h3>
     <div class="row"><input type="number" id="devPts" min="1" max="9999" value="100" style="max-width:120px"><button class="btn sm" data-act="devPoints">${t('dev.add')}</button></div>
+    <div class="row"><button class="ghost-btn" data-act="devPorta">${t('dev.porta')}</button><button class="ghost-btn" data-act="devPayReset">${t('dev.payReset')}</button></div>
   </section>
   <section class="panel">
     <h3>${t('dev.gift')}</h3>
@@ -2654,11 +2931,13 @@ function devAct(act,d){
     case 'devRatesReset': D.rates=null; D.god=null; SV.pending=null; save(); toast(t('dev.saved')); renderApp(true); return true;
     case 'devSetPack': {
       const cards=Array.from({length:CONFIG.packSize},(_,i)=>{ const v=$('#devPack'+i).value; if(v) return v; const rar=rollRarity(); const pool=CARD_IDS.filter(id=>CARDS[id].rarity===rar); return pool[Math.floor(Math.random()*pool.length)]; });
-      SV.pending={god:cards.every(id=>CARDS[id].rarity==='R'), cards, seed:Math.floor(Math.random()*1e9)};
+      SV.pending={god:cards.every(id=>CARDS[id].rarity==='R'), cards, foil:cards.map(()=>false), kind:'normal', seed:Math.floor(Math.random()*1e9)};
       save(); toast(t('dev.saved')); renderApp(true); return true; }
     case 'devRefill': SV.pk.stock=CONFIG.packStockMax; SV.gc.stock=CONFIG.gcMax; addChallenge(); save(); toast(t('dev.saved')); renderApp(true); return true;
     case 'devCpu': D.cpu=d.v; save(); renderApp(true); return true;
     case 'devGive': { const id=$('#devGiveCard').value, n=Math.min(99,Math.max(1,+$('#devGiveN').value||1)); SV.collection[id]=(SV.collection[id]||0)+n; save(); toast(t('dev.added')); renderApp(true); return true; }
+    case 'devPorta': SV.porta.free+=500; save(); toast(t('dev.added')); renderApp(true); return true;
+    case 'devPayReset': SV.pay={age:null,month:'',spent:0,history:[],first:{},bought:{}}; SV.pass={until:0,trialUsed:false,lastDay:null,bank:0}; save(); toast(t('dev.saved')); renderApp(true); return true;
     case 'devPoints': { const n=Math.min(9999,Math.max(1,+$('#devPts').value||0)); SV.points+=n; save(); toast(t('dev.added')); renderApp(true); return true; }
     case 'devGift': {
       const to=($('#giftTo').value||'').trim().toUpperCase(), id=$('#giftCard').value, n=Math.min(99,Math.max(1,+$('#giftN').value||1)), pts=Math.min(9999,Math.max(0,+$('#giftPts').value||0));
@@ -2673,6 +2952,7 @@ function updateDevBanner(){ const b=$('#devBanner'); if(b){ b.hidden=!devOn(); b
 
 /* ----- 操作の振り分け ----- */
 function appAct(act,d,el){
+  if(portaAct(act,d)) return;
   if(devAct(act,d)) return;
   switch(act){
     case 'tab': APP.tab=d.tab; APP.editing=null; APP.resetArm=false; renderApp(); return;
@@ -2716,6 +2996,7 @@ function appAct(act,d,el){
     case 'openPack': openPack(1); return;
     case 'flip': flipCard(+d.i,el); return;
     case 'flipAll': flipAll(); return;
+    case 'nextPack': nextPack(); return;
     case 'collect': closeModal(); renderApp(); return;
     case 'odds': showOdds(); return;
     case 'rules': showRules(); return;
@@ -3591,7 +3872,7 @@ function renderPaintCtl(){
   box.innerHTML=PAINT_ROLES.filter(r=>roles[r]).map(r=>{
     const cur=PV.draft[r] || hex6(roles[r].orig);
     return `<div class="prow"><span class="pswatch big" style="background:${cur}"></span><b>${t('paint.'+r)}</b>
-      <div class="pal">${PALETTE.map(c=>`<button class="pswatch ${c===cur?'on':''}" style="background:${c}" data-act="paintPick" data-r="${r}" data-c="${c}" aria-label="${c}"></button>`).join('')}
+      <div class="pal">${paletteNow().map(c=>`<button class="pswatch ${c===cur?'on':''}" style="background:${c}" data-act="paintPick" data-r="${r}" data-c="${c}" aria-label="${c}"></button>`).join('')}
       <label class="pswatch custom" title="${t('paint.custom')}"><input type="color" data-paint-role="${r}" value="${cur}" aria-label="${t('paint.custom')}">＋</label></div></div>`;
   }).join('')+`<div class="row"><button class="btn" data-act="paintSave">${t('paint.save')}</button><button class="ghost-btn" data-act="paintReset">${t('paint.reset')}</button><button class="ghost-btn" data-act="paintClose">${t('close')}</button></div>
     <p class="meta">${t('paint.note')}</p>`;
